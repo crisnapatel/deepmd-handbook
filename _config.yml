@@ -1,0 +1,30 @@
+title: "DeePMD + dpgen — But Make It Make Sense"
+author: Krishna Patel
+logo: ""
+
+execute:
+  execute_notebooks: "off"
+
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_admonition
+    - html_image
+    - linkify
+    - substitution
+    - tasklist
+
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: true
+
+repository:
+  url: https://github.com/crisnapatel/deepmd-dpgen-tutorial
+  branch: main
+
+sphinx:
+  extra_extensions:
+    - sphinx_copybutton

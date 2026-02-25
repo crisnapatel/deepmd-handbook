@@ -1,0 +1,35 @@
+format: jb-book
+root: content/index
+parts:
+  - caption: "Part I — Foundations"
+    chapters:
+      - file: content/ch01/why-ml-potentials
+      - file: content/ch02/deepmd-architecture
+  - caption: "Part II — Your First Model"
+    chapters:
+      - file: content/ch03/dpdata
+      - file: content/ch04/first-model
+      - file: content/ch05/lammps-deepmd
+  - caption: "Part III — The Active Learning Loop"
+    chapters:
+      - file: content/ch06/dpgen-concept
+      - file: content/ch07/param-json
+      - file: content/ch08/machine-json
+      - file: content/ch09/running-dpgen
+      - file: content/ch10/monitoring
+  - caption: "Part IV — Validation & Beyond"
+    chapters:
+      - file: content/ch11/validation
+  - caption: "Practical Topics"
+    chapters:
+      - file: content/practical/gap-filling
+      - file: content/practical/multi-element
+      - file: content/practical/energy-scale
+      - file: content/practical/transfer-learning
+      - file: content/practical/apptainer
+      - file: content/practical/qe-vs-vasp
+      - file: content/practical/init-commands
+  - caption: "Appendix"
+    chapters:
+      - file: content/reading-order
+      - file: content/references

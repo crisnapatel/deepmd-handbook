@@ -143,7 +143,7 @@ Open the `.data` file. Look at the atom types. For Ar, there's only type 1. Easy
 Grab your terminal.
 
 ```console
-$ cd ~/deepmd_project/ar/03_lammps/
+$ cd ~/deepmd/ar/03_lammps/
 $ apptainer exec --nv ~/deepmd-dpgen.sif lmp -in input.lammps
 
 # Or with MPI (usually overkill for DeePMD; GPU does the work)

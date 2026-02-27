@@ -15,4 +15,4 @@ Open `_build/html/index.html` in your browser.
 
 ## Live site
 
-[crisnapatel.github.io/deepmd-dpgen-tutorial](https://crisnapatel.github.io/deepmd-dpgen-tutorial/)
+[crisnapatel.github.io/deepmd-handbook](https://crisnapatel.github.io/deepmd-handbook/)

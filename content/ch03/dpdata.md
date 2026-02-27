@@ -15,9 +15,9 @@ So how do you get from here to there?
 Before we touch any data, let's set up the directory where everything will live. Open your terminal.
 
 ```console
-$ mkdir -p ~/deepmd_project && cd ~/deepmd_project
+$ mkdir -p ~/deepmd && cd ~/deepmd
 $ pwd
-/home/krishna/deepmd_project
+/home/krishna/deepmd
 ```
 
 This is your project root. Everything in this tutorial happens inside here. DFT data goes in, training data comes out, models get trained, LAMMPS runs happen. One directory. You always know where you are.

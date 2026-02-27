@@ -23,7 +23,7 @@ html:
   toc_depth: 3
 
 repository:
-  url: https://github.com/crisnapatel/deepmd-dpgen-tutorial
+  url: https://github.com/crisnapatel/deepmd-handbook
   branch: main
 
 sphinx:

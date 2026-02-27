@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Conversational tutorial website for the DeePMD-kit + dpgen machine learning interatomic potential pipeline. Built with Jupyter Book (MyST Markdown), deployed to GitHub Pages at `crisnapatel.github.io/deepmd-dpgen-tutorial/`.
+Conversational tutorial website for the DeePMD-kit + dpgen machine learning interatomic potential pipeline. Built with Jupyter Book (MyST Markdown), deployed to GitHub Pages at `crisnapatel.github.io/deepmd-handbook/`.
 
 Target audience: grad students who know Linux, QE/VASP, and basic MD, but NOT machine learning or dpgen.
 

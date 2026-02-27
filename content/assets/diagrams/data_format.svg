@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="700" height="480" viewBox="0 0 700 480">
+<defs>
+</defs>
+<rect x="0" y="0" width="700" height="480" fill="white" />
+<text x="350" y="25" font-size="18" text-anchor="middle" font-weight="bold" fill="#333">DeePMD-kit Data Format (npy)</text>
+<rect x="30" y="46" width="13" height="11" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="48" y="57" font-size="12" fill="#333" font-family="monospace">my_system/</text>
+<rect x="54" y="70" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="72" y="81" font-size="12" fill="#333" font-family="monospace">type.raw</text>
+<text x="132.0" y="81" font-size="9" fill="#999" font-style="italic">  0 0 0 ... 1 1</text>
+<rect x="54" y="94" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="72" y="105" font-size="12" fill="#333" font-family="monospace">type_map.raw</text>
+<text x="162.0" y="105" font-size="9" fill="#999" font-style="italic">  C  H</text>
+<rect x="54" y="118" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="72" y="129" font-size="12" fill="#333" font-family="monospace">nopbc</text>
+<text x="109.5" y="129" font-size="9" fill="#999" font-style="italic">  (optional)</text>
+<rect x="54" y="142" width="13" height="11" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="72" y="153" font-size="12" fill="#333" font-family="monospace">set.000/</text>
+<rect x="78" y="166" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="96" y="177" font-size="12" fill="#333" font-family="monospace">box.npy</text>
+<text x="148.5" y="177" font-size="9" fill="#999" font-style="italic">  (nframes, 9)</text>
+<rect x="78" y="190" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="96" y="201" font-size="12" fill="#333" font-family="monospace">coord.npy</text>
+<text x="163.5" y="201" font-size="9" fill="#999" font-style="italic">  (nframes, natoms*3)</text>
+<rect x="78" y="214" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="96" y="225" font-size="12" fill="#333" font-family="monospace">energy.npy</text>
+<text x="171.0" y="225" font-size="9" fill="#999" font-style="italic">  (nframes,)</text>
+<rect x="78" y="238" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="96" y="249" font-size="12" fill="#333" font-family="monospace">force.npy</text>
+<text x="163.5" y="249" font-size="9" fill="#999" font-style="italic">  (nframes, natoms*3)</text>
+<rect x="78" y="262" width="11" height="13" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="96" y="273" font-size="12" fill="#333" font-family="monospace">virial.npy</text>
+<text x="171.0" y="273" font-size="9" fill="#999" font-style="italic">  (nframes, 9)</text>
+<rect x="54" y="286" width="13" height="11" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="72" y="297" font-size="12" fill="#333" font-family="monospace">set.001/</text>
+<text x="132.0" y="297" font-size="9" fill="#999" font-style="italic">  (more data splits)</text>
+<rect x="380" y="55" width="290" height="55" rx="6" ry="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" />
+<text x="388" y="71" font-size="11" font-weight="bold" fill="#1565C0" font-family="monospace">type.raw</text>
+<text x="388" y="85" font-size="9" fill="#555">Integer per atom (0=C, 1=H).</text>
+<text x="388" y="98" font-size="9" fill="#555">Same for ALL frames. Set once.</text>
+<rect x="380" y="118" width="290" height="55" rx="6" ry="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" />
+<text x="388" y="134" font-size="11" font-weight="bold" fill="#1565C0" font-family="monospace">type_map.raw</text>
+<text x="388" y="148" font-size="9" fill="#555">Element names, one per line.</text>
+<text x="388" y="161" font-size="9" fill="#555">Maps 0→C, 1→H, etc.</text>
+<rect x="380" y="181" width="290" height="55" rx="6" ry="6" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5" />
+<text x="388" y="197" font-size="11" font-weight="bold" fill="#E65100" font-family="monospace">box.npy</text>
+<text x="388" y="211" font-size="9" fill="#555">Cell vectors (a1,a2,a3) flattened.</text>
+<text x="388" y="224" font-size="9" fill="#555">9 numbers per frame, in Angstrom.</text>
+<rect x="380" y="244" width="290" height="55" rx="6" ry="6" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5" />
+<text x="388" y="260" font-size="11" font-weight="bold" fill="#E65100" font-family="monospace">coord.npy</text>
+<text x="388" y="274" font-size="9" fill="#555">Cartesian coordinates, flattened.</text>
+<text x="388" y="287" font-size="9" fill="#555">natoms × 3 numbers per frame, in Å.</text>
+<rect x="380" y="307" width="290" height="55" rx="6" ry="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5" />
+<text x="388" y="323" font-size="11" font-weight="bold" fill="#2E7D32" font-family="monospace">energy.npy</text>
+<text x="388" y="337" font-size="9" fill="#555">Total energy per frame.</text>
+<text x="388" y="350" font-size="9" fill="#555">In eV (not Ry, not Ha).</text>
+<rect x="380" y="370" width="290" height="55" rx="6" ry="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5" />
+<text x="388" y="386" font-size="11" font-weight="bold" fill="#2E7D32" font-family="monospace">force.npy</text>
+<text x="388" y="400" font-size="9" fill="#555">Forces on each atom, flattened.</text>
+<text x="388" y="413" font-size="9" fill="#555">natoms × 3 per frame, in eV/Å.</text>
+<rect x="30" y="430" width="640" height="40" rx="8" ry="8" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5" />
+<text x="350" y="452" font-size="12" text-anchor="middle" fill="#7B1FA2" font-family="monospace" font-weight="bold">QE output  →  dpdata.LabeledSystem()  →  .to_deepmd_npy()  →  set.000/*.npy</text>
+</svg>

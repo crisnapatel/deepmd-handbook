@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="750" height="620" viewBox="0 0 750 620">
+<defs>
+</defs>
+<rect x="0" y="0" width="750" height="620" fill="white" />
+<text x="375" y="25" font-size="18" text-anchor="middle" font-weight="bold" fill="#333">dpgen Iteration Directory Structure</text>
+<rect x="40" y="47" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="56" y="57" font-size="12" fill="#333" font-family="monospace">dpgen_workdir/</text>
+<text x="161.0" y="57" font-size="9" fill="#999" font-style="italic">  (your dpgen run directory)</text>
+<path d="M69,66.0 L69,77 L78,77" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="64" y="69" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="80" y="79" font-size="12" fill="#1565C0" font-family="monospace">iter.000000/</text>
+<text x="170.0" y="79" font-size="9" fill="#999" font-style="italic">  ← Iteration 0</text>
+<path d="M93,88.0 L93,99 L102,99" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="88" y="91" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="104" y="101" font-size="12" fill="#1565C0" font-family="monospace">00.train/</text>
+<path d="M117,110.0 L117,121 L126,121" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="113" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="123" font-size="12" fill="#42A5F5" font-family="monospace">000/</text>
+<text x="158.0" y="123" font-size="9" fill="#999" font-style="italic">  ← Model 0 (seed 1)</text>
+<path d="M141,132.0 L141,143 L150,143" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="135" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="145" font-size="12" fill="#666" font-family="monospace">input.json</text>
+<text x="227.0" y="145" font-size="9" fill="#999" font-style="italic">  training config</text>
+<path d="M141,154.0 L141,165 L150,165" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="157" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="167" font-size="12" fill="#666" font-family="monospace">lcurve.out</text>
+<text x="227.0" y="167" font-size="9" fill="#999" font-style="italic">  loss vs step</text>
+<path d="M141,176.0 L141,187 L150,187" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="179" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="189" font-size="12" fill="#666" font-family="monospace">model.ckpt.*</text>
+<text x="242.0" y="189" font-size="9" fill="#999" font-style="italic">  checkpoints</text>
+<path d="M141,198.0 L141,209 L150,209" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="201" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="211" font-size="12" fill="#666" font-family="monospace">frozen_model.pb</text>
+<text x="264.5" y="211" font-size="9" fill="#999" font-style="italic">  final model</text>
+<path d="M117,220.0 L117,231 L126,231" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="223" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="233" font-size="12" fill="#42A5F5" font-family="monospace">001/</text>
+<text x="158.0" y="233" font-size="9" fill="#999" font-style="italic">  ← Model 1 (seed 2)</text>
+<path d="M117,242.0 L117,253 L126,253" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="245" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="255" font-size="12" fill="#42A5F5" font-family="monospace">002/</text>
+<text x="158.0" y="255" font-size="9" fill="#999" font-style="italic">  ← Model 2 (seed 3)</text>
+<path d="M117,264.0 L117,275 L126,275" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="267" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="277" font-size="12" fill="#42A5F5" font-family="monospace">003/</text>
+<text x="158.0" y="277" font-size="9" fill="#999" font-style="italic">  ← Model 3 (seed 4)</text>
+<path d="M93,291.0 L93,302 L102,302" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="88" y="294" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="104" y="304" font-size="12" fill="#E65100" font-family="monospace">01.model_devi/</text>
+<path d="M117,313.0 L117,324 L126,324" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="316" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="326" font-size="12" fill="#FF8A65" font-family="monospace">task.000.000000/</text>
+<text x="248.0" y="326" font-size="9" fill="#999" font-style="italic">  ← sys_idx=0, T=77K</text>
+<path d="M141,335.0 L141,346 L150,346" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="338" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="348" font-size="12" fill="#666" font-family="monospace">input.lammps</text>
+<text x="242.0" y="348" font-size="9" fill="#999" font-style="italic">  LAMMPS input</text>
+<path d="M141,357.0 L141,368 L150,368" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="360" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="370" font-size="12" fill="#666" font-family="monospace">model_devi.out</text>
+<text x="257.0" y="370" font-size="9" fill="#999" font-style="italic">  deviation per frame</text>
+<path d="M141,379.0 L141,390 L150,390" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="382" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="152" y="392" font-size="12" fill="#666" font-family="monospace">traj/</text>
+<text x="189.5" y="392" font-size="9" fill="#999" font-style="italic">  MD trajectory</text>
+<path d="M117,401.0 L117,412 L126,412" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="404" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="414" font-size="12" fill="#FF8A65" font-family="monospace">task.000.000001/</text>
+<text x="248.0" y="414" font-size="9" fill="#999" font-style="italic">  ← sys_idx=0, T=150K</text>
+<path d="M117,423.0 L117,434 L126,434" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="426" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="436" font-size="12" fill="#FF8A65" font-family="monospace">task.001.000000/</text>
+<text x="248.0" y="436" font-size="9" fill="#999" font-style="italic">  ← sys_idx=1, T=77K</text>
+<path d="M93,450.0 L93,461 L102,461" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="88" y="453" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="104" y="463" font-size="12" fill="#2E7D32" font-family="monospace">02.fp/</text>
+<path d="M117,472.0 L117,483 L126,483" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="475" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="485" font-size="12" fill="#66BB6A" font-family="monospace">task.000.000000/</text>
+<text x="248.0" y="485" font-size="9" fill="#999" font-style="italic">  ← candidate structure 1</text>
+<path d="M141,494.0 L141,505 L150,505" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="497" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="507" font-size="12" fill="#666" font-family="monospace">input</text>
+<text x="189.5" y="507" font-size="9" fill="#999" font-style="italic">  QE/VASP input file</text>
+<path d="M141,516.0 L141,527 L150,527" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="519" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="529" font-size="12" fill="#666" font-family="monospace">output</text>
+<text x="197.0" y="529" font-size="9" fill="#999" font-style="italic">  DFT output</text>
+<path d="M141,538.0 L141,549 L150,549" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="136" y="541" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="152" y="551" font-size="12" fill="#666" font-family="monospace">POSCAR</text>
+<text x="197.0" y="551" font-size="9" fill="#999" font-style="italic">  structure</text>
+<path d="M117,560.0 L117,571 L126,571" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="563" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="573" font-size="12" fill="#66BB6A" font-family="monospace">task.000.000001/</text>
+<text x="248.0" y="573" font-size="9" fill="#999" font-style="italic">  ← candidate structure 2</text>
+<path d="M117,582.0 L117,593 L126,593" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="585" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="128" y="595" font-size="12" fill="#666" font-family="monospace">candidate.shuffled.000.out</text>
+<text x="323.0" y="595" font-size="9" fill="#999" font-style="italic">  selection log</text>
+<path d="M117,604.0 L117,615 L126,615" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="112" y="607" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="128" y="617" font-size="12" fill="#66BB6A" font-family="monospace">data.000/</text>
+<text x="195.5" y="617" font-size="9" fill="#999" font-style="italic">  ← converted dpdata output</text>
+<path d="M69,636.0 L69,647 L78,647" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="64" y="639" width="12" height="10" rx="2" ry="2" fill="#FFE082" stroke="#FFB300" stroke-width="1" />
+<text x="80" y="649" font-size="12" fill="#1565C0" font-family="monospace">iter.000001/</text>
+<text x="170.0" y="649" font-size="9" fill="#999" font-style="italic">  ← Iteration 1 (same structure)</text>
+<text x="80" y="671" font-size="14" fill="#999" font-family="monospace">...</text>
+<path d="M69,680.0 L69,691 L78,691" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="64" y="683" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="80" y="693" font-size="12" fill="#C62828" font-family="monospace">record.dpgen</text>
+<text x="170.0" y="693" font-size="9" fill="#999" font-style="italic">  ← state machine (tracks progress)</text>
+<path d="M69,702.0 L69,713 L78,713" stroke="#CCC" stroke-width="1.5" fill="none" />
+<rect x="64" y="705" width="10" height="12" rx="1" ry="1" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+<text x="80" y="715" font-size="12" fill="#C62828" font-family="monospace">dpgen.log</text>
+<text x="147.5" y="715" font-size="9" fill="#999" font-style="italic">  ← main log file</text>
+</svg>

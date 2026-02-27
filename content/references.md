@@ -12,7 +12,7 @@
 
 ## Best Practices & Reviews
 
-5. Jacobs & Morgan, "A practical guide to machine learning interatomic potentials — Status and future," arXiv:2503.09814 (2025).
+5. Jacobs & Morgan, "A practical guide to machine learning interatomic potentials: Status and future," arXiv:2503.09814 (2025).
 
 6. "Enhancing the Quality and Reliability of Machine Learning Interatomic Potentials through Better Reporting Practices," *J. Phys. Chem. C* (2024).
 
@@ -31,3 +31,10 @@
 12. "An Efficiently Trained Deep Learning Potential for graphene."
 
 13. "Hydrogen storage efficiency of pristine carbon allotropes" (2025).
+
+## Tutorial Resources
+
+These external tutorials provided supplementary examples and are excellent hands-on companions to this book:
+
+- **ICTP 2024 DeePMD Tutorial** (Cesare Malosso). Water model training, NaCl model deviation analysis, dpgen with QE. [GitHub](https://github.com/cesaremalosso/tutorial_ictp2024)
+- **Deep Modeling for Molecular Simulation Workshop** (Pablo Piaggi, Cesare Malosso, Taehun Lee, Zachary Goldsmith, Yifan Li). Four-day in-person workshop, July 2023, CSI Princeton. QE fundamentals, manual active learning, error analysis, Deep Wannier, DPLR, metadynamics. [GitHub](https://github.com/cesaremalosso/workshop-july-2023)

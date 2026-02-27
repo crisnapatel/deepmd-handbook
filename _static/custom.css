@@ -1,0 +1,54 @@
+/* Color-coded highlighter system for key sentences.
+ *
+ * Three categories:
+ *   <mark class="silent-fail">  — yellow: silent failures, no-warning traps
+ *   <mark class="hard-req">     — pink:   hard requirements, non-negotiable
+ *   <mark class="key-insight">  — green:  core insights, mental model shifts
+ *
+ * Usage in MyST Markdown:
+ *   <mark class="silent-fail">The model trains. The physics is wrong.</mark>
+ */
+
+mark {
+    padding: 0.1em 0.25em;
+    border-radius: 3px;
+    color: #1a1a1a;
+    font-weight: inherit;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+/* Yellow — silent failures */
+mark, mark.silent-fail {
+    background-color: rgba(255, 224, 102, 0.45);
+}
+
+/* Pink — hard requirements */
+mark.hard-req {
+    background-color: rgba(255, 138, 138, 0.35);
+}
+
+/* Green — key insights */
+mark.key-insight {
+    background-color: rgba(119, 221, 119, 0.40);
+}
+
+/* ── Shell prompt styling (console lexer) ──
+ * Pygments 'console' lexer assigns:
+ *   .gp = generic prompt  (the "$ " at start of command lines)
+ *   .go = generic output   (output lines without a prompt)
+ * We color the prompt distinctively so readers can tell
+ * commands from output at a glance.
+ */
+
+/* Prompt: teal/cyan, bold */
+.highlight-console .gp {
+    color: #00897B;
+    font-weight: bold;
+    user-select: none;  /* don't select prompt when copying */
+}
+
+/* Output: slightly dimmed */
+.highlight-console .go {
+    color: #6c757d;
+}

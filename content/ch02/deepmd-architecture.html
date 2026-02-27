@@ -1,0 +1,877 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 2: The DeePMD Architecture &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch02/deepmd-architecture';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 3: Data Preparation with dpdata" href="../ch03/dpdata.html" />
+    <link rel="prev" title="Ch 1: Why Machine-Learned Potentials?" href="../ch01/why-ml-potentials.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch02/deepmd-architecture.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch02/deepmd-architecture.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch02/deepmd-architecture.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 2: The DeePMD Architecture</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design Principles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-big-picture">The Big Picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-descriptor-how-atoms-see-their-neighbors">The Descriptor: How Atoms See Their Neighbors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-descriptor-parameters">The Descriptor Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fitting-network-from-environment-to-energy">The Fitting Network: From Environment to Energy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-loss-function-what-the-model-optimizes">The Loss Function: What the Model Optimizes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-learning-rate-how-fast-the-model-learns">The Learning Rate: How Fast the Model Learns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-together-the-training-loop">Putting It Together: The Training Loop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-your-architecture-rules-of-thumb">Choosing Your Architecture: Rules of Thumb</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-2-the-deepmd-architecture">
+<h1>Ch 2: The DeePMD Architecture<a class="headerlink" href="#ch-2-the-deepmd-architecture" title="Permalink to this heading">#</a></h1>
+<p>I’ll be straight with you. You don’t need this chapter to train a model. You can skip to Ch 3 right now, copy the JSON, run <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code>, and get a working potential.</p>
+<p>But “working” and “good” are different things. And when your loss curve flatlines at iteration 200,000, or your MD simulation launches an atom into the vacuum at Mach 4, you will come back here. I promise. I did.</p>
+<p>So let’s do this now. Not the math. Not the full derivation. Just enough to understand what every knob in the training JSON actually controls, and why you’d turn it.</p>
+<section id="design-principles">
+<h2>Design Principles<a class="headerlink" href="#design-principles" title="Permalink to this heading">#</a></h2>
+<p>Four non-negotiable constraints shaped this architecture. Every design choice traces back to one of these.</p>
+<ul class="simple">
+<li><p><strong>Extensivity</strong>: Total energy = sum of per-atom energies. Each atom’s contribution depends only on its local environment. Train on 32 atoms, predict on 32,000. The model doesn’t care.</p></li>
+<li><p><strong>Continuity</strong>: The energy surface must be smooth and differentiable. Forces are the negative gradient of energy. No smooth surface, no valid forces. Period.</p></li>
+<li><p><strong>Symmetry invariance</strong>: Rotate the system, translate it, swap two identical atoms. The energy stays the same. The architecture enforces this by construction, not by hoping the network learns it.</p></li>
+<li><p><strong>Learnable representation</strong>: A deep neural network maps local atomic environments to energies, trained against DFT data. This is the part that actually learns.</p></li>
+</ul>
+<p>You might look at that list and think, “Sure, obvious.” It’s not. Classical force fields satisfy the first three but can’t learn arbitrary interactions. A naive neural network could learn anything but violates the symmetries. Getting all four simultaneously is the whole engineering challenge. And that’s not a small thing.</p>
+</section>
+<section id="the-big-picture">
+<h2>The Big Picture<a class="headerlink" href="#the-big-picture" title="Permalink to this heading">#</a></h2>
+<p>Here’s the entire model in one sentence: given atomic positions, predict the total energy. Forces come for free as derivatives.</p>
+<p>Two stages. That’s all.</p>
+<ol class="arabic simple">
+<li><p><strong>Descriptor</strong>: Each atom looks around at its neighbors and encodes what it sees into a fixed-size numerical vector. This is perception.</p></li>
+<li><p><strong>Fitting Network</strong>: That vector goes into a neural network, which outputs a single number: this atom’s energy contribution. Sum all the contributions. Total energy.</p></li>
+</ol>
+<p>Descriptor. Fitting. Energy. And that’s the whole trick.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Positions</span> <span class="o">--&gt;</span> <span class="p">[</span><span class="n">Descriptor</span><span class="p">]</span> <span class="o">--&gt;</span> <span class="n">Environment</span> <span class="n">Matrix</span> <span class="o">--&gt;</span> <span class="p">[</span><span class="n">Fitting</span> <span class="n">Net</span><span class="p">]</span> <span class="o">--&gt;</span> <span class="n">Per</span><span class="o">-</span><span class="n">atom</span> <span class="n">Energy</span> <span class="o">--&gt;</span> <span class="n">Sum</span> <span class="o">--&gt;</span> <span class="n">Total</span> <span class="n">Energy</span>
+                                                                                                    <span class="o">|</span>
+                                                                                         <span class="n">Gradient</span> <span class="o">--&gt;</span> <span class="n">Forces</span>
+</pre></div>
+</div>
+<figure class="align-default" id="deepmd-architecture-diagram">
+<a class="reference internal image-reference" href="../../_images/deepmd_architecture.svg"><img alt="../../_images/deepmd_architecture.svg" src="../../_images/deepmd_architecture.svg" width="90%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">The DeePMD-kit pipeline from atomic coordinates to energy and forces. Each atom’s local environment is encoded by the descriptor, then mapped to a per-atom energy contribution through the fitting network. Total energy is the sum; forces are computed as gradients.</span><a class="headerlink" href="#deepmd-architecture-diagram" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Let me unpack that diagram. For each atom <span class="math notranslate nohighlight">\(i\)</span>, the full coordinate matrix <span class="math notranslate nohighlight">\(\mathbf{R}\)</span> gets sliced into a local environment matrix <span class="math notranslate nohighlight">\(\mathbf{R}_i\)</span> (just the neighbors within <code class="docutils literal notranslate"><span class="pre">rcut</span></code>). The embedding network transforms each <span class="math notranslate nohighlight">\(\mathbf{R}_i\)</span> into a descriptor matrix <span class="math notranslate nohighlight">\(\mathbf{D}_i\)</span>. The fitting network (the DNN) takes <span class="math notranslate nohighlight">\(\mathbf{D}_i\)</span> and outputs a local energy <span class="math notranslate nohighlight">\(E_i\)</span>. Total energy: <span class="math notranslate nohighlight">\(E = \sum_i E_i\)</span>. Forces: <span class="math notranslate nohighlight">\(\mathbf{F}_i = -\nabla_{\mathbf{R}_i} E\)</span>. Virial stress: <span class="math notranslate nohighlight">\(\Xi_{\alpha\beta} = \sum_i R_{i\alpha} F_{i\beta}\)</span>.</p>
+<p>One architecture. Energy, forces, and stress all fall out of it. This is the part that made it click for me. You define one thing (energy as a function of positions) and three physical quantities emerge from calculus alone.</p>
+<figure class="align-default" id="deepmd-dnn-architecture">
+<a class="reference internal image-reference" href="../../_images/dnn-architecture-energy-force-virial.png"><img alt="../../_images/dnn-architecture-energy-force-virial.png" src="../../_images/dnn-architecture-energy-force-virial.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">The complete DeePMD pipeline. Atomic coordinates <span class="math notranslate nohighlight">\(\mathbf{R}\)</span> are decomposed into per-atom local environment matrices, transformed by the embedding network into descriptors, then fed through the DNN to produce per-atom energies. Energy, forces, and virial stress are all derived from this single architecture. Figure from <a class="reference external" href="https://youtu.be/Eiewy3gKVm0">DeePMD-kit tutorial</a>.</span><a class="headerlink" href="#deepmd-dnn-architecture" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="the-descriptor-how-atoms-see-their-neighbors">
+<h2>The Descriptor: How Atoms See Their Neighbors<a class="headerlink" href="#the-descriptor-how-atoms-see-their-neighbors" title="Permalink to this heading">#</a></h2>
+<p>The descriptor we use is called <strong><code class="docutils literal notranslate"><span class="pre">se_e2_a</span></code></strong>. Smooth edition, two-body, with angular information. It’s the workhorse. The vast majority of published DeePMD papers use it.</p>
+<p>You might think the descriptor just stores distances to neighbors. Nope. It encodes distances <em>and</em> angles into a learned representation. Here’s what’s actually happening.</p>
+<p>Every atom looks around within a sphere of radius <code class="docutils literal notranslate"><span class="pre">rcut</span></code>. It sees neighbors, their element types, their relative positions. The descriptor takes all of that raw spatial information and compresses it into a fixed-size vector the neural network can work with.</p>
+<p>Think of it as peripheral vision. Each atom scans out to 6 Angstroms (in our case), notices who’s nearby, and builds a structured summary of its neighborhood. Three properties make this work:</p>
+<ul class="simple">
+<li><p><strong>Smooth</strong>: No hard cutoff. Neighbor contributions taper smoothly to zero between <code class="docutils literal notranslate"><span class="pre">rcut_smth</span></code> and <code class="docutils literal notranslate"><span class="pre">rcut</span></code>. This matters more than you think. A discontinuous potential creates infinite forces at the cutoff boundary. <mark class="silent-fail">Your MD simulation doesn’t “crash” in the traditional sense. It just produces garbage. Silently.</mark></p></li>
+<li><p><strong>Invariant</strong>: Rotate the entire system 90 degrees. Translate it by 10 Angstroms. The descriptor stays identical. The energy of a water molecule is the same whether it’s pointing up or sideways. The architecture guarantees this.</p></li>
+<li><p><strong>Permutation symmetric</strong>: Swap two identical carbon atoms. Nothing changes. The architecture handles this automatically.</p></li>
+</ul>
+<p>How? Translational invariance comes from using relative positions instead of absolute coordinates. Rotational invariance is baked in through products of the environment matrix (<span class="math notranslate nohighlight">\(\tilde{R} \times \tilde{R}^T\)</span>) that are inherently rotation-independent. Permutational invariance comes from the embedding network processing each neighbor through the same network regardless of ordering.</p>
+<p>Three hard physics constraints satisfied by construction. Not learned. Not approximate. Exact.</p>
+<section id="the-descriptor-parameters">
+<h3>The Descriptor Parameters<a class="headerlink" href="#the-descriptor-parameters" title="Permalink to this heading">#</a></h3>
+<p>Here’s a real config. For Ar (single element), this is simple: one <code class="docutils literal notranslate"><span class="pre">sel</span></code> value. For multi-element systems like water, you get one <code class="docutils literal notranslate"><span class="pre">sel</span></code> per element type. Here’s the water descriptor from our tutorial:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;rcut_smth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">46</span><span class="p">,</span><span class="w"> </span><span class="mi">92</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Every field matters. Let’s trace through this.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">rcut:</span> <span class="pre">6.0</span></code></strong>: The cutoff radius in Angstroms. Anything beyond 6 Angstroms is invisible to the atom. Gone. Doesn’t exist. For covalent bonds (C-C is ~1.4 Angstroms, C-H is ~1.1 Angstroms), 6 Angstroms captures several neighbor shells. For van der Waals, it covers the most important range but misses longer-range dispersion. For Coulomb interactions, 6 Angstroms is too short; you need specialized long-range methods.</p>
+<p><strong>Choosing rcut</strong>: 6.0 for organic/covalent systems. 8 or 9 for metals or ionic systems. Start there. Adjust later. Don’t go past 9 or 10 unless you really know why. The number of neighbors scales as <span class="math notranslate nohighlight">\(r^3\)</span>, so bumping from 6 to 9 roughly triples your neighbor count. Training cost scales with that.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">rcut_smth:</span> <span class="pre">2.0</span></code></strong>: The smoothing width. A neighbor at distance <span class="math notranslate nohighlight">\(r\)</span> fades smoothly from full contribution to zero between <span class="math notranslate nohighlight">\(r = rcut - rcut\_smth = 4.0\)</span> Angstroms and <span class="math notranslate nohighlight">\(r = rcut = 6.0\)</span> Angstroms. Leave this at 2.0. I have never had a reason to change it.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">sel:</span> <span class="pre">[46,</span> <span class="pre">92]</span></code></strong>: Maximum number of neighbors per element type. <code class="docutils literal notranslate"><span class="pre">sel[0]</span> <span class="pre">=</span> <span class="pre">46</span></code> means up to 46 Oxygen neighbors within <code class="docutils literal notranslate"><span class="pre">rcut</span></code>. <code class="docutils literal notranslate"><span class="pre">sel[1]</span> <span class="pre">=</span> <span class="pre">92</span></code> means up to 92 Hydrogen neighbors. The order matches <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Not optional. Not a suggestion. Get it wrong and the model silently trains on incomplete neighbor information.</p>
+<p>Why 46 and 92? In liquid water, each atom typically sees ~30 oxygens and ~60 hydrogens within 6 Angstroms. We pad by about 50% for safety. For our single-element Ar model, <code class="docutils literal notranslate"><span class="pre">sel:</span> <span class="pre">[80]</span></code> (one value, one element type).</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">neuron:</span> <span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">100]</span></code></strong>: The embedding network architecture. Three layers, 25 then 50 then 100 neurons. This network learns <em>how</em> to encode the raw distance and angle information into a useful representation. Larger networks capture more complexity but train slower and risk overfitting on small datasets.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">axis_neuron:</span> <span class="pre">16</span></code></strong>: Controls the angular information encoding dimensionality. 16 is the standard default. I’ve tried increasing it. It rarely helps. Decreasing it can hurt for systems with strong angular dependence (like covalent bonds with specific bond angles).</p>
+</div>
+<figure class="align-default" id="smoothing-function">
+<a class="reference internal image-reference" href="../../_images/smoothing_function.png"><img alt="../../_images/smoothing_function.png" src="../../_images/smoothing_function.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text"><strong>Left:</strong> The smoothing function s(r) tapers atom contributions between <code class="docutils literal notranslate"><span class="pre">rcut_smth</span></code> (2.0 Angstroms) and <code class="docutils literal notranslate"><span class="pre">rcut</span></code> (6.0 Angstroms). <strong>Right:</strong> Top-down view of the cutoff sphere. Green atoms contribute fully, orange atoms are tapered, gray atoms beyond the cutoff are invisible to the descriptor.</span><a class="headerlink" href="#smoothing-function" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">sel</span></code> is a source of silent errors.</strong> This one will bite you. If you set <code class="docutils literal notranslate"><span class="pre">sel</span> <span class="pre">=</span> <span class="pre">[20,</span> <span class="pre">20]</span></code> but your densest configuration has 40 carbon neighbors within <code class="docutils literal notranslate"><span class="pre">rcut</span></code>, DeePMD will quietly use only the closest 20 and ignore the rest. No warning. No error message. Just subtly wrong forces in dense regions. I stared at bad force predictions for two days before I realized my <code class="docutils literal notranslate"><span class="pre">sel</span></code> was too low.</p>
+<p>Check your maximum neighbor counts before setting <code class="docutils literal notranslate"><span class="pre">sel</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># After converting data with dpdata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dpdata</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">dpdata</span><span class="o">.</span><span class="n">LabeledSystem</span><span class="p">(</span><span class="s1">&#39;your_data/&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;deepmd/npy&#39;</span><span class="p">)</span>
+<span class="c1"># Check neighbor counts for your rcut</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Frames: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Max atoms: </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">])</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or just set <code class="docutils literal notranslate"><span class="pre">sel</span></code> generously. The cost of a larger <code class="docutils literal notranslate"><span class="pre">sel</span></code> is more memory during training, not slower inference. Memory is cheap. Bad forces are not.</p>
+</div>
+</section>
+</section>
+<section id="the-fitting-network-from-environment-to-energy">
+<h2>The Fitting Network: From Environment to Energy<a class="headerlink" href="#the-fitting-network-from-environment-to-energy" title="Permalink to this heading">#</a></h2>
+<p>The descriptor tells the atom what it sees. The fitting network decides what that means.</p>
+<p>It’s a standard fully-connected neural network. Input: the descriptor vector (that fixed-size encoding of the neighborhood). Output: one number. The per-atom energy contribution. One number per atom. Sum them. Total energy. That’s the entire fitting network’s job.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong><code class="docutils literal notranslate"><span class="pre">neuron:</span> <span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code></strong>: Three hidden layers, 240 neurons each. That’s a lot of neurons. Here’s why it needs to be.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>System complexity</p></th>
+<th class="head"><p>Typical fitting net</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Simple (single element, bulk metal)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[60,</span> <span class="pre">60,</span> <span class="pre">60]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Medium (small molecules, water)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">100,</span> <span class="pre">100]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Complex (interfaces, multi-element)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A complex multi-element system has bonding wells, diffusion barriers, and cross-element interactions all competing at once. A small network can’t capture that complexity. It underfits, the force RMSE plateaus, and you sit there wondering what went wrong. I learned this the expensive way. Three separate training runs with <code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">100,</span> <span class="pre">100]</span></code> before I accepted the network was too small for the physics.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">resnet_dt:</span> <span class="pre">true</span></code></strong>: Enables residual connections with a learnable scaling factor. Skip connections that help gradients flow through deep networks. Leave it on for the fitting net. Always. There is no good reason to turn it off.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>Each element type gets its own fitting network.</strong> When you have <code class="docutils literal notranslate"><span class="pre">type_map:</span> <span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>, DeePMD internally creates two separate fitting networks. Same architecture (<code class="docutils literal notranslate"><span class="pre">neuron</span></code> list), independent weights. Carbon atoms go through one network. Hydrogen atoms go through a different one. They learn completely different energy contributions.</p>
+<p>This is also why the model is <strong>size-extensive</strong>. Total energy = sum of per-atom contributions. Train on 32 atoms, predict on 32,000. The per-atom networks never see the total system size. They don’t know and they don’t care.</p>
+</div>
+</section>
+<section id="the-loss-function-what-the-model-optimizes">
+<h2>The Loss Function: What the Model Optimizes<a class="headerlink" href="#the-loss-function-what-the-model-optimizes" title="Permalink to this heading">#</a></h2>
+<p>Here’s where people get burned.</p>
+<p>The model needs to know how wrong it is at every training step. The loss function defines “wrong.” And the way you define “wrong” determines what kind of model you get. Pay attention to this next part.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ener&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The total loss is a weighted sum:</p>
+<div class="math notranslate nohighlight">
+\[L = p_e \cdot \Delta E^2 + p_f \cdot \Delta F^2 + p_v \cdot \Delta V^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta E\)</span>, <span class="math notranslate nohighlight">\(\Delta F\)</span>, <span class="math notranslate nohighlight">\(\Delta V\)</span> are the errors in energy, forces, and virial stress. The <span class="math notranslate nohighlight">\(p\)</span> values are the prefactors. They control what the model pays attention to.</p>
+<p>Here’s where it gets interesting. The prefactors <em>change</em> during training.</p>
+<p><strong>Early training</strong> (<code class="docutils literal notranslate"><span class="pre">start_pref</span></code>): Forces dominate. <span class="math notranslate nohighlight">\(p_f = 1000\)</span>, <span class="math notranslate nohighlight">\(p_e = 0.02\)</span>. The model is almost exclusively trying to get forces right. Why? Think about the information content. Each frame has <span class="math notranslate nohighlight">\(3N\)</span> force components but only 1 energy value. Forces are where the signal is. Forces define the <em>shape</em> of the potential energy surface.</p>
+<p><strong>Late training</strong> (<code class="docutils literal notranslate"><span class="pre">limit_pref</span></code>): Energy catches up. <span class="math notranslate nohighlight">\(p_f = 1.0\)</span>, <span class="math notranslate nohighlight">\(p_e = 2.0\)</span>. By now the forces are already good. The model has learned the PES shape. What’s left is calibrating the absolute energy scale, which matters when you compare different configurations.</p>
+<p>So the model learns the landscape first, then adjusts the elevation. Shape first, calibration second. That’s genuinely elegant.</p>
+<p><strong>Virials</strong> are zeroed out in our config. We’re studying a 2D slab with vacuum in the z-direction. The stress tensor isn’t physically meaningful in that geometry. For bulk 3D systems where you need accurate pressure, set <code class="docutils literal notranslate"><span class="pre">start_pref_v</span> <span class="pre">=</span> <span class="pre">0.02</span></code> and <code class="docutils literal notranslate"><span class="pre">limit_pref_v</span> <span class="pre">=</span> <span class="pre">1.0</span></code>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Training phase</p></th>
+<th class="head"><p>Force prefactor</p></th>
+<th class="head"><p>Energy prefactor</p></th>
+<th class="head"><p>What the model focuses on</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Early (step 0)</p></td>
+<td><p>1000</p></td>
+<td><p>0.02</p></td>
+<td><p>Getting PES shape right through forces</p></td>
+</tr>
+<tr class="row-odd"><td><p>Late (final step)</p></td>
+<td><p>1.0</p></td>
+<td><p>2.0</p></td>
+<td><p>Calibrating absolute energy scale</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="align-default" id="loss-weight-evolution">
+<a class="reference internal image-reference" href="../../_images/loss_weights.png"><img alt="../../_images/loss_weights.png" src="../../_images/loss_weights.png" style="width: 80%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">Loss prefactor evolution during training. The force prefactor starts high (1000) and decays to 1, while the energy prefactor grows from 0.02 to 2. Early training focuses on learning the PES shape through forces; later training calibrates absolute energies.</span><a class="headerlink" href="#loss-weight-evolution" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>This animation shows exactly what that looks like in practice:</p>
+<video width="100%" controls>
+  <source src="../assets/animations/loss_landscape.mp4" type="video/mp4">
+</video>
+<p><em>How DeePMD learns a PES. Phase 1: the model gets the shape right (forces/slopes match) but at the wrong absolute energy. Phase 2: the energy prefactor kicks in and the curve slides down to match DFT. Shape first, elevation second.</em></p>
+<p>Makes sense when you think about it. But I didn’t think about it my first time through. I copied the defaults and got lucky.</p>
+<div class="danger admonition">
+<p class="admonition-title">Warning: Energy Scale</p>
+<p><strong>The loss function doesn’t know your physics.</strong> It minimizes weighted RMSE across all training frames equally. If your training set mixes systems with very different per-atom energies (e.g., isolated molecules at ~-16 eV/atom vs dense slabs at ~-278 eV/atom), the model focuses on reducing the absolute error on the larger values because those dominate the RMSE. The small-system forces could be terrible and the total loss would barely flinch. See <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a> for the full story.</p>
+<p><mark class="silent-fail">The model isn’t broken. The loss function is doing exactly what you told it to. You just told it the wrong thing.</mark> The fix is <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> reference corrections so the model trains on residual energies that live on comparable scales. We cover this in detail in <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a>.</p>
+</div>
+</section>
+<section id="the-learning-rate-how-fast-the-model-learns">
+<h2>The Learning Rate: How Fast the Model Learns<a class="headerlink" href="#the-learning-rate-how-fast-the-model-learns" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;learning_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;exp&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;stop_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5e-08</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;decay_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Exponential decay from <span class="math notranslate nohighlight">\(10^{-3}\)</span> to <span class="math notranslate nohighlight">\(5 \times 10^{-8}\)</span>. At step <span class="math notranslate nohighlight">\(t\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{lr}(t) = \mathrm{start{\_}lr} \cdot \left(\frac{\mathrm{stop{\_}lr}}{\mathrm{start{\_}lr}}\right)^{t / \mathrm{numb{\_}steps}}\]</div>
+<p>Early training: big learning rate, big jumps. The model is stumbling around the loss landscape trying to find the right neighborhood. Crude. Fast. Necessary.</p>
+<p>Late training: tiny learning rate, tiny adjustments. The model found the right neighborhood; now it’s looking for the exact house. Too large a step here and it overshoots, bouncing back and forth across the minimum forever.</p>
+<p><code class="docutils literal notranslate"><span class="pre">decay_steps</span> <span class="pre">=</span> <span class="pre">5000</span></code> controls how often the rate updates. It doesn’t change the total decay, just smooths the staircase. Leave it.</p>
+<p>For most systems, these values work out of the box. The only time I’ve needed to change them: training diverged (NaN in the loss). If that happens, halve <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to <code class="docutils literal notranslate"><span class="pre">0.0005</span></code>. That has fixed it every time so far. Start there. Adjust later.</p>
+</section>
+<section id="putting-it-together-the-training-loop">
+<h2>Putting It Together: The Training Loop<a class="headerlink" href="#putting-it-together-the-training-loop" title="Permalink to this heading">#</a></h2>
+<p>Here’s what <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code> actually does. No magic. Just a loop.</p>
+<ol class="arabic simple">
+<li><p>Load training data from <code class="docutils literal notranslate"><span class="pre">training_data.systems</span></code> (in the dpgen context, this gets filled automatically).</p></li>
+<li><p>Initialize descriptor and fitting network with random weights.</p></li>
+<li><p>For each training step (up to <code class="docutils literal notranslate"><span class="pre">numb_steps</span></code>):
+a. Sample a batch of frames from the training data.
+b. Forward pass: positions go through the descriptor, then the fitting net, out comes predicted E and F.
+c. Compute loss: compare predictions against DFT reference values.
+d. Backward pass: compute gradients of loss with respect to every weight in the network.
+e. Update weights using Adam optimizer at the current learning rate.
+f. Every <code class="docutils literal notranslate"><span class="pre">disp_freq</span></code> steps, write the current loss to <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code>.
+g. Every <code class="docutils literal notranslate"><span class="pre">save_freq</span></code> steps, save a checkpoint.</p></li>
+<li><p>Training done. Run <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">freeze</span></code> to convert the saved weights into a deployable <code class="docutils literal notranslate"><span class="pre">.pb</span></code> file.</p></li>
+</ol>
+<p>That’s your model. Frozen and ready.</p>
+<p>The file you’ll live in is <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code>. Columns: step number, learning rate, energy RMSE (training), energy RMSE (validation), force RMSE (training), force RMSE (validation). A healthy training run shows all RMSE values decreasing smoothly. If the training RMSE drops but validation RMSE stalls or rises, that’s overfitting. <mark class="key-insight">The model is memorizing instead of learning. More data fixes that. A bigger network does not.</mark></p>
+<p>Read that again. Seriously. The instinct when a model isn’t good enough is always “make it bigger.” That instinct is wrong. If training error is low and validation error is high, the network is already big enough to represent the physics. It just doesn’t have enough examples to generalize from. More data. Not more neurons.</p>
+<p>We’ll look at real learning curves in Ch 4. You’ll see exactly what “healthy” and “sick” look like.</p>
+</section>
+<section id="choosing-your-architecture-rules-of-thumb">
+<h2>Choosing Your Architecture: Rules of Thumb<a class="headerlink" href="#choosing-your-architecture-rules-of-thumb" title="Permalink to this heading">#</a></h2>
+<p>Starting from scratch? Use this table. Don’t overthink it on your first model. I’m serious.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head text-center"><p>Simple system</p></th>
+<th class="head text-center"><p>Complex system</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rcut</span></code></p></td>
+<td class="text-center"><p>6.0</p></td>
+<td class="text-center"><p>6.0-8.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rcut_smth</span></code></p></td>
+<td class="text-center"><p>2.0</p></td>
+<td class="text-center"><p>2.0</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sel</span></code></p></td>
+<td class="text-center"><p>Check + pad 20%</p></td>
+<td class="text-center"><p>Check + pad 20%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Descriptor <code class="docutils literal notranslate"><span class="pre">neuron</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">20,</span> <span class="pre">40]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">100]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Fitting <code class="docutils literal notranslate"><span class="pre">neuron</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">100,</span> <span class="pre">100]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">numb_steps</span></code></p></td>
+<td class="text-center"><p>400,000</p></td>
+<td class="text-center"><p>1,000,000</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">start_lr</span></code></p></td>
+<td class="text-center"><p>0.001</p></td>
+<td class="text-center"><p>0.001</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">start_pref_f</span></code></p></td>
+<td class="text-center"><p>1000</p></td>
+<td class="text-center"><p>1000</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Start small. If the model underfits (force RMSE plateaus too high), increase the network size. If it overfits (training RMSE way below validation RMSE), you need more data, not more neurons. I cannot stress this enough. I wasted a week making the network bigger when the real problem was 30 training frames. Thirty. Don’t be me.</p>
+</section>
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p>You now know what every piece does. Descriptor for perception. Fitting network for prediction. Loss function for feedback. Learning rate for pacing. Clean.</p>
+<p>In Ch 3, we prepare actual DFT data for training. In Ch 4, we run <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code> and watch the learning curve in real time. The theory is done. Now we build.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch02"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch01/why-ml-potentials.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 1: Why Machine-Learned Potentials?</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch03/dpdata.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 3: Data Preparation with dpdata</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design Principles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-big-picture">The Big Picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-descriptor-how-atoms-see-their-neighbors">The Descriptor: How Atoms See Their Neighbors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-descriptor-parameters">The Descriptor Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fitting-network-from-environment-to-energy">The Fitting Network: From Environment to Energy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-loss-function-what-the-model-optimizes">The Loss Function: What the Model Optimizes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-learning-rate-how-fast-the-model-learns">The Learning Rate: How Fast the Model Learns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-together-the-training-loop">Putting It Together: The Training Loop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-your-architecture-rules-of-thumb">Choosing Your Architecture: Rules of Thumb</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

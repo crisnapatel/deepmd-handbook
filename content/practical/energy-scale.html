@@ -1,0 +1,885 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Energy Scale Traps &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/energy-scale';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transfer Learning" href="transfer-learning.html" />
+    <link rel="prev" title="Multi-Element Systems" href="multi-element.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/energy-scale.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/energy-scale.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/energy-scale.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Energy Scale Traps</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-problem-16-vs-278-ev-atom">The Problem: -16 vs. -278 eV/atom</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-model-can-t-fit-both">Why the Model Can’t Fit Both</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnosing-the-problem">Diagnosing the Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-visual">The Visual</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-1-use-atom-ener-to-shift-per-atom-reference-energies">Solution 1: Use <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> to Shift Per-Atom Reference Energies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-2-train-separate-models-for-separate-energy-scales">Solution 2: Train Separate Models for Separate Energy Scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-3-add-energy-shift-corrections-to-training-data">Solution 3: Add Energy Shift Corrections to Training Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-4-restrict-training-to-comparable-energy-scales">Solution 4: Restrict Training to Comparable Energy Scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-5-weight-different-systems-differently-batch-sizes">Solution 5: Weight Different Systems Differently (Batch Sizes)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-decision-framework">A Decision Framework</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-we-actually-did">What We Actually Did</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-deeper-lesson">The Deeper Lesson</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prevention-check-scales-before-training">Prevention: Check Scales Before Training</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="energy-scale-traps">
+<h1>Energy Scale Traps<a class="headerlink" href="#energy-scale-traps" title="Permalink to this heading">#</a></h1>
+<p>I trained a model on graphene + H2 gas. The loss curve was textbook perfect. Smooth exponential decay, training and validation tracking each other step for step, force RMSE settling below 50 meV/A. I froze the model feeling good about life.</p>
+<p>Then I ran <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> on each subsystem separately.</p>
+<p>Graphene slab? 2 meV/atom energy error, 30 meV/A force error. Excellent. Isolated H2? 40 meV/atom energy error, 350 meV/A force error. The model had no idea what a hydrogen molecule looked like. Despite training on hundreds of H2 frames. The overall loss hid the disaster because the slab data drowned out everything else.</p>
+<p>This is the energy scale trap. It doesn’t crash. It doesn’t warn you. It sits in your training set, patient and quiet, and waits for you to trust the aggregate metrics. Then it ruins three weeks of production MD when you finally test the subsystem you actually care about. This is the part the docs skip. Let me show you exactly how it works, so you can catch it before it catches you.</p>
+<hr class="docutils" />
+<section id="the-problem-16-vs-278-ev-atom">
+<h2>The Problem: -16 vs. -278 eV/atom<a class="headerlink" href="#the-problem-16-vs-278-ev-atom" title="Permalink to this heading">#</a></h2>
+<p>Here are the real numbers from our project. Look at the per-atom energies and let them sink in.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>System</p></th>
+<th class="head"><p>Formula</p></th>
+<th class="head"><p>Atoms</p></th>
+<th class="head"><p>Total Energy (eV)</p></th>
+<th class="head"><p>Per-Atom Energy (eV/atom)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Isolated H2</p></td>
+<td><p>H2</p></td>
+<td><p>2</p></td>
+<td><p>~-32</p></td>
+<td><p>~-16</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bare graphene</p></td>
+<td><p>C72</p></td>
+<td><p>72</p></td>
+<td><p>~-20,000</p></td>
+<td><p>~-278</p></td>
+</tr>
+<tr class="row-even"><td><p>Graphene + 4 H2</p></td>
+<td><p>C72H8</p></td>
+<td><p>80</p></td>
+<td><p>~-20,128</p></td>
+<td><p>~-252</p></td>
+</tr>
+<tr class="row-odd"><td><p>Graphene + 8 H2</p></td>
+<td><p>C72H16</p></td>
+<td><p>88</p></td>
+<td><p>~-20,256</p></td>
+<td><p>~-230</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Isolated H2: -16 eV/atom. Graphene: -278 eV/atom. That is a <strong>17x</strong> difference.</p>
+<p>Now look at the mixed systems. As you add more H2 to graphene, the per-atom energy drifts from -278 toward -252 (80 atoms) and -230 (88 atoms). The hydrogen dilutes the per-atom energy because each H contributes far less than each C. But even with 16 hydrogen atoms in the system, carbon still dominates everything.</p>
+<p>The model sees that imbalance. And it makes a perfectly rational choice: pour all its capacity into getting carbon right, because that is where the loss reduction lives.</p>
+<p>Think of it like grading kindergarten and PhD exams on the same curve. The PhD answers are worth 278 points each. The kindergarten answers are worth 16. The grader (your optimizer) focuses on the questions worth 278 points, because getting those even slightly wrong tanks the total score. The kindergarten answers? Rounding error. Irrelevant to the final grade.</p>
+<div class="danger admonition">
+<p class="admonition-title">Warning: Energy Scale</p>
+<p>The per-atom energy of isolated H2 (~-16 eV/atom) and a graphene slab (~-278 eV/atom) differ by a factor of 17. A neural network potential trained on both will prioritize getting graphene right (larger absolute values mean larger contributions to RMSE) and effectively ignore H2. The optimizer is not broken. It is doing exactly what you told it to: minimize total RMSE. The problem is that total RMSE does not care about your physics.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="why-the-model-can-t-fit-both">
+<h2>Why the Model Can’t Fit Both<a class="headerlink" href="#why-the-model-can-t-fit-both" title="Permalink to this heading">#</a></h2>
+<p>Let me trace through the math of what happens inside the network. This is not abstract. This is the specific mechanism that kills your H2 accuracy.</p>
+<p>DeePMD uses per-atom energy decomposition. The model predicts a per-atom energy <span class="math notranslate nohighlight">\(\epsilon_i\)</span> for each atom, and the total energy of a frame is the sum:</p>
+<div class="math notranslate nohighlight">
+\[E_{\text{total}} = \sum_{i=1}^{N} \epsilon_i\]</div>
+<p>During training, the energy component of the loss function looks like:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}_E = w_e \cdot \frac{1}{N_{\text{frames}}} \sum_k \left( E_{\text{pred}}^{(k)} - E_{\text{DFT}}^{(k)} \right)^2\]</div>
+<p>Now think about a single training step. The model sees a mini-batch containing one graphene frame (<span class="math notranslate nohighlight">\(E \approx -20{,}000\)</span> eV) and one H2 frame (<span class="math notranslate nohighlight">\(E \approx -32\)</span> eV). The gradient from the graphene frame is proportional to the error times the energy magnitude. The gradient from the H2 frame is a rounding error by comparison.</p>
+<p>Here’s where it gets concrete. If the model predicts the carbon per-atom energy with 0.1% error, that is 0.1% of -278 eV = <strong>0.278 eV/atom</strong> error on carbon. Meanwhile, the entire H2 binding energy you are trying to capture is 0.05-0.1 eV. The carbon “noise” is 3-5x bigger than the hydrogen “signal.” The optimizer chases the carbon error because that is where the loss reduction lives. The hydrogen signal gets trampled.</p>
+<p>Are you seeing this? The model isn’t broken. The optimizer isn’t broken. The math is doing exactly what you asked. You just asked the wrong question.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>Here is something that confused me until I actually sat down and thought through it: per-atom forces on hydrogen in isolated H2 and per-atom forces on carbon in graphene are in the same ballpark. Both on the order of 0.1-1.0 eV/A. Forces are relatively scale-invariant. Energies are not.</p>
+<p>During early training, when force prefactors dominate the loss (<code class="docutils literal notranslate"><span class="pre">start_pref_f</span> <span class="pre">=</span> <span class="pre">1000</span></code>), both systems get reasonable attention. The model learns about H2 and graphene in roughly equal measure. But as training progresses and energy prefactors ramp up (<code class="docutils literal notranslate"><span class="pre">limit_pref_e</span> <span class="pre">=</span> <span class="pre">2.0</span></code>), the slab energies dominate the energy loss completely. The H2 energy signal gets drowned out.</p>
+<p>This is why your force RMSE on the combined test set looks fine while the per-subsystem breakdown reveals the catastrophe.</p>
+</div>
+<p>Let me put it even more bluntly. The loss function treats all per-atom energy errors equally. But a 1 meV/atom error on C in a 72-atom slab creates a 72 meV total energy error. A 1 meV/atom error on H in a 2-atom molecule creates a 2 meV total energy error. The carbon-dominated system has 36x more leverage on the total loss. <mark class="key-insight">The model will sacrifice H2 accuracy every single time to shave a tiny fraction off the slab error.</mark> That is not a bug. That is the math.</p>
+</section>
+<hr class="docutils" />
+<section id="diagnosing-the-problem">
+<h2>Diagnosing the Problem<a class="headerlink" href="#diagnosing-the-problem" title="Permalink to this heading">#</a></h2>
+<p>You will not catch this by looking at the overall <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> output. I cannot stress this enough. The combined metrics average over all frames, and the slab frames dominate. Here is what it actually looks like.</p>
+<p>Grab your terminal.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>graph.pb<span class="w"> </span>-s<span class="w"> </span>all_test_data/<span class="w"> </span>-n<span class="w"> </span><span class="m">500</span><span class="w"> </span>-d<span class="w"> </span>test_all
+<span class="gp"># </span>Energy<span class="w"> </span>RMSE/atom:<span class="w"> </span><span class="m">3</span>.2<span class="w"> </span>meV<span class="w">  </span>&lt;--<span class="w"> </span>looks<span class="w"> </span>fine!
+
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>graph.pb<span class="w"> </span>-s<span class="w"> </span>test_data/graphene_bare/<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>-d<span class="w"> </span>test_graphene
+<span class="gp"># </span>Energy<span class="w"> </span>RMSE/atom:<span class="w"> </span><span class="m">1</span>.8<span class="w"> </span>meV<span class="w">  </span>&lt;--<span class="w"> </span>great!
+<span class="gp"># </span>Force<span class="w"> </span>RMSE:<span class="w"> </span><span class="m">28</span><span class="w"> </span>meV/A<span class="w">       </span>&lt;--<span class="w"> </span>great!
+
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>graph.pb<span class="w"> </span>-s<span class="w"> </span>test_data/graphene_4h2/<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>-d<span class="w"> </span>test_4h2
+<span class="gp"># </span>Energy<span class="w"> </span>RMSE/atom:<span class="w"> </span><span class="m">4</span>.1<span class="w"> </span>meV<span class="w">  </span>&lt;--<span class="w"> </span>okay,<span class="w"> </span>getting<span class="w"> </span>worse
+
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>graph.pb<span class="w"> </span>-s<span class="w"> </span>test_data/h2_gas/<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>-d<span class="w"> </span>test_h2
+<span class="gp"># </span>Energy<span class="w"> </span>RMSE/atom:<span class="w"> </span><span class="m">38</span>.7<span class="w"> </span>meV<span class="w"> </span>&lt;--<span class="w"> </span>TERRIBLE
+<span class="gp"># </span>Force<span class="w"> </span>RMSE:<span class="w"> </span><span class="m">350</span><span class="w"> </span>meV/A<span class="w">      </span>&lt;--<span class="w"> </span>TERRIBLE
+</pre></div>
+</div>
+<p>See the trajectory? 1.8 meV for the slab. 4.1 meV for slab+H2. 38.7 meV for isolated H2. The error grows as the hydrogen fraction increases. And <mark class="silent-fail">the aggregate metric (3.2 meV) hides the entire story</mark> because the slab frames outnumber and outweigh everything else.</p>
+<p>That first number, the 3.2 meV aggregate, is a liar. A polite, well-formatted liar.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Never trust an aggregate <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> result for a multi-system training set.</strong> Always test each subsystem separately. The overall RMSE is a weighted average that buries catastrophic failure on minority systems.</p>
+<p>Concrete diagnostic: if your force RMSE on the minority system (H2) is 5-10x worse than on the majority system (graphene slab), you have an energy scale problem. Not “might have.” Have.</p>
+<p>Typical symptoms:</p>
+<ul class="simple">
+<li><p>Overall force RMSE: 40 meV/A (looks great)</p></li>
+<li><p>Slab force RMSE: 30 meV/A (excellent)</p></li>
+<li><p>H2 force RMSE: 350 meV/A (catastrophic)</p></li>
+<li><p>The model predicts H2 bond lengths that are physically wrong</p></li>
+<li><p>MD shows H2 molecules behaving erratically while the slab dynamics look fine</p></li>
+</ul>
+</div>
+<p>If your per-subsystem numbers look like that, keep reading. There are solutions. None of them are magic. But they work.</p>
+</section>
+<hr class="docutils" />
+<section id="the-visual">
+<h2>The Visual<a class="headerlink" href="#the-visual" title="Permalink to this heading">#</a></h2>
+<figure class="align-center" id="fig-energy-scale">
+<a class="reference internal image-reference" href="../../_images/energy_scale.png"><img alt="../../_images/energy_scale.png" src="../../_images/energy_scale.png" style="width: 80%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 33 </span><span class="caption-text">Per-atom energy comparison across subsystems. The 17x gap between isolated H2 (~-16 eV/atom) and graphene slab (~-278 eV/atom) means the model’s energy loss is dominated entirely by slab configurations. The mixed systems fall in between but are still much closer to the slab scale.</span><a class="headerlink" href="#fig-energy-scale" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>That bar chart tells the whole story. The H2 bar is barely visible next to the slab. The optimizer treats H2 energies as noise. Because compared to -278 eV/atom, -16 eV/atom basically IS noise.</p>
+</section>
+<hr class="docutils" />
+<section id="solutions">
+<h2>Solutions<a class="headerlink" href="#solutions" title="Permalink to this heading">#</a></h2>
+<p>No perfect answer here. Every approach has trade-offs. I’ve tried all of these. Here are the real options, ordered by how well they work in practice.</p>
+<section id="solution-1-use-atom-ener-to-shift-per-atom-reference-energies">
+<h3>Solution 1: Use <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> to Shift Per-Atom Reference Energies<a class="headerlink" href="#solution-1-use-atom-ener-to-shift-per-atom-reference-energies" title="Permalink to this heading">#</a></h3>
+<p>This is the closest thing to a silver bullet.</p>
+<p>DeePMD-kit supports <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> in the fitting network configuration. It is a per-element energy shift that gets subtracted before training and added back during prediction:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;atom_ener&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-278.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-16.0</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This tells the model: “Carbon atoms have a baseline energy around -278 eV. Hydrogen atoms have a baseline energy around -16 eV. Do not learn those baselines. Learn the <em>deviations</em> from them.”</p>
+<p>Instead of predicting per-atom energies of -278 and -16 from scratch, the model only needs to predict small corrections around zero. Both subsystems now contribute comparably to the loss because the corrections are on the same scale. That 17x mismatch collapses to maybe 2x in the residuals. Manageable.</p>
+<p>And that’s the whole trick. Shift the reference. Collapse the scale. Let the model focus on the physics, not the bookkeeping.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> shifts the per-atom energy references so the model learns residuals instead of absolute energies. The residuals live on the same scale regardless of the element.</p>
+<p>To get the reference values: compute the average per-atom energy for each element from your training data, or run single-atom / isolated-molecule DFT calculations. The values do not need to be exact. They are reference shifts, not constraints. Getting them within 10% of the true per-atom energy is good enough. What matters is collapsing the scale difference, not nailing the absolute number.</p>
+</div>
+</section>
+<section id="solution-2-train-separate-models-for-separate-energy-scales">
+<h3>Solution 2: Train Separate Models for Separate Energy Scales<a class="headerlink" href="#solution-2-train-separate-models-for-separate-energy-scales" title="Permalink to this heading">#</a></h3>
+<p>The cleanest approach when the physics allows it: do not force one model to span incompatible energy scales.</p>
+<ul class="simple">
+<li><p>Model A: graphene slab + graphene with adsorbed H2 (per-atom energies: -278 to -230 eV/atom)</p></li>
+<li><p>Model B: isolated H2 gas phase (per-atom energy: ~-16 eV/atom)</p></li>
+</ul>
+<p>Each model sees a narrow energy range and fits it well. No competition. No trade-offs.</p>
+<p><strong>When this works:</strong> You only need each model in its own domain. Studying adsorbed H2 on graphene? Use Model A. Studying gas-phase H2 separately? Use Model B. The models never need to coexist in one simulation.</p>
+<p><strong>When this fails:</strong> Reactive systems. Adsorption/desorption processes. Anything where atoms transition between the two energy-scale regimes during a single MD trajectory. If H2 desorbs from the surface and flies into the vacuum, you need one model that handles both. Two models cannot hand off mid-trajectory.</p>
+</section>
+<section id="solution-3-add-energy-shift-corrections-to-training-data">
+<h3>Solution 3: Add Energy Shift Corrections to Training Data<a class="headerlink" href="#solution-3-add-energy-shift-corrections-to-training-data" title="Permalink to this heading">#</a></h3>
+<p>Apply element-dependent energy shifts to your training data <em>before</em> training, so the raw per-atom energies fed to DeePMD are on comparable scales:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dpdata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Reference energies per atom (from isolated atom DFT)</span>
+<span class="n">E_ref</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">278.0</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">16.0</span><span class="p">}</span>
+
+<span class="c1"># Subtract reference energies from each frame</span>
+<span class="n">sys</span> <span class="o">=</span> <span class="n">dpdata</span><span class="o">.</span><span class="n">LabeledSystem</span><span class="p">(</span><span class="s2">&quot;./qe_output&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;qe/pw/scf&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="p">)):</span>
+    <span class="n">n_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sys</span><span class="p">[</span><span class="s2">&quot;atom_types&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">n_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sys</span><span class="p">[</span><span class="s2">&quot;atom_types&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">sys</span><span class="p">[</span><span class="s2">&quot;energies&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">n_C</span> <span class="o">*</span> <span class="n">E_ref</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_H</span> <span class="o">*</span> <span class="n">E_ref</span><span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This achieves the same effect as <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> but at the data level. The downside: you must apply the reverse shift when interpreting model predictions. Every time you add new training data, you must apply the same shift consistently. More bookkeeping. More chances for errors. One forgotten shift corrupts the entire training set.</p>
+<p>Prefer <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> if your DeePMD version supports it. Seriously. This approach is the manual transmission version of the same idea. It works, but you will eventually forget to shift a dataset, and then you will have a very confusing afternoon.</p>
+</section>
+<section id="solution-4-restrict-training-to-comparable-energy-scales">
+<h3>Solution 4: Restrict Training to Comparable Energy Scales<a class="headerlink" href="#solution-4-restrict-training-to-comparable-energy-scales" title="Permalink to this heading">#</a></h3>
+<p>The pragmatic approach: if isolated H2 gas is causing problems, remove it from the training set. Train the model only on systems where the energy scales are comparable.</p>
+<p>For our project, graphene slab data (-278 eV/atom) and graphene + 12H2 data (-212 eV/atom) differ by a factor of 278/212 = 1.3x. The model can handle that. It is the isolated H2 at -16 eV/atom that is the 17x outlier.</p>
+<p><strong>The trade-off is real.</strong> The model knows nothing about isolated H2 physics. If an H2 molecule desorbs from the surface during production MD and drifts into the vacuum region, the model is extrapolating. You need to ensure your simulation conditions keep H2 near the surface, or accept that far-field H2 behavior is approximate at best.</p>
+</section>
+<section id="solution-5-weight-different-systems-differently-batch-sizes">
+<h3>Solution 5: Weight Different Systems Differently (Batch Sizes)<a class="headerlink" href="#solution-5-weight-different-systems-differently-batch-sizes" title="Permalink to this heading">#</a></h3>
+<p>Adjust <code class="docutils literal notranslate"><span class="pre">init_batch_size</span></code> so that minority systems appear more frequently during training:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;init_batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Setting a higher explicit batch size for the H2 dataset means the model cycles through H2 frames faster. With <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, DeePMD-kit already sets batch sizes inversely proportional to atom count (small systems get larger batches). You can push this further with manual values.</p>
+<p>I’m going to be honest: this is a band-aid, not a fix. It increases the frequency of the small H2 gradients to partially compensate, but the fundamental gradient-magnitude problem remains. The slab gradients are still larger in absolute terms. The model still prefers to reduce slab error over H2 error. Use this alongside <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code>, not instead of it.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="a-decision-framework">
+<h2>A Decision Framework<a class="headerlink" href="#a-decision-framework" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Situation</p></th>
+<th class="head"><p>Best Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Systems never interact in simulation</p></td>
+<td><p>Separate models</p></td>
+</tr>
+<tr class="row-odd"><td><p>Systems interact, DeePMD &gt;= 2.0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">atom_ener</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Quick fix, can tolerate approximate minority system</p></td>
+<td><p>Restrict to comparable scales</p></td>
+</tr>
+<tr class="row-odd"><td><p>Large mismatch, complex multi-system workflow</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> + batch size tuning</p></td>
+</tr>
+<tr class="row-even"><td><p>Legacy workflow, cannot change model config</p></td>
+<td><p>Energy shift post-processing on data</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="what-we-actually-did">
+<h2>What We Actually Did<a class="headerlink" href="#what-we-actually-did" title="Permalink to this heading">#</a></h2>
+<p>For the graphene + H2 project, we used a combination approach. No single solution was sufficient:</p>
+<ol class="arabic simple">
+<li><p>Included the H2 gas data but kept it minimal (one <code class="docutils literal notranslate"><span class="pre">set_2atoms</span></code> dataset, roughly 50 frames from the H2 bond-length scan)</p></li>
+<li><p>Used <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> batch sizes so the small H2 system got proportionally more training iterations</p></li>
+<li><p>Added gap-filling data at intermediate compositions (graphene + 4H2, 8H2, 12H2) to bridge between slab and gas energy scales</p></li>
+<li><p>Accepted that isolated H2 energetics would be approximate, and validated carefully on the subsystems that actually mattered for our scientific question</p></li>
+</ol>
+<p>The result after dpgen convergence + gap-filling:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Subsystem</p></th>
+<th class="head"><p>Energy RMSE/atom (meV)</p></th>
+<th class="head"><p>Force RMSE (meV/A)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Bare graphene (72 atoms)</p></td>
+<td><p>1.2</p></td>
+<td><p>28</p></td>
+</tr>
+<tr class="row-odd"><td><p>Graphene + 4H2 (80 atoms)</p></td>
+<td><p>2.1</p></td>
+<td><p>35</p></td>
+</tr>
+<tr class="row-even"><td><p>Graphene + 8H2 (88 atoms)</p></td>
+<td><p>2.8</p></td>
+<td><p>42</p></td>
+</tr>
+<tr class="row-odd"><td><p>Graphene + 12H2 (96 atoms)</p></td>
+<td><p>3.4</p></td>
+<td><p>48</p></td>
+</tr>
+<tr class="row-even"><td><p>Isolated H2 gas (2 atoms)</p></td>
+<td><p>22.3</p></td>
+<td><p>145</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Check the numbers. The more hydrogen in the system, the worse the per-atom error gets. And isolated H2 is an order of magnitude worse than the slab. The model tried to fit both scales and made a choice. It chose carbon. Every time.</p>
+<p>For our scientific question (H2 physisorption on graphene surfaces), the first four rows are what matter. Those are solid. The isolated H2 accuracy is a compromise we made deliberately, not one we discovered accidentally. That distinction matters more than the numbers themselves.</p>
+</section>
+<hr class="docutils" />
+<section id="the-deeper-lesson">
+<h2>The Deeper Lesson<a class="headerlink" href="#the-deeper-lesson" title="Permalink to this heading">#</a></h2>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>Energy scale traps are a symptom of something bigger: <strong>your model learns what your loss function rewards.</strong> If the loss function cannot distinguish between “good enough on everything” and “great on slabs, terrible on molecules,” the model takes the path of least resistance. It optimizes what is easiest to optimize. Every single time.</p>
+<p>This applies beyond energy scales. Any time your training data has an imbalanced distribution (different system sizes, different frame counts per system, different difficulty levels), the model will learn the easy majority and neglect the hard minority. That is not a bug. That is gradient descent doing its job. Your job is to make sure gradient descent’s job aligns with your scientific question.</p>
+<p><strong>Match your model to your question.</strong> A universal potential that handles every possible configuration is a noble goal. It is also, for most practical projects, unnecessary. A model that is excellent for the specific conditions you are studying is sufficient and achievable. Do not let the perfect be the enemy of the publishable. But also do not pretend the model is good at something you never validated.</p>
+</div>
+</section>
+<section id="prevention-check-scales-before-training">
+<h2>Prevention: Check Scales Before Training<a class="headerlink" href="#prevention-check-scales-before-training" title="Permalink to this heading">#</a></h2>
+<p>Before you write <code class="docutils literal notranslate"><span class="pre">param.json</span></code>, compute per-atom energies for all your systems. This takes five minutes. Five minutes that will either confirm you’re fine or save you three weeks of wasted compute.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick check: run QE on each system type and compute E/N_atoms</span>
+<span class="c1"># H2:            E_total / 2 atoms  = ?? eV/atom</span>
+<span class="c1"># Bare graphene: E_total / 72 atoms = ?? eV/atom</span>
+<span class="c1"># Graphene + H2: E_total / 80 atoms = ?? eV/atom</span>
+</pre></div>
+</div>
+<p>If the per-atom energies differ by more than a factor of roughly 5, you have an energy scale problem. Plan for it upfront. Choose your solution from the options above. Set up <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code>. Decide which subsystem accuracy you are willing to sacrifice. Do this before you start training, not three weeks later when the H2 forces come back at 350 meV/A and you are wondering what went wrong.</p>
+<p>I learned this the expensive way. You don’t have to.</p>
+<p>Always test subsystems independently. Always check per-atom energy scales before training. Always match your accuracy requirements to the specific question you are asking.</p>
+<div class="note admonition">
+<p class="admonition-title">Why Our Tutorial Examples Avoid This</p>
+<p>Our Ar model is single-element. All frames have per-atom energies around -1294 eV / 32 atoms ≈ -40.4 eV/atom. No scale mismatch. Our water model is single-phase liquid. All frames have similar per-atom energies. Neither system has the multi-component energy scale trap. But the moment you move to a research system with mixed phases (slab + gas, bulk + surface, crystal + melt at very different densities), this trap is waiting for you.</p>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="multi-element.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Multi-Element Systems</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="transfer-learning.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Transfer Learning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-problem-16-vs-278-ev-atom">The Problem: -16 vs. -278 eV/atom</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-model-can-t-fit-both">Why the Model Can’t Fit Both</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnosing-the-problem">Diagnosing the Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-visual">The Visual</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions">Solutions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-1-use-atom-ener-to-shift-per-atom-reference-energies">Solution 1: Use <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> to Shift Per-Atom Reference Energies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-2-train-separate-models-for-separate-energy-scales">Solution 2: Train Separate Models for Separate Energy Scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-3-add-energy-shift-corrections-to-training-data">Solution 3: Add Energy Shift Corrections to Training Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-4-restrict-training-to-comparable-energy-scales">Solution 4: Restrict Training to Comparable Energy Scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-5-weight-different-systems-differently-batch-sizes">Solution 5: Weight Different Systems Differently (Batch Sizes)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-decision-framework">A Decision Framework</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-we-actually-did">What We Actually Did</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-deeper-lesson">The Deeper Lesson</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prevention-check-scales-before-training">Prevention: Check Scales Before Training</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

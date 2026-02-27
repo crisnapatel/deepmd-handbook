@@ -1,0 +1,846 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Apptainer Setup &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/apptainer';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="QE vs VASP for First-Principles Labeling" href="qe-vs-vasp.html" />
+    <link rel="prev" title="Transfer Learning" href="transfer-learning.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/apptainer.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/apptainer.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/apptainer.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Apptainer Setup</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-in-our-container">What’s in Our Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-the-container">Getting the Container</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-pull-from-docker-hub">Option 1: Pull from Docker Hub</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-build-from-a-definition-file">Option 2: Build from a Definition File</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-commands-inside-the-container">Running Commands Inside the Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-mounts-making-your-files-visible">Bind Mounts: Making Your Files Visible</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-passthrough">GPU Passthrough</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-glibc-compatibility-issue">The GLIBC Compatibility Issue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-dpgen-s-machine-json">Integration with dpgen’s machine.json</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-1-wrap-the-command-directly">Approach 1: Wrap the Command Directly</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-2-source-script">Approach 2: Source Script</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-container-errors">Common Container Errors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick Reference</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="apptainer-setup">
+<h1>Apptainer Setup<a class="headerlink" href="#apptainer-setup" title="Permalink to this heading">#</a></h1>
+<p>I spent two weeks trying to compile DeePMD-kit from source on the HPC. Two weeks. Tracking down the right TensorFlow version. Rebuilding LAMMPS with the DeePMD plugin. Coaxing MPI into cooperating with CUDA. Wrestling with <code class="docutils literal notranslate"><span class="pre">cmake</span></code> flags that the documentation swore were correct but produced linking errors that looked like ancient curses. I got it working exactly once. Then a system update broke everything.</p>
+<p>Don’t be me.</p>
+<p>A container is a frozen filesystem image. Everything your code needs (binaries, libraries, Python packages, CUDA runtimes) packed into a single <code class="docutils literal notranslate"><span class="pre">.sif</span></code> file. You copy that file to any HPC cluster, and it runs. No module juggling. No version conflicts. No “it works on my machine” followed by three hours of debugging why it doesn’t work on yours. Think of it as a pre-packaged lab. The HPC’s ancient system libraries, the weird module conflicts, the missing headers? None of that matters. Your software lives inside the container, hermetically sealed.</p>
+<p>For DeePMD-kit specifically, this is salvation. The dependency tree is vicious: TensorFlow or PyTorch (pinned to a specific version), CUDA toolkit (must match both TF/PyTorch and your GPU driver), MPI (must match the host interconnect), LAMMPS (compiled with the DeePMD plugin), dpgen, dpdata, and a dozen Python packages that all need compatible versions. Getting all of those aligned by hand is an exercise in suffering. I know because I did it. Twice. The second time was not faster.</p>
+<p>A container bundles all of it. Pull it, run it, move on with your actual research.</p>
+<hr class="docutils" />
+<section id="what-s-in-our-container">
+<h2>What’s in Our Container<a class="headerlink" href="#what-s-in-our-container" title="Permalink to this heading">#</a></h2>
+<p>The exact versions used throughout this tutorial:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Package</p></th>
+<th class="head"><p>Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DeePMD-kit (<code class="docutils literal notranslate"><span class="pre">dp</span></code>)</p></td>
+<td><p>3.1.2</p></td>
+</tr>
+<tr class="row-odd"><td><p>dpdata</p></td>
+<td><p>1.0.0</p></td>
+</tr>
+<tr class="row-even"><td><p>dpgen</p></td>
+<td><p>0.13.2</p></td>
+</tr>
+<tr class="row-odd"><td><p>LAMMPS</p></td>
+<td><p>29 Aug 2024</p></td>
+</tr>
+<tr class="row-even"><td><p>Python</p></td>
+<td><p>3.12.12</p></td>
+</tr>
+<tr class="row-odd"><td><p>CUDA</p></td>
+<td><p>12.1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These versions are known to work together. That sentence alone is worth the container. If you have never spent a day discovering that your TensorFlow build expects CUDA 11.8 while your cluster only has CUDA 12.0, you will not fully appreciate this. If you have, you are already downloading the <code class="docutils literal notranslate"><span class="pre">.sif</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="getting-the-container">
+<h2>Getting the Container<a class="headerlink" href="#getting-the-container" title="Permalink to this heading">#</a></h2>
+<section id="option-1-pull-from-docker-hub">
+<h3>Option 1: Pull from Docker Hub<a class="headerlink" href="#option-1-pull-from-docker-hub" title="Permalink to this heading">#</a></h3>
+<p>One command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span>pull<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>docker://deepmdkit/deepmd-kit:3.1.2_cuda12.1_gpu
+</pre></div>
+</div>
+<p>Apptainer grabs the Docker image and converts it to its <code class="docutils literal notranslate"><span class="pre">.sif</span></code> format. The file will be 2-5 GB depending on what is bundled. Make sure you have the space before you start.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Many HPC login nodes have tight disk quotas in <code class="docutils literal notranslate"><span class="pre">$HOME</span></code>. Pull the <code class="docutils literal notranslate"><span class="pre">.sif</span></code> into your scratch or project directory, not your home. Also: some clusters block Docker Hub pulls from compute nodes. Do this on a login node or a data transfer node. I learned this the expensive way, watching a pull timeout after 20 minutes on a compute node that had no outbound network access. The error message was not helpful.</p>
+</div>
+</section>
+<section id="option-2-build-from-a-definition-file">
+<h3>Option 2: Build from a Definition File<a class="headerlink" href="#option-2-build-from-a-definition-file" title="Permalink to this heading">#</a></h3>
+<p>If you need to customize (add packages, change versions, include your own scripts), write a <code class="docutils literal notranslate"><span class="pre">.def</span></code> file and build:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span>build<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>deepmd-dpgen.def
+</pre></div>
+</div>
+<p>Building from source takes 20-60 minutes and requires root or <code class="docutils literal notranslate"><span class="pre">--fakeroot</span></code> privileges. Most HPC clusters allow <code class="docutils literal notranslate"><span class="pre">--fakeroot</span></code>. If yours doesn’t, build on a local machine and <code class="docutils literal notranslate"><span class="pre">scp</span></code> the <code class="docutils literal notranslate"><span class="pre">.sif</span></code> over.</p>
+<p>For this tutorial, pulling from Docker Hub is all you need.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="running-commands-inside-the-container">
+<h2>Running Commands Inside the Container<a class="headerlink" href="#running-commands-inside-the-container" title="Permalink to this heading">#</a></h2>
+<p>The pattern is always the same: <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span> <span class="pre">&lt;image&gt;</span> <span class="pre">&lt;command&gt;</span></code>. You run a command, it executes inside the container’s filesystem, and it exits. No persistent shell. No daemon. No overhead worth worrying about.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>--version<span class="w">          </span><span class="c1"># Check DeePMD-kit version</span>
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>lmp<span class="w"> </span>-h<span class="w">                 </span><span class="c1"># Check LAMMPS + installed packages</span>
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>train<span class="w"> </span>input.json<span class="w">   </span><span class="c1"># Run dp train with GPU</span>
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>lmp<span class="w"> </span>-in<span class="w"> </span><span class="k">in</span>.lammps<span class="w">     </span><span class="c1"># Run LAMMPS with DeePMD potential</span>
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>The pattern is always <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span> <span class="pre">[flags]</span> <span class="pre">&lt;image&gt;</span> <span class="pre">&lt;command&gt;</span> <span class="pre">[args]</span></code>. The <code class="docutils literal notranslate"><span class="pre">--nv</span></code> flag enables GPU passthrough. Include it for any GPU workload (<code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">lmp</span></code> with a DeePMD potential). Omit it for CPU-only tasks like <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> on small systems or data conversion scripts.</p>
+</div>
+<p>Every command you would normally type at the terminal, you prefix with <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span> <span class="pre">[flags]</span> <span class="pre">deepmd-dpgen.sif</span></code>. That is the whole mental model. Container runs your command, produces output, disappears. Clean.</p>
+</section>
+<hr class="docutils" />
+<section id="bind-mounts-making-your-files-visible">
+<h2>Bind Mounts: Making Your Files Visible<a class="headerlink" href="#bind-mounts-making-your-files-visible" title="Permalink to this heading">#</a></h2>
+<p>Here is where people get stuck. And I mean everyone. I got stuck here. My labmates got stuck here. The postdoc who showed me Apptainer in the first place got stuck here when he moved to a new cluster.</p>
+<p><mark class="hard-req">Apptainer sees its own filesystem. By default, it has no idea your scratch directory exists.</mark> Your data? Invisible. Your config files in some project directory? Doesn’t know about them. The container is a sealed box, and you need to punch holes in it.</p>
+<p>Those holes are called <strong>bind mounts.</strong></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/home:/home<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>train<span class="w"> </span>input.json
+</pre></div>
+</div>
+<p>The syntax is <code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/host/path:/container/path</span></code>. If you leave off the container path, it maps to the same path inside. So <code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/scratch:/scratch</span></code> makes the host’s <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> appear at <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> inside the container. Same path, same files, no confusion.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Critical directories to bind:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">/home</span></code></strong>: your scripts, configs, maybe input data</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">/scratch</span></code> or <code class="docutils literal notranslate"><span class="pre">/work</span></code></strong>: where your actual data and jobs live</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">/var/spool/pbs</span></code></strong>: on PBS/Torque systems, this is where job environment variables live. Without this bind, your PBS job scripts can’t read <code class="docutils literal notranslate"><span class="pre">$PBS_NODEFILE</span></code> or <code class="docutils literal notranslate"><span class="pre">$PBS_JOBID</span></code> from inside the container. Your job launches, the container can’t find the node file, MPI can’t figure out where to run, everything falls apart. Ask me how I know.</p></li>
+<li><p><strong>Any project or group directories</strong>: <code class="docutils literal notranslate"><span class="pre">/project</span></code>, <code class="docutils literal notranslate"><span class="pre">/groups</span></code>, whatever your cluster uses</p></li>
+</ul>
+<p>If a path doesn’t exist inside the container, Apptainer creates it automatically as a bind point. No need to pre-create anything.</p>
+</div>
+<p>Typing <code class="docutils literal notranslate"><span class="pre">--bind</span></code> flags every single time gets old by the third command. Set <code class="docutils literal notranslate"><span class="pre">APPTAINER_BIND</span></code> in your shell profile and forget about it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">APPTAINER_BIND</span><span class="o">=</span><span class="s2">&quot;/scratch:/scratch,/home:/home,/var/spool/pbs:/var/spool/pbs&quot;</span>
+</pre></div>
+</div>
+<p>Now every <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span></code> inherits those mounts automatically. Set it once, never think about it again. There is no good reason to skip this step.</p>
+</section>
+<hr class="docutils" />
+<section id="gpu-passthrough">
+<h2>GPU Passthrough<a class="headerlink" href="#gpu-passthrough" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">--nv</span></code> flag is what gives the container access to your NVIDIA GPUs. Without it, <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code> runs on CPU. <mark class="silent-fail">It won’t crash. It won’t complain. It will just silently be 10-100x slower</mark>, and you will sit there watching training steps tick by at a glacial pace wondering what you did wrong.</p>
+<p>Nothing. You just forgot two characters: <code class="docutils literal notranslate"><span class="pre">--nv</span></code>.</p>
+<p>I’m serious. This one will bite you. I have watched three different people make this exact mistake, stare at the training log for 30 minutes, and then realize the GPU was never engaged. One of them let it run overnight on CPU before noticing.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Forgot <code class="docutils literal notranslate"><span class="pre">--nv</span></code> in your job script? DeePMD-kit happily trains on CPU without a single warning. The only clue is the training log: no GPU device mentioned, and each step takes forever. Always verify GPU access before launching a multi-hour training run. The 10 seconds it takes to check will save you hours.</p>
+</div>
+<p>Verify GPU access like this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s2">&quot;import tensorflow as tf; print(tf.config.list_physical_devices(&#39;GPU&#39;))&quot;</span>
+</pre></div>
+</div>
+<p>You should see something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">PhysicalDevice</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;/physical_device:GPU:0&#39;</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="s1">&#39;GPU&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>If you see an empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code>, the GPU is not accessible. Three things to check:</p>
+<ol class="arabic simple">
+<li><p>You included <code class="docutils literal notranslate"><span class="pre">--nv</span></code></p></li>
+<li><p>The host has NVIDIA drivers loaded (<code class="docutils literal notranslate"><span class="pre">nvidia-smi</span></code> on the host should work)</p></li>
+<li><p>Your job actually landed on a GPU node (not a CPU-only node)</p></li>
+</ol>
+<p>That third one bites people more than you’d think. You requested a GPU node, but the scheduler gave you a CPU node because the GPU queue was full and your script didn’t enforce it. Check your PBS/Slurm flags.</p>
+</section>
+<hr class="docutils" />
+<section id="the-glibc-compatibility-issue">
+<h2>The GLIBC Compatibility Issue<a class="headerlink" href="#the-glibc-compatibility-issue" title="Permalink to this heading">#</a></h2>
+<p>This one is insidious. You pull a container, it works perfectly on one cluster. You copy it to another cluster. And then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.34&#39; not found
+</pre></div>
+</div>
+<p>Here is what is happening: Apptainer bind-mounts some host libraries (especially for GPU and MPI) into the container. If the container’s base OS is much older or newer than the host OS, the GLIBC versions clash. The host’s Slurm or PBS libraries expect a GLIBC version that doesn’t exist in the container. Or vice versa. Either way, nothing works. And the error message tells you exactly what went wrong but gives you zero guidance on how to fix it.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Fixes, in order of preference:</p>
+<ol class="arabic simple">
+<li><p><strong>Use a container built on a compatible OS.</strong> If your cluster runs RHEL 8, use a container based on Ubuntu 20.04+ or RHEL 8+. The DeePMD Docker images are typically based on recent Ubuntu, which works on most modern clusters.</p></li>
+<li><p><strong>Bind-mount the host’s libc into the container.</strong> Ugly but effective: <code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/lib64:/host-lib64</span></code> and set <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> inside the container. This is fragile and version-specific. It feels like a hack because it is one.</p></li>
+<li><p><strong>Use <code class="docutils literal notranslate"><span class="pre">--contain</span></code> or <code class="docutils literal notranslate"><span class="pre">--cleanenv</span></code></strong> to prevent the host’s environment from leaking into the container. This can help with library conflicts but may break MPI.</p></li>
+</ol>
+<p>If you hit GLIBC errors, the first question is: what OS is the container based on, and what OS is the host running? <code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">/etc/os-release</span></code> on both sides will tell you instantly.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="integration-with-dpgen-s-machine-json">
+<h2>Integration with dpgen’s machine.json<a class="headerlink" href="#integration-with-dpgen-s-machine-json" title="Permalink to this heading">#</a></h2>
+<p>When dpgen runs, it submits training, exploration, and labeling jobs to your HPC scheduler. It needs to know how to invoke <code class="docutils literal notranslate"><span class="pre">dp</span></code>, <code class="docutils literal notranslate"><span class="pre">lmp</span></code>, and <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> (or <code class="docutils literal notranslate"><span class="pre">vasp</span></code>). With a container, you have two approaches.</p>
+<section id="approach-1-wrap-the-command-directly">
+<h3>Approach 1: Wrap the Command Directly<a class="headerlink" href="#approach-1-wrap-the-command-directly" title="Permalink to this heading">#</a></h3>
+<p>In your <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>, set the command field to include the full <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span></code> invocation:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apptainer exec --nv --bind /scratch:/scratch /path/to/deepmd-dpgen.sif dp&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;machine_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;slurm&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Every time dpgen invokes <code class="docutils literal notranslate"><span class="pre">dp</span></code>, it actually runs <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span> <span class="pre">...</span> <span class="pre">dp</span></code>. Same for LAMMPS:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apptainer exec --nv --bind /scratch:/scratch /path/to/deepmd-dpgen.sif lmp&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Explicit. Portable. Anyone reading the config knows exactly what is happening. No guessing. I prefer this approach. When something breaks at 2 AM and you are reading <code class="docutils literal notranslate"><span class="pre">machine.json</span></code> through bleary eyes, you want the command to be right there, spelled out, no indirection.</p>
+</section>
+<section id="approach-2-source-script">
+<h3>Approach 2: Source Script<a class="headerlink" href="#approach-2-source-script" title="Permalink to this heading">#</a></h3>
+<p>Write a wrapper script that sets up the environment and call it via <code class="docutils literal notranslate"><span class="pre">source_list</span></code> or <code class="docutils literal notranslate"><span class="pre">module_list</span></code> in your machine.json:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># setup_deepmd.sh</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DEEPMD_SIF</span><span class="o">=</span><span class="s2">&quot;/scratch/containers/deepmd-dpgen.sif&quot;</span>
+<span class="nb">alias</span><span class="w"> </span><span class="nv">dp</span><span class="o">=</span><span class="s2">&quot;apptainer exec --nv --bind /scratch:/scratch </span><span class="nv">$DEEPMD_SIF</span><span class="s2"> dp&quot;</span>
+<span class="nb">alias</span><span class="w"> </span><span class="nv">lmp</span><span class="o">=</span><span class="s2">&quot;apptainer exec --nv --bind /scratch:/scratch </span><span class="nv">$DEEPMD_SIF</span><span class="s2"> lmp&quot;</span>
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>Approach 1 is more reliable for dpgen. Source scripts with aliases can behave differently depending on whether the shell is interactive or non-interactive. Job scripts are non-interactive. Aliases may not expand.</p>
+<p>If you use Approach 2, use shell functions instead of aliases, or export the full path and use variable expansion in <code class="docutils literal notranslate"><span class="pre">command</span></code>. I have been burned by aliases silently not expanding in PBS scripts. Spent an hour wondering why dpgen couldn’t find <code class="docutils literal notranslate"><span class="pre">dp</span></code>. The answer was that <code class="docutils literal notranslate"><span class="pre">dp</span></code> was an alias, and bash ignores aliases in non-interactive mode. Nothing crashed. dpgen just reported “command not found” in a log file buried three directories deep.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use functions instead of aliases for non-interactive shells:</span>
+dp<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span><span class="nv">$DEEPMD_SIF</span><span class="w"> </span>dp<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+<span class="nb">export</span><span class="w"> </span>-f<span class="w"> </span>dp
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-container-errors">
+<h2>Common Container Errors<a class="headerlink" href="#common-container-errors" title="Permalink to this heading">#</a></h2>
+<p>Let me save you some debugging time. These are errors I have actually hit, with the actual fixes.</p>
+<p><strong>1. Permission denied / Read-only filesystem</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">OSError</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">30</span><span class="p">]</span> <span class="n">Read</span><span class="o">-</span><span class="n">only</span> <span class="n">filesystem</span><span class="p">:</span> <span class="s1">&#39;/some/path&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">.sif</span></code> image is immutable. If your code tries to write to a path inside the container (not on a bind-mounted directory), it fails hard. The container is read-only by design.</p>
+<p>Fix:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--writable-tmpfs<span class="w"> </span>--nv<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>train<span class="w"> </span>input.json
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--writable-tmpfs</span></code> creates a temporary writable overlay in RAM. Writes go to tmpfs and disappear when the container exits. Good for temp files. Bad for large outputs, because they eat your RAM.</p>
+<p><strong>2. Out of disk space in /tmp</strong></p>
+<p>DeePMD-kit and TensorFlow love writing temp files. If <code class="docutils literal notranslate"><span class="pre">/tmp</span></code> inside the container is small (it often is), training crashes mid-run. Halfway through. After you already waited two hours. I cannot stress this enough: bind-mount a larger tmp.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--bind<span class="w"> </span>/scratch/tmp:/tmp<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>train<span class="w"> </span>input.json
+</pre></div>
+</div>
+<p>Or set <code class="docutils literal notranslate"><span class="pre">TMPDIR</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">APPTAINER_TMPDIR</span><span class="o">=</span>/scratch/tmp
+</pre></div>
+</div>
+<p><strong>3. Module not found / ImportError</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">ModuleNotFoundError</span><span class="p">:</span> <span class="n">No</span> <span class="n">module</span> <span class="n">named</span> <span class="s1">&#39;dpdata&#39;</span>
+</pre></div>
+</div>
+<p>You are accidentally running the host’s Python, not the container’s. This happens when the host has a Python in <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> that shadows the container’s Python. The host Python has no idea what dpdata is. It is not supposed to.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--cleanenv</span></code> to prevent host environment leakage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--cleanenv<span class="w"> </span>--nv<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import dpdata&quot;</span>
+</pre></div>
+</div>
+<p><strong>4. MPI errors with multi-node jobs</strong></p>
+<p>Running across multiple nodes requires the host’s MPI to communicate with the container’s MPI. This is the hardest problem in containerized HPC. The versions must be ABI-compatible. If they are not, you get segfaults or MPI initialization failures that produce the most cryptic error messages you have ever seen.</p>
+<p>For single-node GPU training (the common case for DeePMD-kit), this is not your problem. For multi-node LAMMPS exploration runs, you may need to bind-mount the host’s MPI libraries or use a container built with the same MPI as the host.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Don’t overthink MPI compatibility for <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code>. DeePMD-kit training typically runs on a single GPU. You don’t need multi-node MPI for training. The MPI headache only matters for large-scale LAMMPS exploration runs, and even those often fit on a single node. Solve the MPI problem when you actually have it, not before.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="quick-reference">
+<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Permalink to this heading">#</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span>pull<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>docker://deepmdkit/deepmd-kit:3.1.2_cuda12.1_gpu
+
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/home:/home<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>train<span class="w"> </span>input.json
+
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s2">&quot;import tensorflow as tf; print(tf.config.list_physical_devices(&#39;GPU&#39;))&quot;</span>
+
+<span class="gp">$ </span>apptainer<span class="w"> </span>shell<span class="w"> </span>--nv<span class="w"> </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span>deepmd-dpgen.sif
+</pre></div>
+</div>
+<p>Two commands to pull. One pattern to run everything. The rest of this tutorial assumes you have the container available and know how to invoke it. Every <code class="docutils literal notranslate"><span class="pre">dp</span></code>, <code class="docutils literal notranslate"><span class="pre">lmp</span></code>, and <code class="docutils literal notranslate"><span class="pre">python</span></code> command in subsequent chapters should be prefixed with the appropriate <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span></code> invocation, or you have set up <code class="docutils literal notranslate"><span class="pre">APPTAINER_BIND</span></code> and <code class="docutils literal notranslate"><span class="pre">--nv</span></code> so the container is transparent.</p>
+<p>That is containers. Not glamorous. Not the reason you got into computational science. Just a thing that works so you can focus on the part that actually matters: your science.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="transfer-learning.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Transfer Learning</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="qe-vs-vasp.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">QE vs VASP for First-Principles Labeling</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-in-our-container">What’s in Our Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-the-container">Getting the Container</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-pull-from-docker-hub">Option 1: Pull from Docker Hub</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-build-from-a-definition-file">Option 2: Build from a Definition File</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-commands-inside-the-container">Running Commands Inside the Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-mounts-making-your-files-visible">Bind Mounts: Making Your Files Visible</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-passthrough">GPU Passthrough</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-glibc-compatibility-issue">The GLIBC Compatibility Issue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-dpgen-s-machine-json">Integration with dpgen’s machine.json</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-1-wrap-the-command-directly">Approach 1: Wrap the Command Directly</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-2-source-script">Approach 2: Source Script</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-container-errors">Common Container Errors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick Reference</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

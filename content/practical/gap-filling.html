@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Gap-Filling: Manual Data Curation &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/gap-filling';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Multi-Element Systems" href="multi-element.html" />
+    <link rel="prev" title="Ch 11: Validation &amp; Production" href="../ch11/validation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/gap-filling.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/gap-filling.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/gap-filling.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Gap-Filling: Manual Data Curation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-you-need-gap-filling">When You Need Gap-Filling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gap-filling-workflow">The Gap-Filling Workflow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-candidate-structures-with-classical-force-fields">Step 1: Generate Candidate Structures with Classical Force Fields</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-farthest-point-sampling-fps">Step 2: Farthest Point Sampling (FPS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-qe-static-calculations">Step 3: QE Static Calculations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-curate-and-integrate">Step 4: Curate and Integrate</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verifying-the-gap-fill">Verifying the Gap Fill</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-gap-fill-vs-when-to-adjust-dpgen">When to Gap-Fill vs. When to Adjust dpgen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="gap-filling-manual-data-curation">
+<h1>Gap-Filling: Manual Data Curation<a class="headerlink" href="#gap-filling-manual-data-curation" title="Permalink to this heading">#</a></h1>
+<p>Let me tell you what happened. dpgen converged. 98% accurate. The model looked bulletproof. I was ready to write the methods section. Then I ran production MD with 20 H2 molecules on graphene instead of the usual 4, and the model immediately launched two hydrogen atoms through the graphene sheet like it was a hologram.</p>
+<p>No crash. No error. No model deviation spike. <mark class="silent-fail">The model confidently predicted that atoms can phase through carbon sheets.</mark> Because why not? Nobody told it otherwise. It had never seen two hydrogen atoms pushed close together by crowding. It had never encountered the repulsive wall at short distances. So when the simulation wandered into those configurations, the model did what neural networks do when they extrapolate: it made something up. Smoothly. Confidently.</p>
+<p>That is the gap-filling problem. And here is why dpgen alone cannot solve it. dpgen explores configuration space by running MD, which means it only finds structures that dynamics can reach from your starting points. High barriers? Rare events? Specific geometries that 300 K NVT will never stumble into? dpgen has no idea those exist. The Boltzmann distribution is working against you. Equilibrium MD exponentially suppresses high-energy configurations. The model never sees them, never learns them, and then confidently hallucinates when it encounters them in production.</p>
+<p>You have to go find those gaps yourself.</p>
+<div class="note admonition">
+<p class="admonition-title">Why Our Tutorial Examples Don’t Need Gap-Filling</p>
+<p>Our Ar model was trained on two phases (FCC + liquid), covering a range of configurations. Our water model uses ICTP pre-computed data spanning liquid water conditions. Neither system has the kind of missing physics (close contacts, reactions, desorption events) that requires manual gap-filling. But the moment you study adsorption on surfaces, reactions, phase transitions between very different structures, or any system where MD can’t sample the full relevant configuration space, gap-filling becomes essential.</p>
+</div>
+<section id="when-you-need-gap-filling">
+<h2>When You Need Gap-Filling<a class="headerlink" href="#when-you-need-gap-filling" title="Permalink to this heading">#</a></h2>
+<p>You will know. The symptoms are unmistakable.</p>
+<ol class="arabic simple">
+<li><p><strong>Production MD crashes at conditions dpgen never explored.</strong> The model was rock solid at 300 K but detonates at 77 K. Or it handles 4 H2 molecules but falls apart with 20. dpgen never sent the model on a field trip to those conditions. No training data. No learning. The model is flying blind and does not know it.</p></li>
+<li><p><strong>Model deviation spikes in regions you actually care about.</strong> You run a test simulation and see sudden jumps in deviation, even though dpgen declared convergence three iterations ago. The model is telling you, loudly, that it is guessing. Listen to it.</p></li>
+<li><p><strong>Unphysical behavior during dynamics.</strong> H2 molecules passing through graphene. Bond lengths hitting 0.5 Angstroms. Atoms sitting on top of each other. If the model has never seen repulsive close-contact configurations, it does not know those should cost a fortune in energy. It just lets atoms walk through each other like they are not even there.</p></li>
+<li><p><strong>Missing physics that MD cannot sample.</strong> Your dpgen exploration only ran NVT. It never saw strained structures. Never sampled different cell sizes. Never explored specific adsorption sites that require placing an H2 molecule exactly where you want it. You cannot wait for dynamics to find these. Dynamics never will.</p></li>
+</ol>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>dpgen explores configuration space <strong>dynamically</strong>. It runs MD and picks uncertain frames. But MD is biased toward low-energy regions of the potential energy surface. High-energy configurations (close contacts, strained cells, transition states) are exponentially unlikely to show up in equilibrium MD, even at high temperatures. The Boltzmann distribution is working against you.</p>
+<p>Gap-filling supplements dynamic exploration with <strong>targeted static sampling</strong>. You deliberately build the configurations the model needs to see. You go to the gaps instead of waiting for dynamics to find them. Dynamics never will.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="the-gap-filling-workflow">
+<h2>The Gap-Filling Workflow<a class="headerlink" href="#the-gap-filling-workflow" title="Permalink to this heading">#</a></h2>
+<p>Four steps. Each one has a specific job. Let me trace through them with real examples from the graphene + H2 project.</p>
+<section id="step-1-generate-candidate-structures-with-classical-force-fields">
+<h3>Step 1: Generate Candidate Structures with Classical Force Fields<a class="headerlink" href="#step-1-generate-candidate-structures-with-classical-force-fields" title="Permalink to this heading">#</a></h3>
+<p>Before you burn DFT compute, use cheap classical potentials to generate a diverse pool of structures. The classical FF does not need to be accurate. I am serious. It does not even need to be good. It just needs to produce physically reasonable structures that span the configuration space you want to fill.</p>
+<p>Think of it like scouting. You are not asking the classical FF to solve your problem. You are asking it to show you what different parts of configuration space look like. Where are the atoms when you have 20 H2 on graphene instead of 4? What does a crowded surface look like? What does H2 gas look like at high density? The classical FF answers those structural questions cheaply. DFT answers the energetics questions expensively. You use the cheap answer to decide where to spend the expensive answer.</p>
+<p>For our project:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Material</p></th>
+<th class="head"><p>Force Field</p></th>
+<th class="head"><p>Runs</p></th>
+<th class="head"><p>Systems</p></th>
+<th class="head"><p>Time per run</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Graphene</p></td>
+<td><p>AIREBO</p></td>
+<td><p>19</p></td>
+<td><p>bare, +4/8/12/20 H2, H2 gas</p></td>
+<td><p>~1 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>Graphanol</p></td>
+<td><p>ReaxFF</p></td>
+<td><p>18</p></td>
+<td><p>bare, +2/4/6/8/12 H2, H2 gas</p></td>
+<td><p>~30 min</p></td>
+</tr>
+<tr class="row-even"><td><p>Graphamine</p></td>
+<td><p>ReaxFF</p></td>
+<td><p>18</p></td>
+<td><p>bare, +2/4/6/8/12 H2, H2 gas</p></td>
+<td><p>~30 min</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>bash<span class="w"> </span>graphene_h2/gap_filling/lammps/run_all.sh
+</pre></div>
+</div>
+<p>These simulations use <code class="docutils literal notranslate"><span class="pre">replicate</span></code> to create larger supercells: 2x2x1 for graphene (288 atoms from 72), 2x3x1 for graphanol/graphamine (432 atoms from 72). Bigger cells sample more configurations per trajectory and give the FPS selector (coming in step 2) more material to work with.</p>
+<p>Temperatures span 77 K to 800 K. Not optional. Not a suggestion. Low temperatures sample near-equilibrium structures. The atoms barely move. The model probably already knows this regime. High temperatures shove atoms into unusual positions. Compressed bonds. Atoms crowded together. Configurations your model has never imagined. You need both ends of the spectrum, and you need everything between.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>AIREBO runs in seconds per trajectory. ReaxFF takes tens of minutes. Neither needs a GPU. Run these on your local workstation or a single HPC node. Do not waste GPU allocation on classical FF runs. Save those hours for DFT.</p>
+</div>
+</section>
+<section id="step-2-farthest-point-sampling-fps">
+<h3>Step 2: Farthest Point Sampling (FPS)<a class="headerlink" href="#step-2-farthest-point-sampling-fps" title="Permalink to this heading">#</a></h3>
+<p>You now have thousands of frames from those classical MD runs. You obviously cannot run DFT on all of them. That would defeat the entire purpose. You need to select a maximally diverse subset. The smallest set of frames that covers the largest swath of configuration space.</p>
+<p>Enter <strong>Farthest Point Sampling</strong>. This is the part that made it click for me.</p>
+<p>The idea is almost embarrassingly simple. Imagine you are placing fire stations in a city. You want each station as far from every other station as possible, so the coverage is maximal and the overlap is minimal. FPS does this in configuration space:</p>
+<ol class="arabic simple">
+<li><p>Start with one random frame from your pool.</p></li>
+<li><p>For every remaining frame, compute its “distance” to the nearest already-selected frame.</p></li>
+<li><p>Select the frame that is farthest from anything already selected.</p></li>
+<li><p>Repeat until you have enough frames.</p></li>
+</ol>
+<p>That is the whole trick. The “distance” is computed in descriptor space (SOAP or a similar structural fingerprint). Two frames that look similar in descriptor space are neighbors. Two frames with very different atomic environments are far apart.</p>
+<p>The result: a subset that maximally spans your configuration space. No clustering in one region. No huge blind spots elsewhere. Every selected frame is as different as possible from every other selected frame.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>Analysis<span class="w"> </span>python3<span class="w"> </span>common/scripts/fps_select_lammps.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--material<span class="w"> </span>graphene<span class="w"> </span>--n_select<span class="w"> </span><span class="m">200</span>
+
+<span class="gp">$ </span>conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>Analysis<span class="w"> </span>python3<span class="w"> </span>common/scripts/fps_select_lammps.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--material<span class="w"> </span>graphanol<span class="w"> </span>--n_select<span class="w"> </span><span class="m">150</span>
+</pre></div>
+</div>
+<p>200 frames out of thousands. That is your DFT budget for this round.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>Why FPS instead of random selection? Because random sampling is lazy. If 90% of your MD frames are near-equilibrium graphene at 300 K, random sampling hands you 90% near-equilibrium graphene. You already have plenty of that. You need the weird stuff. The edges. The configurations the model has not seen.</p>
+<p>FPS deliberately avoids redundancy. It reaches out to the fringes of your configuration space and grabs the most alien frames it can find. For gap-filling, that is exactly the point.</p>
+</div>
+</section>
+<section id="step-3-qe-static-calculations">
+<h3>Step 3: QE Static Calculations<a class="headerlink" href="#step-3-qe-static-calculations" title="Permalink to this heading">#</a></h3>
+<p>Now you have your selected configurations. FPS-selected frames from LAMMPS MD, plus manually designed static scans that cover specific physics MD might miss. Submit everything to QE for DFT labeling.</p>
+<p>The FPS-selected frames cover broad configuration space. The static scans are surgical. Each one targets a specific gap in the model’s knowledge:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scan Type</p></th>
+<th class="head"><p>Configs</p></th>
+<th class="head"><p>Atoms</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>H2 bond length</p></td>
+<td><p>14</p></td>
+<td><p>2</p></td>
+<td><p>The model needs to know the intramolecular H-H potential</p></td>
+</tr>
+<tr class="row-odd"><td><p>H2 height (horizontal)</p></td>
+<td><p>9</p></td>
+<td><p>72-74</p></td>
+<td><p>Adsorption energy vs. distance from surface</p></td>
+</tr>
+<tr class="row-even"><td><p>H2 height (vertical)</p></td>
+<td><p>9</p></td>
+<td><p>72-74</p></td>
+<td><p>Different orientation, different interaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>Strained bare slab</p></td>
+<td><p>4</p></td>
+<td><p>72</p></td>
+<td><p>Mechanical response of the substrate</p></td>
+</tr>
+<tr class="row-even"><td><p>Strained slab + 1 H2</p></td>
+<td><p>2</p></td>
+<td><p>73-74</p></td>
+<td><p>Coupling between strain and adsorption</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bulk H2 gas</p></td>
+<td><p>6</p></td>
+<td><p>16-64</p></td>
+<td><p>Dense gas-phase H2 interactions</p></td>
+</tr>
+<tr class="row-even"><td><p>Bond dissociation</p></td>
+<td><p>8</p></td>
+<td><p>72</p></td>
+<td><p>O-H / N-H breaking (graphanol/graphamine only)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These are not random. Each row exists because the model failed at something specific and this scan fixes it. The H2 bond length scan exists because the model got the H-H equilibrium distance wrong. The height scans exist because the adsorption curve had the wrong shape. The strained slab exists because the model saw only relaxed cells and did not know what a compressed lattice feels like. Every scan is a targeted response to a known failure.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>qsub<span class="w"> </span>graphene_h2/gap_filling/qe_scans/submit_qe.pbs
+<span class="gp">$ </span>qsub<span class="w"> </span>graphene_h2/gap_filling/fps_selected/submit_qe.pbs
+</pre></div>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>The static scans (small systems, 2-74 atoms) finish in minutes each. The FPS-selected configs (128-448 atoms) can take 30-60 minutes each on 64-128 cores. For 200 FPS-selected configs at roughly 1 hour each, that is 200 CPU-hours on top of your dpgen budget. Not free. But compared to the weeks of production MD you would waste on a model with gaps, it is cheap insurance.</p>
+</div>
+</section>
+<section id="step-4-curate-and-integrate">
+<h3>Step 4: Curate and Integrate<a class="headerlink" href="#step-4-curate-and-integrate" title="Permalink to this heading">#</a></h3>
+<p>QE jobs done. Now convert the outputs to DeePMD format and fold them into your training data:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>python3<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>common/scripts/curate_gap_filling.py<span class="w"> </span>--all
+</pre></div>
+</div>
+<p>This groups frames by atom count (<mark class="hard-req">DeePMD requires consistent atom counts within a dataset</mark>), creates the <code class="docutils literal notranslate"><span class="pre">set.000/</span></code> directories with <code class="docutils literal notranslate"><span class="pre">box.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">coord.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">energy.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">force.npy</span></code>, and drops them in <code class="docutils literal notranslate"><span class="pre">init_data/</span></code>.</p>
+<p>Then you add these new datasets to your <code class="docutils literal notranslate"><span class="pre">param.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;init_data_sys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;set_2atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_4atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_8atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_72atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_74atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_128atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_288atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_2atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_320atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_352atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_384atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_448atoms&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>See those <code class="docutils literal notranslate"><span class="pre">set_gap_*</span></code> entries? That is your gap-filled data. It lives alongside the original AIMD-derived data in <code class="docutils literal notranslate"><span class="pre">init_data/</span></code>. When dpgen starts, it trains on ALL of <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> from iteration zero. The gap-filled data is baked in from the very beginning. The model sees those configurations on day one. Not iteration five. Not after it has already developed bad habits. Day one.</p>
+<p>Clean.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="verifying-the-gap-fill">
+<h2>Verifying the Gap Fill<a class="headerlink" href="#verifying-the-gap-fill" title="Permalink to this heading">#</a></h2>
+<p>You added data. But did you actually fill the gap you were aiming at? Here is where it gets interesting. Adding data is easy. Adding the <em>right</em> data is the whole challenge. Trust but verify.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>python3<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>common/scripts/data_to_xyz.py<span class="w"> </span>--all
+
+<span class="gp">$ </span>conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>Analysis<span class="w"> </span>python3<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>common/scripts/visualize_training_data.py<span class="w"> </span>--all
+</pre></div>
+</div>
+<p>Three things to look for:</p>
+<ul class="simple">
+<li><p>The energy distribution should now cover the range you were missing. If you added close-contact configurations, you should see high-energy points in the distribution that were not there before. If those points are missing, the gap is still open.</p></li>
+<li><p>Configuration space coverage (H2-surface distance distribution, for example) should span your target range. No visible holes. No empty bins where you expected data.</p></li>
+<li><p>The new data should not have introduced an energy scale mismatch. This one will bite you.</p></li>
+</ul>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>You add gap-filling data and re-run dpgen, feeling good about yourself. But the new data has a wildly different energy scale than the existing data (see <a class="reference internal" href="energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a>). The model tries to fit both scales and fits neither.</p>
+<p>For our project, the isolated H2 bond-length scan (2 atoms, roughly -16 eV/atom) sat on a completely different energy scale than the graphene slab data (roughly -278 eV/atom). That is grading kindergarten and PhD students on the same curve. Mixing them naively degraded the slab accuracy without meaningfully improving H2. You have to handle this deliberately. Check per-atom energies before you merge datasets. Always.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="when-to-gap-fill-vs-when-to-adjust-dpgen">
+<h2>When to Gap-Fill vs. When to Adjust dpgen<a class="headerlink" href="#when-to-gap-fill-vs-when-to-adjust-dpgen" title="Permalink to this heading">#</a></h2>
+<p>Not every problem needs gap-filling. Sometimes dpgen can handle it if you give it the right settings. Here is how to tell the difference:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Situation</p></th>
+<th class="head"><p>Fix</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Model deviation high in regions dpgen already explored</p></td>
+<td><p>Adjust <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code>/<code class="docutils literal notranslate"><span class="pre">trust_hi</span></code> or add more dpgen iterations</p></td>
+<td><p>dpgen is designed for this; let it do its job</p></td>
+</tr>
+<tr class="row-odd"><td><p>Too few frames got labeled in explored regions</p></td>
+<td><p>Increase <code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code> and re-run</p></td>
+<td><p>dpgen found the candidates but hit the labeling budget</p></td>
+</tr>
+<tr class="row-even"><td><p>Model fails in conditions dpgen never explored</p></td>
+<td><p>Gap-fill with targeted data</p></td>
+<td><p>New temperatures, new compositions, different cell sizes; dpgen cannot find what it never looked for</p></td>
+</tr>
+<tr class="row-odd"><td><p>Model fails at specific geometries</p></td>
+<td><p>Gap-fill with static scans</p></td>
+<td><p>Close contacts, transition states, bond dissociation; MD at any temperature is unlikely to sample these</p></td>
+</tr>
+<tr class="row-even"><td><p>Training data is fundamentally missing a region</p></td>
+<td><p>Gap-fill</p></td>
+<td><p>No strained structures, no high-pressure data, no surface with more than 4 adsorbates</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The rule of thumb: <mark class="key-insight">dpgen fills gaps in the regions it explores. Gap-filling fills gaps in the regions dpgen never visits.</mark> If MD can reach it, dpgen will eventually find it. If MD cannot reach it, you have to build it by hand.</p>
+</section>
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>dpgen is an exploration engine. A very good one. But it explores by running dynamics, which means it only finds what dynamics can reach from your starting structures. High barriers, rare events, extreme conditions, specific geometries that equilibrium MD will never stumble into? Those gaps are yours to fill.</p>
+<p>FPS gives you the most diverse subset from cheap classical MD. Static scans target specific physics the model gets wrong. Together with dpgen, you get comprehensive coverage. Without gap-filling, you get a model that is confident in the regions it knows and dangerously creative in the regions it does not.</p>
+<p>I’ve seen this go wrong too many times. Do the gap-filling.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch11/validation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 11: Validation &amp; Production</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="multi-element.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Multi-Element Systems</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-you-need-gap-filling">When You Need Gap-Filling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gap-filling-workflow">The Gap-Filling Workflow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-candidate-structures-with-classical-force-fields">Step 1: Generate Candidate Structures with Classical Force Fields</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-farthest-point-sampling-fps">Step 2: Farthest Point Sampling (FPS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-qe-static-calculations">Step 3: QE Static Calculations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-curate-and-integrate">Step 4: Curate and Integrate</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verifying-the-gap-fill">Verifying the Gap Fill</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-gap-fill-vs-when-to-adjust-dpgen">When to Gap-Fill vs. When to Adjust dpgen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

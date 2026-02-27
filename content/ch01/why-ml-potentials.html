@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 1: Why Machine-Learned Potentials? &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch01/why-ml-potentials';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 2: The DeePMD Architecture" href="../ch02/deepmd-architecture.html" />
+    <link rel="prev" title="DeePMD + dpgen: But Make It Make Sense" href="../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch01/why-ml-potentials.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch01/why-ml-potentials.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch01/why-ml-potentials.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 1: Why Machine-Learned Potentials?</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-accuracy-speed-tradeoff">The Accuracy-Speed Tradeoff</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-not-just-use-a-better-force-field">Why Not Just Use a Better Force Field?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-deepmd-kit-specifically">Why DeePMD-kit Specifically?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-idea">The Core Idea</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-build">What You’ll Build</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wait-what-s-apptainer">Wait, what’s Apptainer?</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-1-why-machine-learned-potentials">
+<h1>Ch 1: Why Machine-Learned Potentials?<a class="headerlink" href="#ch-1-why-machine-learned-potentials" title="Permalink to this heading">#</a></h1>
+<p>You already know the answer. You just haven’t said it out loud.</p>
+<p>You’ve submitted a QE job for a 100-atom cell. You’ve watched it burn through 128 cores for 30 minutes to finish one SCF cycle. One. And you need 20,000 of those for a 10 ps AIMD trajectory at half a femtosecond per step. That’s roughly 10,000 CPU-hours for a single trajectory at a single temperature.</p>
+<p>Now scale it up. Ten temperatures. A surface system with 500 atoms. Statistical averaging over multiple initial conditions.</p>
+<p>You don’t have that compute budget. Nobody does. That’s the honest starting point for everything in this tutorial.</p>
+<figure class="align-default" id="pes-ab-initio-vs-ff">
+<a class="reference internal image-reference" href="../../_images/pes-ab-initio-vs-force-field-md.png"><img alt="../../_images/pes-ab-initio-vs-force-field-md.png" src="../../_images/pes-ab-initio-vs-force-field-md.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">The two traditional approaches to modeling the potential energy surface <span class="math notranslate nohighlight">\(\Phi(\mathbf{R}_1, \mathbf{R}_2, \ldots, \mathbf{R}_n)\)</span>. Ab initio MD derives forces from quantum mechanics (accurate, transferable, but expensive). Force-field MD approximates the PES with analytical functions (fast, but limited accuracy and transferability). MLIPs bridge this gap. Figure from <a class="reference external" href="https://youtu.be/Eiewy3gKVm0">DeePMD-kit tutorial</a>.</span><a class="headerlink" href="#pes-ab-initio-vs-ff" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="the-accuracy-speed-tradeoff">
+<h2>The Accuracy-Speed Tradeoff<a class="headerlink" href="#the-accuracy-speed-tradeoff" title="Permalink to this heading">#</a></h2>
+<p>Every atomistic simulation method stakes a claim on the same axis. Accuracy at one end. Speed at the other. Pick one. That was the deal for decades.</p>
+<p><strong>Density Functional Theory (DFT)</strong>: You trust it (for the functional you chose, anyway). Real quantum-mechanical energies and forces, derived from first principles. But the scaling is <span class="math notranslate nohighlight">\(O(N^3)\)</span> with electron count. 100 atoms? Routine. 1,000 atoms? A career-defining calculation. 10,000 atoms for production MD? Not happening.</p>
+<p><strong>Classical Force Fields</strong> (AIREBO, ReaxFF, Tersoff, the usual suspects): Fast. Millions of atoms for nanoseconds. The catch? The functional forms are frozen. Harmonic bonds. Lennard-Jones pairs. Predefined angle potentials. Someone sat down, thought hard about the physics, and wrote a mathematical expression. That expression works beautifully for the system it was designed for. For everything else? You’re on your own. Charge transfer, bond breaking, any interaction the designer didn’t anticipate: invisible. And for a new material or unusual thermodynamic condition, good luck finding parameters that actually work.</p>
+<p>So there’s a gap. DFT accuracy on one side. Classical speed on the other. Nothing in between.</p>
+<p><strong>Machine-learned interatomic potentials (MLIPs)</strong> live in that gap. And that changes everything.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>An MLIP is a function (typically a neural network) trained on DFT data to predict the potential energy and atomic forces of a system. Once trained, it runs 1,000 to 10,000 times faster than DFT while reproducing DFT accuracy to within a few meV/atom in energy and roughly 50 meV/Angstrom in forces.</p>
+<p>The tradeoff: you need good training data (DFT calculations) upfront. The model is only as good as the data it learned from. Think of it as a student. Bad curriculum, bad student. Biased curriculum, biased student.</p>
+</div>
+<p>Here’s the picture in numbers. Study this table. It tells you exactly why this tutorial exists.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Accuracy</p></th>
+<th class="head"><p>Speed (atoms)</p></th>
+<th class="head"><p>Speed (time)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DFT (QE/VASP)</p></td>
+<td><p>Reference</p></td>
+<td><p>~100</p></td>
+<td><p>~10 ps</p></td>
+</tr>
+<tr class="row-odd"><td><p>MLIP (DeePMD)</p></td>
+<td><p>Near-DFT</p></td>
+<td><p>~10,000-100,000</p></td>
+<td><p>~10 ns</p></td>
+</tr>
+<tr class="row-even"><td><p>Classical FF</p></td>
+<td><p>System-dependent</p></td>
+<td><p>~1,000,000</p></td>
+<td><p>~100 ns</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Look at the MLIP row. Near-DFT accuracy. 3 to 4 orders of magnitude faster. That 10,000 CPU-hour AIMD trajectory? An MLIP does it in minutes on a single GPU.</p>
+<p>Are you seeing this? This isn’t incremental. This is a different game entirely.</p>
+</section>
+<section id="why-not-just-use-a-better-force-field">
+<h2>Why Not Just Use a Better Force Field?<a class="headerlink" href="#why-not-just-use-a-better-force-field" title="Permalink to this heading">#</a></h2>
+<p>Fair question. If you want bigger, faster simulations, why not improve the classical force field? Why drag neural networks into this?</p>
+<p>Because classical force fields have a problem that no amount of fitting can fix: <strong>they assume a functional form</strong>.</p>
+<p>Here’s what that means. Take AIREBO for carbon. It says “the interaction between two carbon atoms depends on bond order, which depends on these specific angular functions, with these specific cutoffs.” A human thought very carefully about carbon bonding and wrote that mathematical expression. It works beautifully for graphite, diamond, carbon nanotubes. Systems it was <em>designed</em> for.</p>
+<p>Now put hydrogen on a graphene surface where C-H physisorption matters. Or push the system into a regime where van der Waals forces dominate the physics. AIREBO might not have the right terms. You’d need to re-parameterize, or switch to a different potential, or accept the inaccuracy and hope reviewers don’t notice.</p>
+<p>An MLIP doesn’t assume anything about the functional form. The neural network learns the potential energy surface directly from data. If there’s a subtle many-body interaction that matters, the network can capture it. No human needs to anticipate it. No one needs to invent a special mathematical term for it.</p>
+<p>The network just needs to see it in the training data.</p>
+<p>Here’s what nobody tells you: both approaches fail outside their comfort zone. But the <em>kind</em> of failure is completely different.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Classical Force Field</p></th>
+<th class="head"><p>MLIP (DeePMD)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Potential form</p></td>
+<td><p><strong>Designed</strong> by a human</p></td>
+<td><p><strong>Learned</strong> from DFT data</p></td>
+</tr>
+<tr class="row-odd"><td><p>Limited by</p></td>
+<td><p>Imagination of the designer</p></td>
+<td><p>Quality/diversity of training data</p></td>
+</tr>
+<tr class="row-even"><td><p>New interaction needed</p></td>
+<td><p>Redesign the mathematical form</p></td>
+<td><p>Add more training data</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bond breaking</p></td>
+<td><p>Only if explicitly parameterized</p></td>
+<td><p>Captured if in training data</p></td>
+</tr>
+<tr class="row-even"><td><p>Transferability</p></td>
+<td><p>Poor outside fitted conditions</p></td>
+<td><p>Poor outside training distribution</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Read that last row again. Seriously. Both approaches break outside their domain. The MLIP isn’t magic. It can’t predict physics it hasn’t seen. But the MLIP’s failure mode is <em>fixable</em>. Need it to work at higher temperature? Generate DFT data at higher temperature and retrain. The classical FF’s failure requires redesigning the mathematical form from scratch. Starting over. A different kind of problem entirely.</p>
+<p><mark class="key-insight">One limit is a data problem. The other is a theory problem. Data problems are easier to solve.</mark></p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>The fundamental difference: classical force fields are <strong>designed</strong>, MLIPs are <strong>learned</strong>. A designed potential is limited by the imagination of the person who wrote the functional form. A learned potential is limited by the quality and diversity of its training data.</p>
+<p>Both have limits. But the MLIP’s limit is fixable: add more data. The classical FF’s limit requires redesigning the mathematical form from scratch.</p>
+</div>
+<figure class="align-default" id="accuracy-speed-tradeoff">
+<a class="reference internal image-reference" href="../../_images/accuracy_speed.png"><img alt="../../_images/accuracy_speed.png" src="../../_images/accuracy_speed.png" style="width: 80%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">The accuracy-speed tradeoff. DFT is accurate but slow. Classical force fields are fast but limited. Machine learning potentials (MLIPs) aim for DFT-level accuracy at near-classical speed. Bubble size indicates typical system size each method can handle.</span><a class="headerlink" href="#accuracy-speed-tradeoff" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="why-deepmd-kit-specifically">
+<h2>Why DeePMD-kit Specifically?<a class="headerlink" href="#why-deepmd-kit-specifically" title="Permalink to this heading">#</a></h2>
+<p>There are a lot of MLIP frameworks. GAP, SNAP, MTP, ACE, ANI, NequIP, MACE, Allegro, SchNet. New ones show up every few months. The field moves fast.</p>
+<p>This tutorial uses <strong>DeePMD-kit</strong>. Not because it’s “the best” (that depends on your system and your tolerance for pain). Because the full ecosystem solves problems you don’t even know you have yet.</p>
+<ol class="arabic simple">
+<li><p><strong>End-to-end</strong>: Raw atomic positions in, energy and forces out. No manual feature engineering. No basis set selection. No “choose your 47 symmetry functions and pray.” You hand it coordinates. It gives you a potential. That’s the whole interface.</p></li>
+<li><p><strong>Smooth and continuous</strong>: The descriptor (<code class="docutils literal notranslate"><span class="pre">se_e2_a</span></code>) provides smooth energy surfaces. This matters more than it sounds. A discontinuous potential creates infinite forces at the cutoff boundary. <mark class="silent-fail">Your simulation doesn’t crash. It just produces garbage. Silently.</mark></p></li>
+<li><p><strong>Size-extensive</strong>: Total energy scales linearly with atom count. Train on 72 atoms, run inference on 10,000. The model doesn’t care about system size because it never sees the total system. Each atom only sees its local neighborhood. This is the part that clicks.</p></li>
+<li><p><strong>dpgen integration</strong>: This is the killer feature. DeePMD-kit comes with dpgen, an automated active learning framework that systematically builds the training dataset. Without dpgen, you’re manually curating training data forever, guessing which configurations the model needs next. With dpgen, the model tells <em>you</em> what data it needs. The student raises its hand and says “I’m confused about this.” You just answer the question.</p></li>
+<li><p><strong>LAMMPS integration</strong>: The trained model plugs directly into LAMMPS as <code class="docutils literal notranslate"><span class="pre">pair_style</span> <span class="pre">deepmd</span></code>. No custom code. All of LAMMPS’s analysis tools, thermostats, and barostats work out of the box. If you already know LAMMPS, you already know how to use this.</p></li>
+<li><p><strong>Mature and tested</strong>: Hundreds of published papers. Active development team. Dense documentation (we’ll translate the dense parts).</p></li>
+</ol>
+</section>
+<section id="the-core-idea">
+<h2>The Core Idea<a class="headerlink" href="#the-core-idea" title="Permalink to this heading">#</a></h2>
+<p>Here’s the entire pipeline in five steps. You’ll understand every detail by Ch 4, but the outline is dead simple.</p>
+<ol class="arabic simple">
+<li><p><strong>Collect DFT data</strong>: Run DFT calculations (AIMD trajectories, perturbed structures, whatever you have) to get energies and forces for a set of atomic configurations. This is the curriculum.</p></li>
+<li><p><strong>Train a neural network</strong>: Feed those configurations to DeePMD-kit. It learns a mapping from atomic positions to energy. Forces come for free as the negative gradient of energy with respect to position. One architecture, two outputs.</p></li>
+<li><p><strong>Use the model in MD</strong>: Plug the trained model into LAMMPS. Run MD at DFT accuracy, 10,000 times faster. That’s the payoff. Right there.</p></li>
+<li><p><strong>Find where the model fails</strong>: Run the model in new conditions. Where it’s uncertain (model deviation; defined precisely in Ch 6), it needs more training data. One model doesn’t know what it doesn’t know. But <em>four copies</em> of the model, trained with different random seeds, do. When they disagree, that’s the signal. That’s the entire active learning idea in one sentence.</p></li>
+<li><p><strong>Label and retrain</strong>: Run DFT on those uncertain structures, add them to the training set, retrain. The model improves. The student learns from its mistakes.</p></li>
+</ol>
+<p>Steps 4 and 5 repeat until the model handles everything you throw at it. That’s the dpgen loop. It’s the subject of Part III of this tutorial. Stay with me through the foundations first. They pay off.</p>
+</section>
+<section id="what-you-ll-build">
+<h2>What You’ll Build<a class="headerlink" href="#what-you-ll-build" title="Permalink to this heading">#</a></h2>
+<p>By the end of this tutorial, you’ll have:</p>
+<ul class="simple">
+<li><p>Converted DFT output to DeePMD training format (Ch 3)</p></li>
+<li><p>Trained your first neural network potential (Ch 4)</p></li>
+<li><p>Run MD with that potential in LAMMPS (Ch 5)</p></li>
+<li><p>Set up and run dpgen’s automated active learning loop (Ch 6-10)</p></li>
+<li><p>Validated that your model actually works (Ch 11)</p></li>
+</ul>
+<p>The tools are DeePMD-kit v3.1.2, dpdata 1.0.0, dpgen 0.13.2, LAMMPS (29 Aug 2024), all inside an Apptainer container.</p>
+<section id="wait-what-s-apptainer">
+<h3>Wait, what’s Apptainer?<a class="headerlink" href="#wait-what-s-apptainer" title="Permalink to this heading">#</a></h3>
+<p>Short version: Docker for HPC. You know the nightmare. Installing DeePMD-kit means matching CUDA versions, TensorFlow versions, compiler versions, and performing a ritual sacrifice to the dependency gods. Apptainer (formerly Singularity) packages everything into a single <code class="docutils literal notranslate"><span class="pre">.sif</span></code> file. One file. All the software, all the libraries, all the correct versions. Copy it to your cluster, run it. It works.</p>
+<p>The beauty is that it doesn’t need root access. Your HPC admin doesn’t need to install anything. You don’t need to beg for a conda environment on a shared filesystem. You bring your <code class="docutils literal notranslate"><span class="pre">.sif</span></code> file and go. Apptainer comes pre-installed on most HPC clusters that run Linux (so, all of them).</p>
+<p>I built the container for this tutorial so you can skip straight to the science. The <code class="docutils literal notranslate"><span class="pre">.sif</span></code> file is ~8 GB (too large to host), but the definition file is tiny. Download <a class="reference download internal" download="" href="../../_downloads/77d03c9c83129ab760e7d5f44b43bc2c/deepmd-dpgen.def"><code class="xref download docutils literal notranslate"><span class="pre">deepmd-dpgen.def</span></code></a> and build it yourself:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span>build<span class="w"> </span>deepmd-dpgen.sif<span class="w"> </span>deepmd-dpgen.def
+</pre></div>
+</div>
+<p>One command. It pulls the official DeePMD-kit Docker image and installs dpgen and dpdata on top. Ten minutes later you have everything this tutorial uses. If your cluster sits behind a proxy, add <code class="docutils literal notranslate"><span class="pre">http_proxy</span></code> and <code class="docutils literal notranslate"><span class="pre">https_proxy</span></code> to the <code class="docutils literal notranslate"><span class="pre">%post</span></code> section of the def file before building (same as you’d do for <code class="docutils literal notranslate"><span class="pre">pip</span></code>).</p>
+<p>If you want to know more about bind mounts, GPU passthrough, and all the ways containers can silently fail on a cluster, there’s a full deep-dive in the <a class="reference internal" href="../practical/apptainer.html"><span class="doc std std-doc">Apptainer practical topic</span></a>. For now, just know: if a command in this tutorial starts with <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span></code>, that’s running software from inside the container. Nothing magical. Just a portable install.</p>
+<p>Curious about Apptainer itself? The <a class="reference external" href="https://github.com/apptainer/apptainer">GitHub repo</a> has everything you need to get started.</p>
+<p>Alright, enough theory. Let’s look at how the neural network actually works.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch01"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DeePMD + dpgen: But Make It Make Sense</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch02/deepmd-architecture.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 2: The DeePMD Architecture</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-accuracy-speed-tradeoff">The Accuracy-Speed Tradeoff</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-not-just-use-a-better-force-field">Why Not Just Use a Better Force Field?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-deepmd-kit-specifically">Why DeePMD-kit Specifically?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-idea">The Core Idea</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-build">What You’ll Build</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wait-what-s-apptainer">Wait, what’s Apptainer?</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

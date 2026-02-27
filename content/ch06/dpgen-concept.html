@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 6: The dpgen Concept &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch06/dpgen-concept';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 7: Writing param.json" href="../ch07/param-json.html" />
+    <link rel="prev" title="Ch 5: LAMMPS with Deep Potential" href="../ch05/lammps-deepmd.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch06/dpgen-concept.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch06/dpgen-concept.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch06/dpgen-concept.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 6: The dpgen Concept</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-training-data-has-holes">Your Training Data Has Holes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#let-the-model-tell-you-where-it-s-ignorant">Let the Model Tell You Where It’s Ignorant</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-stage-loop">The Three-Stage Loop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-1-train-00-train">Stage 1: Train (<code class="docutils literal notranslate"><span class="pre">00.train/</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-2-explore-01-model-devi">Stage 2: Explore (<code class="docutils literal notranslate"><span class="pre">01.model_devi/</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-3-label-02-fp">Stage 3: Label (<code class="docutils literal notranslate"><span class="pre">02.fp/</span></code>)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-buckets">The Three Buckets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trust-levels-the-two-numbers-that-control-everything">Trust Levels: The Two Numbers That Control Everything</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-convergence-looks-like">What Convergence Looks Like</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-deviation-caveat">The Model Deviation Caveat</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-exploration-schedule">The Exploration Schedule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-record-dpgen-state-machine">The record.dpgen State Machine</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together">Putting It All Together</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-6-the-dpgen-concept">
+<h1>Ch 6: The dpgen Concept<a class="headerlink" href="#ch-6-the-dpgen-concept" title="Permalink to this heading">#</a></h1>
+<p>You trained a DeePMD model. Loss curve looked great. You froze it, ran LAMMPS, watched 50 ps of beautiful NVT dynamics at 300 K. Everything stable. Forces make sense. You’re feeling good.</p>
+<p>Now bump the temperature to 500 K.</p>
+<p>Watch the simulation blow up in 200 steps.</p>
+<p>That’s not a bug. That’s the most important failure you’ll see in this entire pipeline, and understanding <em>why</em> it happens is worth more than any config file I can show you.</p>
+<section id="your-training-data-has-holes">
+<h2>Your Training Data Has Holes<a class="headerlink" href="#your-training-data-has-holes" title="Permalink to this heading">#</a></h2>
+<p>Here’s what actually happened. You trained on 200 frames from an AIMD run at 300 K. The model memorized those 200 configurations. Not learned. Memorized. At 300 K, atoms jiggle gently around their equilibrium positions. The model saw gentle jiggles. It got very, very good at gentle jiggles.</p>
+<p>Then you asked it about 500 K. Atoms move further. They explore higher-energy configurations, visit regions of the potential energy surface the model has never seen. And unlike a classical force field (which would give you mediocre but stable numbers), a neural network gives you <mark class="key-insight"><em>confident</em> nonsense</mark>. The model doesn’t know it doesn’t know. It just predicts. Badly. Confidently.</p>
+<p>Think about it like a student who studied only Chapter 3 of the textbook. On a Chapter 3 quiz? Perfect score. On the final exam? They don’t leave the questions blank. They write answers. Wrong answers, delivered with full conviction.</p>
+<p>So the obvious fix: run more AIMD at higher temperatures, add those frames, retrain. But which temperatures? How many frames at each one? What about different pressures? Different surface coverages? How do you know when you have <em>enough</em>?</p>
+<p>If you’re doing this by hand, you’re playing whack-a-mole. Train. Test. Find a failure. Run more DFT. Retrain. Find another failure. I did this for three weeks on a copper surface before someone pointed me to dpgen. Three weeks of manual iteration that dpgen automates in a weekend.</p>
+<p>Don’t be me.</p>
+</section>
+<section id="let-the-model-tell-you-where-it-s-ignorant">
+<h2>Let the Model Tell You Where It’s Ignorant<a class="headerlink" href="#let-the-model-tell-you-where-it-s-ignorant" title="Permalink to this heading">#</a></h2>
+<p><strong>dpgen</strong> (Deep Potential GENerator) automates the entire data-generation loop. And the core idea is so simple it almost feels like cheating.</p>
+<p>Train multiple models on the same data. Where they disagree, the data is insufficient.</p>
+<p>Read that again. Seriously. Everything in dpgen, every stage, every config parameter, every convergence criterion, is engineering built around that one sentence. And that’s the whole trick.</p>
+<p>Here’s the concrete version. Train 4 models on identical data. Same architecture, same loss function, different random seeds. Now throw a new structure at all four and ask: what’s the force on atom 7?</p>
+<p>If they all say roughly 0.5 eV/A, that structure is in familiar territory. The model knows this.</p>
+<p>But if model 1 says 0.5, model 2 says 0.3, model 3 says 0.8, model 4 says 0.4? They’re arguing. And that argument is the most valuable data you’ll generate in this entire workflow. Those structures, the ones where trained models can’t agree, are exactly where your model needs to learn next.</p>
+<p>Are you seeing this? No Bayesian inference. No expensive ensemble methods. Just: “do these four neural networks agree on the answer?”</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>Train 4 models on identical data with different random seeds. They’ll agree on configurations similar to the training data and disagree on configurations far from it. The disagreement itself is the uncertainty signal. No Bayesian inference. No expensive ensemble methods. Just: “do these four neural networks agree on the answer?” If yes, the model knows this region. If no, it doesn’t. Simple. Effective. This is the idea that makes dpgen work.</p>
+</div>
+<p>The DP-GEN paper (Zhang et al., 2020) calls this <strong>concurrent learning</strong>: the model learns while simultaneously identifying what it still needs to learn.</p>
+</section>
+<section id="the-three-stage-loop">
+<h2>The Three-Stage Loop<a class="headerlink" href="#the-three-stage-loop" title="Permalink to this heading">#</a></h2>
+<p>Every dpgen iteration has exactly three stages. Same order. Every time. Let me trace through them.</p>
+<figure class="align-default" id="dpgen-loop-diagram">
+<a class="reference internal image-reference" href="../../_images/dpgen_loop.svg"><img alt="../../_images/dpgen_loop.svg" src="../../_images/dpgen_loop.svg" width="85%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 22 </span><span class="caption-text">The DP-GEN active learning loop. Four models train in parallel, then explore configuration space via LAMMPS MD. Structures where models disagree (candidates) are labeled with DFT and fed back for retraining. The loop repeats until convergence.</span><a class="headerlink" href="#dpgen-loop-diagram" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="stage-1-train-00-train">
+<h3>Stage 1: Train (<code class="docutils literal notranslate"><span class="pre">00.train/</span></code>)<a class="headerlink" href="#stage-1-train-00-train" title="Permalink to this heading">#</a></h3>
+<p>Take everything you have. Your initial AIMD data plus whatever DFT labeled in previous iterations. Train 4 DeePMD models on it. Same data, same architecture, different random seeds.</p>
+<p>And I know what you’re thinking. “Four models? That’s 4x the GPU time just for training.”</p>
+<p>Yeah, it is. And it’s worth it. Because without those four models, you have no uncertainty estimate. You’re flying blind. You’re adding DFT data randomly instead of strategically. Four models trained in parallel on one GPU takes maybe 30 minutes per model. The DFT calculations those models save you? Hundreds of hours.</p>
+<p>Why exactly 4 and not some other number? Because 2 isn’t enough. Two students can make the same mistake by coincidence and you’d never know. 10 would be more statistically robust but costs 10x the GPU hours. 4 is where diminishing returns kick in. The DP-GEN authors tested this. Four is the standard. You could use three. I wouldn’t.</p>
+<p>After training, you have four frozen models: <code class="docutils literal notranslate"><span class="pre">graph.000.pb</span></code>, <code class="docutils literal notranslate"><span class="pre">graph.001.pb</span></code>, <code class="docutils literal notranslate"><span class="pre">graph.002.pb</span></code>, <code class="docutils literal notranslate"><span class="pre">graph.003.pb</span></code>. Four neural networks that studied the same textbook but took different notes. Clean.</p>
+</section>
+<section id="stage-2-explore-01-model-devi">
+<h3>Stage 2: Explore (<code class="docutils literal notranslate"><span class="pre">01.model_devi/</span></code>)<a class="headerlink" href="#stage-2-explore-01-model-devi" title="Permalink to this heading">#</a></h3>
+<p>Now the fun part. Take those 4 models and send them on a field trip.</p>
+<p>LAMMPS runs MD using <strong>all 4 models simultaneously</strong>. At each timestep, every model predicts forces on every atom. dpgen records the <strong>maximum deviation</strong> across the 4 models for each frame. This is the exploration stage. You’re pushing the models into new territory (higher temperatures, bigger systems, surfaces they haven’t seen) and watching where they stumble.</p>
+<p>The output is <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code>, a file with columns for step number, energy deviations, and force deviations. The column that matters is <code class="docutils literal notranslate"><span class="pre">max_devi_f</span></code>: the maximum force deviation across all atoms and all model pairs.</p>
+<p>Open that <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> after your first iteration. See it? Where the models agree, they’ve learned. Where they argue, they haven’t. The argument is the data. That’s it. That’s the entire active learning signal.</p>
+</section>
+<section id="stage-3-label-02-fp">
+<h3>Stage 3: Label (<code class="docutils literal notranslate"><span class="pre">02.fp/</span></code>)<a class="headerlink" href="#stage-3-label-02-fp" title="Permalink to this heading">#</a></h3>
+<p>Take the structures where the models disagreed. Run DFT on them. Get the real energies and forces for exactly the configurations where the model was uncertain.</p>
+<p>Add those freshly labeled structures to the training set. Go back to Stage 1.</p>
+<p><mark class="key-insight">That’s the loop. Train. Explore. Label. Repeat.</mark></p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Stage 3 is almost always the bottleneck. Training takes minutes to hours on a GPU. LAMMPS exploration takes minutes. But each DFT calculation can take hours on 128 CPU cores, and you might run 50 of them per iteration. This is where your HPC allocation goes. Think of <code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code> as your grading capacity. The teacher can only grade so many exams per week. Set it around your compute budget, not around what’s theoretically optimal.</p>
+</div>
+<div class="seealso admonition">
+<p class="admonition-title">Simulation</p>
+<p>Want to feel the active learning loop in your hands before automating it? The <a class="reference external" href="https://github.com/cesaremalosso/workshop-july-2023/tree/main/hands-on-sessions/day-2/5-active-learning">CSI Princeton Workshop (Session 5)</a> walks you through running LAMMPS with 4 models, extracting candidates, labeling them with QE, and retraining. Do one cycle manually. After that, dpgen’s automation stops feeling like magic and starts feeling like relief.</p>
+</div>
+</section>
+</section>
+<section id="the-three-buckets">
+<h2>The Three Buckets<a class="headerlink" href="#the-three-buckets" title="Permalink to this heading">#</a></h2>
+<p>Not every frame from the exploration is useful. Most aren’t. dpgen sorts them into three categories based on <code class="docutils literal notranslate"><span class="pre">max_devi_f</span></code>, and this sorting is where the intelligence lives.</p>
+<p>Think of it like 4 students taking the same exam independently.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model Deviation</p></th>
+<th class="head"><p>Bucket</p></th>
+<th class="head"><p>Student Analogy</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_devi_f</span> <span class="pre">&lt;</span> <span class="pre">trust_lo</span></code></p></td>
+<td><p><strong>Accurate</strong></p></td>
+<td><p>All 4 students got the same answer. Easy question.</p></td>
+<td><p>Skip. No DFT needed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">&lt;</span> <span class="pre">max_devi_f</span> <span class="pre">&lt;</span> <span class="pre">trust_hi</span></code></p></td>
+<td><p><strong>Candidate</strong></p></td>
+<td><p>Different but reasonable answers. Hard but fair question.</p></td>
+<td><p>Send to DFT. This is the gold.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_devi_f</span> <span class="pre">&gt;</span> <span class="pre">trust_hi</span></code></p></td>
+<td><p><strong>Failed</strong></p></td>
+<td><p>One student writes “purple” for a math question.</p></td>
+<td><p>Skip. Too far gone to learn from.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Accurate</strong> frames? The model knows this region. Spending DFT compute here is like re-studying material you already aced. Pointless.</p>
+<p><strong>Candidate</strong> frames? This is the gold. These configurations are uncertain but physically reasonable. Hard but learnable. Send them to DFT.</p>
+<p><strong>Failed</strong> frames? The models disagree so wildly that the structure is probably junk. Atoms overlapping. A simulation mid-explosion. The model isn’t just confused here; it’s incoherent. Labeling this won’t teach it anything useful.</p>
+<p>So that’s the three buckets. Accurate, candidate, failed. Only candidates go to DFT.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>Only <strong>candidates</strong> go to DFT. Not the accurate frames (waste of compute). Not the failed frames (too far gone). The candidates are the “hard but learnable” configurations. dpgen spends your DFT budget exactly where learning actually happens. This is what makes it efficient instead of just automated.</p>
+</div>
+</section>
+<section id="trust-levels-the-two-numbers-that-control-everything">
+<h2>Trust Levels: The Two Numbers That Control Everything<a class="headerlink" href="#trust-levels-the-two-numbers-that-control-everything" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">model_devi_f_trust_lo</span></code> and <code class="docutils literal notranslate"><span class="pre">model_devi_f_trust_hi</span></code>. These define the boundaries between the three buckets. Get them wrong and the whole loop either stalls or hemorrhages compute. Pay attention to this next part.</p>
+<p>From our graphene + H<span class="math notranslate nohighlight">\(_2\)</span> param.json:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi_f_trust_lo&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span>
+<span class="nt">&quot;model_devi_f_trust_hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.15</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Units are eV/Angstrom. 0.05 eV/A means: if the worst atom in the frame has force deviation below this across all four models, the structure is in well-learned territory. Skip it. 0.15 eV/A means: if the deviation is above this, the structure is probably unphysical or so far gone that labeling it won’t help. Skip it too. Everything between 0.05 and 0.15 is a candidate. Those go to DFT.</p>
+<p>Now here’s where people get burned.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Too tight</strong> (<code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">=</span> <span class="pre">0.01</span></code>): Almost every frame becomes a candidate. You’re drowning DFT in hundreds of structures per iteration, half of them nearly identical. Your HPC allocation evaporates and the model barely improves because the new data is redundant.</p>
+<p><strong>Too loose</strong> (<code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">=</span> <span class="pre">0.5</span></code>): Everything looks “accurate” from iteration zero. The model never gets new training data. It never improves. You run 3 iterations of zero progress and wonder why convergence isn’t happening. I did exactly this. Set <code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">=</span> <span class="pre">0.25</span></code> on my first dpgen run. Every structure was “accurate.” The model learned nothing for 3 iterations. Three iterations of zero progress on an HPC cluster that charges by the hour. I learned this the expensive way.</p>
+<p>Start with <code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">=</span> <span class="pre">0.05</span></code>, <code class="docutils literal notranslate"><span class="pre">trust_hi</span> <span class="pre">=</span> <span class="pre">0.15</span></code>. Start there. Adjust later. After your first iteration, look at the <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> distribution and tune. We cover the tuning process in Ch 10.</p>
+</div>
+</section>
+<section id="what-convergence-looks-like">
+<h2>What Convergence Looks Like<a class="headerlink" href="#what-convergence-looks-like" title="Permalink to this heading">#</a></h2>
+<p>Each iteration, the model improves. More explored configurations fall into the “accurate” bucket. Fewer become candidates. The <strong>accurate ratio</strong> (fraction of frames with <code class="docutils literal notranslate"><span class="pre">max_devi_f</span> <span class="pre">&lt;</span> <span class="pre">trust_lo</span></code>) climbs toward 100%.</p>
+<p>Iteration 0: Maybe 30% accurate. The model barely knows anything beyond the seed data.
+Iteration 1: 55% accurate. It picked up the low-hanging fruit.
+Iteration 2: 75% accurate. Momentum building.
+Iteration 3: 90% accurate. Most of configuration space is covered.
+Iteration 4: 97% accurate. Almost there.</p>
+<p>This is the part that made it click for me. You watch those numbers climb iteration by iteration and you can <em>see</em> the model learning. 30% to 55% to 75% to 90% to 97%. Each iteration, fewer candidates. Each iteration, fewer questions the model can’t answer. Until there’s nothing left to learn.</p>
+<p>When the accurate ratio crosses your threshold (typically 95-99% across all explored conditions), the model has converged. No more candidates means no more questions the model can’t answer. Freeze the final model and move to validation. That’s your model. Frozen and ready.</p>
+<p>In practice? Simple systems (bulk metals, small molecules) converge in 3-5 iterations. Complex systems (interfaces, reactive chemistry, multi-phase) can take 10-20+. Our graphene + H<span class="math notranslate nohighlight">\(_2\)</span> system took 8.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>dpgen has built-in convergence parameters:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp_accurate_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.98</span><span class="p">,</span>
+<span class="nt">&quot;fp_accurate_soft_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>If the accurate ratio exceeds <code class="docutils literal notranslate"><span class="pre">fp_accurate_threshold</span></code> (98%), dpgen stops sending structures to DFT. If it exceeds <code class="docutils literal notranslate"><span class="pre">fp_accurate_soft_threshold</span></code> (90%), it starts reducing the number of candidates. These are guardrails, not autopilot. You should still inspect convergence manually. The numbers can lie if your exploration schedule doesn’t cover the conditions you actually care about.</p>
+</div>
+</section>
+<section id="the-model-deviation-caveat">
+<h2>The Model Deviation Caveat<a class="headerlink" href="#the-model-deviation-caveat" title="Permalink to this heading">#</a></h2>
+<p>Here’s what nobody tells you. And skipping this will cost you.</p>
+<p><strong>Model deviation is NOT the true error.</strong></p>
+<p><mark class="silent-fail">Four models can agree perfectly and still be completely wrong.</mark></p>
+<p>How? Think about it. If the simulation visits a region entirely outside the training domain, not a little outside but in a completely different part of configuration space, all 4 models extrapolate in the same direction. They give the same wrong answer. Low deviation. Massive error. Four students who all studied the same wrong textbook. They agree on the same wrong answer. Perfect consensus. Completely wrong.</p>
+<p>I cannot stress this enough. Low model deviation means high <em>agreement</em>. It does not mean high <em>accuracy</em>. Those are different things.</p>
+<p>Is this common? No. LAMMPS exploration tends to visit nearby regions incrementally, so you usually drift into unfamiliar territory gradually. But it can happen with:</p>
+<ul class="simple">
+<li><p>Large temperature jumps between iterations</p></li>
+<li><p>Phase transitions the model has never seen</p></li>
+<li><p>Bond breaking or forming (reactive chemistry)</p></li>
+<li><p>Completely different system sizes or compositions than training</p></li>
+</ul>
+<p>The fix is straightforward: don’t rely only on model deviation for validation. After dpgen converges, run independent tests. <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> on held-out data. Long NVE stability runs. Property comparisons (RDF, diffusion coefficients, elastic constants) against DFT or experiment. We cover this properly in Ch 11.</p>
+<p>This one will bite you if you treat model deviation as ground truth. It’s an uncertainty proxy. A good one. But a proxy.</p>
+</section>
+<section id="the-exploration-schedule">
+<h2>The Exploration Schedule<a class="headerlink" href="#the-exploration-schedule" title="Permalink to this heading">#</a></h2>
+<p>dpgen doesn’t run one LAMMPS simulation per iteration. It runs a <em>matrix</em> of simulations across different systems, temperatures, and ensembles. This is defined by <code class="docutils literal notranslate"><span class="pre">model_devi_jobs</span></code> in param.json.</p>
+<p>Here’s what our real graphene run uses:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi_jobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 0: Light exploration, bare + 4H2 + gas&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 1: Add 8H2&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Let’s trace through this. Notice the strategy.</p>
+<p>Iteration 0 is gentle: 3 systems, mild temperatures, short runs. The model is new, barely trained. You don’t throw it into the deep end. You ease it in. Iteration 1 adds a new system (graphene + 8 H<span class="math notranslate nohighlight">\(_2\)</span>), pushes to 500 K, and runs 4x longer. Each iteration is a harder field trip than the last.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sys_idx</span></code> values reference the <code class="docutils literal notranslate"><span class="pre">sys_configs</span></code> list (0 = bare graphene, 1 = graphene + 4 H<span class="math notranslate nohighlight">\(_2\)</span>, 2 = graphene + 8 H<span class="math notranslate nohighlight">\(_2\)</span>, etc.). The <code class="docutils literal notranslate"><span class="pre">temps</span></code> list means dpgen runs a separate LAMMPS simulation for <em>every</em> combination of system and temperature. So iteration 0 runs 3 systems times 3 temperatures = 9 LAMMPS simulations. Iteration 1 runs 4 times 3 = 12.</p>
+<p>You design this schedule to progressively challenge the model. Start easy. Escalate. Like semesters. Each one, harder material. Fewer failures.</p>
+<p>We’ll walk through every field in Ch 7. For now, the key idea: you start gentle and push harder each round.</p>
+</section>
+<section id="the-record-dpgen-state-machine">
+<h2>The record.dpgen State Machine<a class="headerlink" href="#the-record-dpgen-state-machine" title="Permalink to this heading">#</a></h2>
+<p>dpgen tracks its progress in a file called <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>. It’s a plain text file. Two numbers per line.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>0 0    ←  Iteration 0, started training
+0 1    ←  Iteration 0, finished training
+0 2    ←  Iteration 0, started exploration (model_devi)
+0 3    ←  Iteration 0, finished exploration
+0 4    ←  Iteration 0, started labeling (fp)
+0 5    ←  Iteration 0, finished labeling
+1 0    ←  Iteration 1, started training
+1 1    ←  Iteration 1, finished training
+</pre></div>
+</div>
+<p>First number is the iteration. Second number is the substage. Each of the three main stages (train, explore, label) has two substages: “started” (even number) and “finished” (odd number). So stages 0-1 are training, 2-3 are exploration, 4-5 are labeling.</p>
+<p>Every time dpgen completes a substage, it appends a line. If dpgen crashes (and it will, because HPC jobs hit walltime limits and queues fill up), it reads this file on restart to figure out exactly where it left off.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>The manual override.</strong> If you need to re-run a specific stage (say, the fp stage of iteration 2 because a DFT job exceeded walltime), delete the corresponding line from <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> and restart dpgen. It picks up from wherever the gap is. This is how you fix partially failed iterations without starting over. Use it carefully, but know it exists. There is no good reason to skip knowing about this. It will save you.</p>
+</div>
+</section>
+<section id="putting-it-all-together">
+<h2>Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this heading">#</a></h2>
+<p>Alright, enough theory. Let me trace one complete iteration so you can see every piece in motion.</p>
+<p><strong>Iteration 0:</strong></p>
+<ol class="arabic simple">
+<li><p>dpgen reads <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code>, your initial training data. Say 200 frames from AIMD. The seed curriculum.</p></li>
+<li><p><strong>Train</strong> (Stage 1): 4 DeePMD models train on those 200 frames. Same architecture, different random seeds. On a GPU, roughly 30 minutes per model.</p></li>
+<li><p><strong>Explore</strong> (Stage 2): The frozen models run as LAMMPS <code class="docutils literal notranslate"><span class="pre">pair_style</span></code> across every system/temperature combination in <code class="docutils literal notranslate"><span class="pre">model_devi_jobs[0]</span></code>. For our graphene case, that’s 9 simulations (3 systems times 3 temperatures). During each simulation, dpgen records force deviation across all 4 models every <code class="docutils literal notranslate"><span class="pre">trj_freq</span></code> steps.</p></li>
+<li><p><strong>Sort</strong> (automatic): dpgen reads every <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> file and drops each frame into accurate, candidate, or failed based on <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> and <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code>. It randomly selects up to <code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code> (50 in our case) candidates for DFT labeling, with at least <code class="docutils literal notranslate"><span class="pre">fp_task_min</span></code> (5) per iteration.</p></li>
+<li><p><strong>Label</strong> (Stage 3): QE runs SCF calculations on the selected candidates. Each one produces energies and forces. These get converted to DeePMD format and added to the cumulative training set.</p></li>
+<li><p>Iteration 0 is done. The training set grew from 200 frames to maybe 245. One iteration down. On to iteration 1.</p></li>
+</ol>
+<p><strong>Iteration 1</strong> repeats the process with 245 frames and <code class="docutils literal notranslate"><span class="pre">model_devi_jobs[1]</span></code>, which has harder conditions and more systems. Fewer candidates this time because the model already knows the easy stuff. Maybe 30 new frames.</p>
+<p><strong>Iterations 2, 3, 4…</strong> keep going. Training set grows. Model improves. Fewer and fewer candidates. When the accurate ratio crosses 98% across all conditions, the model is done learning. Freeze it and validate.</p>
+<div class="seealso admonition">
+<p class="admonition-title">Simulation</p>
+<p><strong>Try this yourself</strong>: After your first dpgen iteration completes, look at <code class="docutils literal notranslate"><span class="pre">iter.000000/01.model_devi/task.000.000000/model_devi.out</span></code>. Run this. Look at column 5:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Accurate (column 5 &lt; 0.05)</span>
+awk<span class="w"> </span><span class="s1">&#39;$5 &lt; 0.05 {n++} END {print n}&#39;</span><span class="w"> </span>model_devi.out
+
+<span class="c1"># Candidate (0.05 &lt;= column 5 &lt; 0.15)</span>
+awk<span class="w"> </span><span class="s1">&#39;$5 &gt;= 0.05 &amp;&amp; $5 &lt; 0.15 {n++} END {print n}&#39;</span><span class="w"> </span>model_devi.out
+
+<span class="c1"># Failed (column 5 &gt;= 0.15)</span>
+awk<span class="w"> </span><span class="s1">&#39;$5 &gt;= 0.15 {n++} END {print n}&#39;</span><span class="w"> </span>model_devi.out
+</pre></div>
+</div>
+<p>Check the numbers. Those three counts tell you exactly where your model stands. More in the first bucket than the second? Good. The model is learning. Most in the third? Your initial data was too thin. Start over with more AIMD frames.</p>
+</div>
+</section>
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p>You now have the concept. The 3-stage loop. Model deviation as uncertainty. The three buckets. Trust levels. Convergence. The caveat about deviation vs. true error. That’s the hard part, and you just got through it.</p>
+<p>In Ch 7, we open <code class="docutils literal notranslate"><span class="pre">param.json</span></code> and walk through every field, line by line, using a real config from the graphene + H<span class="math notranslate nohighlight">\(_2\)</span> project. In Ch 8, we do the same for <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>, covering where and how each stage actually runs on your hardware. The concept is done. Now we configure.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch06"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch05/lammps-deepmd.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 5: LAMMPS with Deep Potential</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch07/param-json.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 7: Writing param.json</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-training-data-has-holes">Your Training Data Has Holes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#let-the-model-tell-you-where-it-s-ignorant">Let the Model Tell You Where It’s Ignorant</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-stage-loop">The Three-Stage Loop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-1-train-00-train">Stage 1: Train (<code class="docutils literal notranslate"><span class="pre">00.train/</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-2-explore-01-model-devi">Stage 2: Explore (<code class="docutils literal notranslate"><span class="pre">01.model_devi/</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-3-label-02-fp">Stage 3: Label (<code class="docutils literal notranslate"><span class="pre">02.fp/</span></code>)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-buckets">The Three Buckets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trust-levels-the-two-numbers-that-control-everything">Trust Levels: The Two Numbers That Control Everything</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-convergence-looks-like">What Convergence Looks Like</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-deviation-caveat">The Model Deviation Caveat</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-exploration-schedule">The Exploration Schedule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-record-dpgen-state-machine">The record.dpgen State Machine</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together">Putting It All Together</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

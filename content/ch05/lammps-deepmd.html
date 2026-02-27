@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 5: LAMMPS with Deep Potential &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch05/lammps-deepmd';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 6: The dpgen Concept" href="../ch06/dpgen-concept.html" />
+    <link rel="prev" title="Ch 4: Your First DeePMD Model" href="../ch04/first-model.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch05/lammps-deepmd.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch05/lammps-deepmd.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch05/lammps-deepmd.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 5: LAMMPS with Deep Potential</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pair-style-deepmd-two-lines">pair_style deepmd: Two Lines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-minimal-lammps-input">A Minimal LAMMPS Input</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparing-the-structure-file">Preparing the Structure File</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-simulation">Running the Simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-conservation-check-nve">Energy Conservation Check (NVE)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rdf-comparison">RDF Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-models-for-model-deviation">Multiple Models (for Model Deviation)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-5-lammps-with-deep-potential">
+<h1>Ch 5: LAMMPS with Deep Potential<a class="headerlink" href="#ch-5-lammps-with-deep-potential" title="Permalink to this heading">#</a></h1>
+<p>Four chapters. DFT data, dpdata conversion, training, freezing. All of that was preamble. Setup. Paying dues.</p>
+<p>This is the payoff.</p>
+<p>You have a <code class="docutils literal notranslate"><span class="pre">graph.pb</span></code> file sitting on disk. A frozen neural network that takes atomic positions in, hands forces back. Now you give it to LAMMPS. And LAMMPS does what LAMMPS does best: integrate Newton’s equations, step by step, thousands of atoms, millions of timesteps. Except this time, the forces aren’t coming from some Lennard-Jones potential you stitched together with mixing rules and prayers. They’re coming from your model. A model that learned directly from DFT.</p>
+<p>Near-DFT accuracy. Ab initio MD speed multiplied by three thousand.</p>
+<p>Are you seeing this?</p>
+<p>LAMMPS doesn’t know the forces came from a neural network. It doesn’t care. It asks “what are the forces on these atoms?” and your model answers. Same interface as any other pair_style. That simplicity is deliberate, and it’s what makes the whole ecosystem work.</p>
+<section id="pair-style-deepmd-two-lines">
+<h2>pair_style deepmd: Two Lines<a class="headerlink" href="#pair-style-deepmd-two-lines" title="Permalink to this heading">#</a></h2>
+<p>Here’s your entire force field specification:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pair_style</span>  <span class="n">deepmd</span> <span class="n">graph</span><span class="o">.</span><span class="n">pb</span>
+<span class="n">pair_coeff</span>  <span class="o">*</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>That’s it. That’s the whole thing. No Lennard-Jones parameters. No mixing rules. No Coulomb charges. No KSPACE solver. No bond types, no angle types, no dihedral types. The frozen model file contains the descriptor, the fitting network, the type mapping. Everything.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pair_coeff</span> <span class="pre">*</span> <span class="pre">*</span></code> tells LAMMPS that all atom type pairs interact through this potential. DeePMD handles multi-element interactions internally. There are no per-pair coefficients to specify because the neural network already encodes all of them.</p>
+<p>I know what you’re thinking. “There has to be more configuration than that.” There isn’t. I had the same reaction. I spent twenty minutes looking for a parameter file that didn’t exist. Coming from classical force fields where you’d burn half a day setting up pair coefficients, bond types, angle parameters, dihedral tables, charge equilibration, this feels wrong. Like you forgot something. You didn’t. The complexity is inside the <code class="docutils literal notranslate"><span class="pre">.pb</span></code> file. LAMMPS just talks to it.</p>
+<p>Clean.</p>
+<figure class="align-default" id="lammps-deepmd-diagram">
+<a class="reference internal image-reference" href="../../_images/lammps_deepmd.svg"><img alt="../../_images/lammps_deepmd.svg" src="../../_images/lammps_deepmd.svg" width="85%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 18 </span><span class="caption-text">How LAMMPS uses the frozen DeePMD model. At each timestep, LAMMPS sends atomic positions to the neural network, which returns forces. No quantum mechanical calculation is needed during the simulation. The <code class="docutils literal notranslate"><span class="pre">md.out</span></code> file records model deviation when multiple models are loaded.</span><a class="headerlink" href="#lammps-deepmd-diagram" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>LAMMPS atom type numbers must match your <code class="docutils literal notranslate"><span class="pre">type_map</span></code> ordering. If <code class="docutils literal notranslate"><span class="pre">type_map</span> <span class="pre">=</span> <span class="pre">[&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>, then LAMMPS type 1 = Oxygen, type 2 = Hydrogen. Get this backwards and the model applies oxygen’s energy function to hydrogen atoms. <mark class="silent-fail">No error. No warning. Just wrong forces on every atom in the simulation.</mark> Same silent corruption as the <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> issue from Ch 3.</p>
+<p>Yes, I’m repeating myself from Ch 3. No, I will not apologize. I got this wrong twice before it stuck.</p>
+</div>
+</section>
+<section id="a-minimal-lammps-input">
+<h2>A Minimal LAMMPS Input<a class="headerlink" href="#a-minimal-lammps-input" title="Permalink to this heading">#</a></h2>
+<p>Here’s the actual LAMMPS input we used for our Ar FCC solid simulation. Every line earns its place.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">units</span>           <span class="n">metal</span>
+<span class="n">boundary</span>        <span class="n">p</span> <span class="n">p</span> <span class="n">p</span>
+<span class="n">atom_style</span>      <span class="n">atomic</span>
+
+<span class="c1"># Read FCC Ar structure</span>
+<span class="n">read_data</span>       <span class="n">ar_fcc</span><span class="o">.</span><span class="n">data</span>
+
+<span class="n">mass</span>            <span class="mi">1</span> <span class="mf">39.948</span>  <span class="c1"># Ar</span>
+
+<span class="c1"># DeePMD potential</span>
+<span class="n">pair_style</span>      <span class="n">deepmd</span> <span class="o">../</span><span class="mi">01</span><span class="n">_train</span><span class="o">/</span><span class="n">frozen_model</span><span class="o">.</span><span class="n">pb</span>
+<span class="n">pair_coeff</span>      <span class="o">*</span> <span class="o">*</span>
+
+<span class="c1"># Neighbor settings</span>
+<span class="n">neighbor</span>        <span class="mf">2.0</span> <span class="nb">bin</span>
+<span class="n">neigh_modify</span>    <span class="n">every</span> <span class="mi">1</span> <span class="n">delay</span> <span class="mi">0</span> <span class="n">check</span> <span class="n">yes</span>
+
+<span class="c1"># NVT at 50 K (solid)</span>
+<span class="n">velocity</span>        <span class="nb">all</span> <span class="n">create</span> <span class="mf">50.0</span> <span class="mi">12345</span> <span class="n">dist</span> <span class="n">gaussian</span>
+<span class="n">fix</span>             <span class="mi">1</span> <span class="nb">all</span> <span class="n">nvt</span> <span class="n">temp</span> <span class="mf">50.0</span> <span class="mf">50.0</span> <span class="mf">0.1</span>
+
+<span class="c1"># Output</span>
+<span class="n">thermo_style</span>    <span class="n">custom</span> <span class="n">step</span> <span class="n">temp</span> <span class="n">pe</span> <span class="n">ke</span> <span class="n">etotal</span> <span class="n">press</span> <span class="n">vol</span> <span class="n">density</span>
+<span class="n">thermo</span>          <span class="mi">100</span>
+<span class="n">dump</span>            <span class="mi">1</span> <span class="nb">all</span> <span class="n">custom</span> <span class="mi">100</span> <span class="n">dump</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="nb">id</span> <span class="nb">type</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="n">fx</span> <span class="n">fy</span> <span class="n">fz</span>
+
+<span class="n">timestep</span>        <span class="mf">0.001</span>  <span class="c1"># 1 fs</span>
+<span class="n">run</span>             <span class="mi">10000</span>  <span class="c1"># 10 ps</span>
+</pre></div>
+</div>
+<p>Let’s trace through this.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<ul>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">units</span> <span class="pre">metal</span></code></strong>: <mark class="hard-req">This is not a preference. <code class="docutils literal notranslate"><span class="pre">pair_style</span> <span class="pre">deepmd</span></code> requires metal units.</mark> Use <code class="docutils literal notranslate"><span class="pre">real</span></code>, <code class="docutils literal notranslate"><span class="pre">si</span></code>, <code class="docutils literal notranslate"><span class="pre">lj</span></code>, anything else, and the forces silently come out wrong. No error message. Just garbage dynamics that look almost plausible until you check carefully. Not optional. Not a suggestion. Here’s the full unit system:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head text-center"><p>Metal unit</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy</p></td>
+<td class="text-center"><p>eV</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pe</span></code>, <code class="docutils literal notranslate"><span class="pre">ke</span></code>, <code class="docutils literal notranslate"><span class="pre">etotal</span></code> in thermo output</p></td>
+</tr>
+<tr class="row-odd"><td><p>Length</p></td>
+<td class="text-center"><p>Angstrom</p></td>
+<td><p>Coordinates, <code class="docutils literal notranslate"><span class="pre">rcut</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Time</p></td>
+<td class="text-center"><p>ps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">timestep</span> <span class="pre">0.001</span></code> = 1 fs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force</p></td>
+<td class="text-center"><p>eV/Angstrom</p></td>
+<td><p>Forces in dump files</p></td>
+</tr>
+<tr class="row-even"><td><p>Pressure</p></td>
+<td class="text-center"><p>Bar</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">press</span></code> in thermo output</p></td>
+</tr>
+<tr class="row-odd"><td><p>Temperature</p></td>
+<td class="text-center"><p>K</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">temp</span></code> in thermo output</p></td>
+</tr>
+<tr class="row-even"><td><p>Velocity</p></td>
+<td class="text-center"><p>Angstrom/ps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">all</span> <span class="pre">create</span> <span class="pre">300.0</span> <span class="pre">...</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Mass</p></td>
+<td class="text-center"><p>g/mol</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">1</span> <span class="pre">39.948</span></code> for Ar</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">atom_style</span> <span class="pre">atomic</span></code></strong>: Simple point particles. DeePMD doesn’t use bonds, angles, or charges. If you’re coming from classical force fields where everything was <code class="docutils literal notranslate"><span class="pre">atom_style</span> <span class="pre">full</span></code> with massive topology sections, this will feel liberating. Your whole topology: gone. The neural network handles all of it internally through the descriptor.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">timestep</span> <span class="pre">0.001</span></code></strong>: That’s 1 fs in metal units (time is in ps). Fine for Ar (heavy atoms, no fast vibrations). For water with hydrogen, we use 0.5 fs (0.0005 ps). Those light atoms vibrate fast. Start conservative. You can push it once the NVE test confirms your energy surface is smooth.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fix</span> <span class="pre">nvt</span> <span class="pre">temp</span> <span class="pre">50.0</span> <span class="pre">50.0</span> <span class="pre">0.1</span></code></strong>: Nose-Hoover thermostat at 50 K, damping time 0.1 ps (100 fs). The damping time controls how aggressively the thermostat yanks the temperature back to the target. 50-100 fs is the standard range. Too short and you’re strangling the dynamics. Too long and equilibration takes forever.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">dump</span> <span class="pre">...</span> <span class="pre">fx</span> <span class="pre">fy</span> <span class="pre">fz</span></code></strong>: Dumping forces alongside positions. You’ll want these later for comparing against DFT reference data or for spotting frames where the model might be struggling. Small storage cost, large diagnostic value.</p></li>
+</ul>
+</div>
+<p>Read that config one more time. Notice what’s <em>missing</em>: no force field parameter file, no topology, no charge equilibration, no special bonds section, no improper dihedrals. Less than 20 lines and you have a production-ready NVT simulation.</p>
+<p>And that’s the whole trick.</p>
+<p>For water, the input looks almost identical. The only differences: two masses (<code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">1</span> <span class="pre">15.999</span>&#160; <span class="pre">#</span> <span class="pre">O</span></code> and <code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">2</span> <span class="pre">1.008</span>&#160; <span class="pre">#</span> <span class="pre">H</span></code>), a smaller timestep (0.5 fs because hydrogen vibrates fast), and NVT at 300 K instead of 50 K.</p>
+<p>For the <a class="reference external" href="https://tutorials.deepmodeling.com/">official methane tutorial</a>, the LAMMPS input follows the same pattern: <code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">1</span> <span class="pre">1</span></code> (H), <code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">2</span> <span class="pre">12</span></code> (C), matching <code class="docutils literal notranslate"><span class="pre">type_map:</span> <span class="pre">[&quot;H&quot;,</span> <span class="pre">&quot;C&quot;]</span></code>. NVT at 50 K, 1 fs timestep. The <code class="docutils literal notranslate"><span class="pre">pair_style</span> <span class="pre">deepmd</span></code> and <code class="docutils literal notranslate"><span class="pre">pair_coeff</span> <span class="pre">*</span> <span class="pre">*</span></code> lines are identical regardless of system. That’s the beauty of it.</p>
+</section>
+<section id="preparing-the-structure-file">
+<h2>Preparing the Structure File<a class="headerlink" href="#preparing-the-structure-file" title="Permalink to this heading">#</a></h2>
+<p>LAMMPS needs a <code class="docutils literal notranslate"><span class="pre">.lmp</span></code> data file. You can create one from a POSCAR or XYZ file using ASE:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using ASE (Python)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span><span class="p">,</span> <span class="n">write</span>
+
+<span class="n">atoms</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;POSCAR&#39;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;structure.lmp&#39;</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;lammps-data&#39;</span><span class="p">,</span>
+      <span class="n">atom_style</span><span class="o">=</span><span class="s1">&#39;atomic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or directly from dpdata:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dpdata</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">dpdata</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="s1">&#39;POSCAR&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;vasp/poscar&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;lammps/lmp&#39;</span><span class="p">,</span> <span class="s1">&#39;structure.lmp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Either way works. Either way, you need to check the output.</p>
+<p>Open the <code class="docutils literal notranslate"><span class="pre">.data</span></code> file. Look at the atom types. For Ar, there’s only type 1. Easy. For water, type 1 must be O and type 2 must be H (matching <code class="docutils literal notranslate"><span class="pre">type_map:</span> <span class="pre">[&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>). I know I keep hammering this. <mark class="silent-fail">I’ll stop when it stops being the number one source of silently wrong simulations.</mark> Every month on the DeePMD GitHub, someone posts “my model gives terrible results” and the answer is always the same: check your type ordering. Always.</p>
+</section>
+<section id="running-the-simulation">
+<h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Permalink to this heading">#</a></h2>
+<p>Grab your terminal.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/03_lammps/
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>lmp<span class="w"> </span>-in<span class="w"> </span>input.lammps
+
+<span class="gp"># </span>Or<span class="w"> </span>with<span class="w"> </span>MPI<span class="w"> </span><span class="o">(</span>usually<span class="w"> </span>overkill<span class="w"> </span><span class="k">for</span><span class="w"> </span>DeePMD<span class="p">;</span><span class="w"> </span>GPU<span class="w"> </span>does<span class="w"> </span>the<span class="w"> </span>work<span class="o">)</span>
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">1</span><span class="w"> </span>lmp<span class="w"> </span>-in<span class="w"> </span>input.lammps
+</pre></div>
+</div>
+<p>For systems under 1,000 atoms, a single GPU is more than enough. DeePMD inference handles 10,000 atoms on one GPU without breaking a sweat. You don’t need multi-GPU unless your system is massive (50,000+ atoms), and at that point the parallelization strategy itself becomes the research problem.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Here’s the number you actually want. Our Ar model (32 atoms): 10,000 steps in ~15 seconds on a GPU. Our water model (192 atoms): 20,000 steps in ~8 minutes.</p>
+<p>Compare that to QE AIMD: the same 10 ps Ar trajectory took ~2 hours of DFT wall time.</p>
+<p>2 hours vs 15 seconds. A speedup of roughly 500x. For larger systems (1000+ atoms), the speedup is even more dramatic because DFT scales as O(N³) while DeePMD scales as O(N).</p>
+<p>This is the entire reason you trained the model. This is why you suffered through four chapters of data preparation and neural network training.</p>
+</div>
+</section>
+<section id="energy-conservation-check-nve">
+<h2>Energy Conservation Check (NVE)<a class="headerlink" href="#energy-conservation-check-nve" title="Permalink to this heading">#</a></h2>
+<p>Here’s where it gets interesting. And by interesting, I mean this is the part most people skip and then regret.</p>
+<p>You ran NVT. The thermostat held temperature at 300 K. The simulation looked stable. Everything seemed fine. But here’s the thing about thermostats: they actively paper over problems. If the potential energy surface has bumps, discontinuities, or poorly fitted regions, the thermostat compensates. It absorbs the spurious energy, dumps heat, keeps the temperature steady. The simulation looks fine. The model might not be.</p>
+<p><mark class="key-insight">Before you trust your model for production MD, run an NVE simulation.</mark> No thermostat. No barostat. Just Newton’s equations, raw and unforgiving. If the potential energy surface is smooth and well-behaved, total energy stays constant. If the model has discontinuities, bad training, or cutoff artifacts, the total energy drifts. NVE catches all of that.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># NVE energy conservation test for Ar</span>
+<span class="n">units</span>           <span class="n">metal</span>
+<span class="n">boundary</span>        <span class="n">p</span> <span class="n">p</span> <span class="n">p</span>
+<span class="n">atom_style</span>      <span class="n">atomic</span>
+
+<span class="n">read_data</span>       <span class="n">ar_fcc</span><span class="o">.</span><span class="n">data</span>
+
+<span class="n">pair_style</span>      <span class="n">deepmd</span> <span class="n">frozen_model</span><span class="o">.</span><span class="n">pb</span>
+<span class="n">pair_coeff</span>      <span class="o">*</span> <span class="o">*</span>
+
+<span class="n">mass</span>            <span class="mi">1</span> <span class="mf">39.948</span>  <span class="c1"># Ar</span>
+
+<span class="n">timestep</span>        <span class="mf">0.001</span>     <span class="c1"># 1 fs for Ar (heavy atoms)</span>
+
+<span class="c1"># Start from an equilibrated configuration</span>
+<span class="n">velocity</span>        <span class="nb">all</span> <span class="n">create</span> <span class="mf">50.0</span> <span class="mi">12345</span>
+<span class="n">fix</span>             <span class="mi">1</span> <span class="nb">all</span> <span class="n">nve</span>
+
+<span class="n">thermo</span>          <span class="mi">10</span>
+<span class="n">thermo_style</span>    <span class="n">custom</span> <span class="n">step</span> <span class="n">temp</span> <span class="n">pe</span> <span class="n">ke</span> <span class="n">etotal</span>
+
+<span class="n">run</span>             <span class="mi">50000</span>       <span class="c1"># 50 ps</span>
+</pre></div>
+</div>
+<p>Now plot <code class="docutils literal notranslate"><span class="pre">etotal</span></code> vs step. What you want: a flat line with tiny fluctuations. Boring is beautiful here. What you don’t want: a systematic upward drift (the model is pumping energy into the system), a downward drift (energy is leaking out), or sudden jumps (hard discontinuities in the PES). Any of those means the model isn’t ready for production.</p>
+<p>I learned this the expensive way. I ran a 500 ps production simulation, analyzed the whole trajectory, wrote up results, and then someone asked “did you check energy conservation?” I hadn’t. Went back. 15 meV/atom drift over 10 ps. The thermostat had been hiding it the entire time. Threw out the trajectory. Retrained. Started over.</p>
+<p>Don’t be me.</p>
+<figure class="align-default" id="ar-thermo-stability">
+<a class="reference internal image-reference" href="../../_images/ar_thermo.png"><img alt="../../_images/ar_thermo.png" src="../../_images/ar_thermo.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 19 </span><span class="caption-text">Our Ar FCC NVT at 50 K: temperature fluctuates around the target (top), total energy is rock-stable (bottom). 10 ps of simulation, 32 atoms. This is what a well-trained model looks like in production. Boring is beautiful.</span><a class="headerlink" href="#ar-thermo-stability" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>Energy drift rate is your model’s report card.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Drift rate</p></th>
+<th class="head"><p>Verdict</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>&lt; 1 meV/atom over 10 ps</p></td>
+<td><p>Excellent. Production-ready</p></td>
+</tr>
+<tr class="row-odd"><td><p>1-5 meV/atom over 10 ps</p></td>
+<td><p>Acceptable for many applications. Monitor</p></td>
+</tr>
+<tr class="row-even"><td><p>5-10 meV/atom over 10 ps</p></td>
+<td><p>Concerning. Consider retraining with more data</p></td>
+</tr>
+<tr class="row-odd"><td><p>&gt; 10 meV/atom/ps</p></td>
+<td><p>The PES isn’t smooth enough. Usually means <code class="docutils literal notranslate"><span class="pre">rcut</span></code> was too small, or the model needs more training data in whatever region the simulation is visiting</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Fix the model. Don’t slap a thermostat on it and hope. A thermostat hides the symptom. NVE reveals the disease.</p>
+</div>
+</section>
+<section id="rdf-comparison">
+<h2>RDF Comparison<a class="headerlink" href="#rdf-comparison" title="Permalink to this heading">#</a></h2>
+<p>The radial distribution function is a fast structural sanity check. Quick to compute, easy to interpret, catches real problems.</p>
+<p>The logic is straightforward. Run your DeePMD MD for a few hundred picoseconds. Compute the RDF. Now compare it against a short DFT-MD reference (even 5-10 ps of AIMD is enough for a reference RDF if you average well). If the peaks line up, the model is reproducing the correct local structure. If the peaks are shifted or the heights are wrong, something is off. The model is either missing interactions or distorting the energy landscape.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute RDF from LAMMPS dump</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Read trajectory</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;dump.lammpstrj&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;100:&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;lammps-dump-text&#39;</span><span class="p">)</span>
+
+<span class="c1"># Compute RDF using ASE or MDAnalysis</span>
+<span class="c1"># (simplified; use your preferred RDF tool)</span>
+</pre></div>
+</div>
+<p>Or compute it directly inside LAMMPS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compute</span>         <span class="n">rdf</span> <span class="nb">all</span> <span class="n">rdf</span> <span class="mi">200</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="n">fix</span>             <span class="n">rdf_out</span> <span class="nb">all</span> <span class="n">ave</span><span class="o">/</span><span class="n">time</span> <span class="mi">100</span> <span class="mi">10</span> <span class="mi">1000</span> <span class="n">c_rdf</span><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">file</span> <span class="n">rdf</span><span class="o">.</span><span class="n">dat</span> <span class="n">mode</span> <span class="n">vector</span>
+</pre></div>
+</div>
+<p>What counts as “good agreement”? Peak positions within 0.01 Angstroms. Peak heights within 5-10%. If you’re further off than that, the model needs more training data in the configuration space you’re sampling. The RDF is telling you exactly where the model’s knowledge has gaps. Listen to it.</p>
+<figure class="align-default" id="ar-rdf-plot">
+<a class="reference internal image-reference" href="../../_images/ar_rdf.png"><img alt="../../_images/ar_rdf.png" src="../../_images/ar_rdf.png" style="width: 85%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 20 </span><span class="caption-text">Ar-Ar RDF from our DeePMD simulations. FCC solid (blue) shows sharp crystalline peaks at the expected nearest-neighbor distances. Liquid (orange) shows the classic broad first peak and decaying oscillations. The model correctly distinguishes two fundamentally different phases.</span><a class="headerlink" href="#ar-rdf-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="water-rdf-plot">
+<a class="reference internal image-reference" href="../../_images/water_rdf.png"><img alt="../../_images/water_rdf.png" src="../../_images/water_rdf.png" style="width: 85%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 21 </span><span class="caption-text">Water partial RDFs from NVT 300 K with our DeePMD model. O-O (blue) shows the characteristic first peak around 2.7 Angstroms. O-H (orange) captures the intramolecular peak at ~1.0 Angstroms and the intermolecular hydrogen-bonding peak. H-H (green) shows the expected structure. These are computed from the LAMMPS trajectory, not from DFT, and they reproduce the expected liquid water structure.</span><a class="headerlink" href="#water-rdf-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="multiple-models-for-model-deviation">
+<h2>Multiple Models (for Model Deviation)<a class="headerlink" href="#multiple-models-for-model-deviation" title="Permalink to this heading">#</a></h2>
+<p>Pay attention to this next part. This is where Ch 5 connects to Ch 6, and it’s where LAMMPS stops being just an MD engine and becomes part of the active learning loop.</p>
+<p>In the dpgen workflow, LAMMPS doesn’t run with one model. It runs with all four simultaneously. Same atomic positions, four different neural networks (trained on the same data with different random seeds). Every timestep, every model predicts the forces, and dpgen records how much they disagree. Here’s the syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pair_style</span>  <span class="n">deepmd</span> <span class="n">graph</span><span class="mf">.000</span><span class="o">.</span><span class="n">pb</span> <span class="n">graph</span><span class="mf">.001</span><span class="o">.</span><span class="n">pb</span> <span class="n">graph</span><span class="mf">.002</span><span class="o">.</span><span class="n">pb</span> <span class="n">graph</span><span class="mf">.003</span><span class="o">.</span><span class="n">pb</span> <span class="n">out_file</span> <span class="n">model_devi</span><span class="o">.</span><span class="n">out</span> <span class="n">out_freq</span> <span class="mi">100</span>
+<span class="n">pair_coeff</span>  <span class="o">*</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Four models. One <code class="docutils literal notranslate"><span class="pre">pair_style</span></code> line. <code class="docutils literal notranslate"><span class="pre">out_file</span> <span class="pre">model_devi.out</span></code> tells LAMMPS where to write the deviation data. <code class="docutils literal notranslate"><span class="pre">out_freq</span> <span class="pre">100</span></code> means record it every 100 steps. During a dpgen run, you never write this yourself; dpgen generates it automatically. But understanding the syntax matters because you will, at some point, want to test model deviation on a custom trajectory outside of dpgen. Maybe you want to check how your converged model handles a new temperature range. Maybe you want to validate before committing to a full dpgen extension run. Trust me on this one.</p>
+<p>That file, <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code>, is the heartbeat of the active learning loop. Column 5 (max deviation of forces across atoms) is the number dpgen uses to sort every frame into one of three buckets: accurate, candidate, or failed. But that’s Ch 6’s story.</p>
+</section>
+<section id="common-issues">
+<h2>Common Issues<a class="headerlink" href="#common-issues" title="Permalink to this heading">#</a></h2>
+<p>Here’s what nobody tells you about debugging LAMMPS with DeePMD. The error messages, when they exist at all, are rarely helpful. Most of the real problems produce no error. The simulation just runs and gives you wrong answers. So here’s the field guide.</p>
+<p><strong>LAMMPS can’t find <code class="docutils literal notranslate"><span class="pre">graph.pb</span></code></strong>: The path in <code class="docutils literal notranslate"><span class="pre">pair_style</span> <span class="pre">deepmd</span></code> is relative to where you <em>run</em> LAMMPS. Not where the input script lives. Not your home directory. The directory you’re sitting in when you type <code class="docutils literal notranslate"><span class="pre">lmp</span> <span class="pre">-in</span> <span class="pre">input.lammps</span></code>. This one will bite you the first time you submit a PBS job that runs from a different working directory than you expected. Use an absolute path if there’s any doubt.</p>
+<p><strong>Atom types don’t match</strong>: If your LAMMPS data file assigns type 1 to hydrogen and type 2 to oxygen, but your model was trained with <code class="docutils literal notranslate"><span class="pre">type_map</span> <span class="pre">=</span> <span class="pre">[&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code> (O=1, H=2), every single force is wrong. Every atom. Every timestep. Check with <code class="docutils literal notranslate"><span class="pre">head</span> <span class="pre">-20</span> <span class="pre">structure.data</span></code> and verify the type assignments against your type_map. I have personally wasted two separate afternoons on this. Both times I was convinced the model was bad. Both times the model was fine. The model was fine and I was the problem. Ask me how I know.</p>
+<p><strong>Simulation blows up immediately</strong>: Either the initial structure has atoms too close together, or the model has genuinely never seen the starting configuration. Try energy minimization first:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minimize</span>    <span class="mf">1.0e-6</span> <span class="mf">1.0e-8</span> <span class="mi">1000</span> <span class="mi">10000</span>
+</pre></div>
+</div>
+<p>If it still explodes after minimization, the model doesn’t know this region of configuration space. It’s not a LAMMPS problem. It’s a training data problem. You need more DFT data in this regime.</p>
+<p><strong>Very slow without GPU</strong>: Make sure LAMMPS was compiled with GPU support for DeePMD and you’re passing <code class="docutils literal notranslate"><span class="pre">--nv</span></code> to Apptainer. Without the GPU, inference falls back to CPU and you lose a factor of 50-100x in speed. At that point, you’ve spent four chapters building a neural network potential only to run it at barely-faster-than-DFT speeds. I cannot stress this enough: check that the GPU is actually being used. Look for the TensorFlow GPU initialization messages in the LAMMPS log output.</p>
+</section>
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p>You just completed the full single-model workflow. DFT data in, dpdata conversion, dp train, dp freeze, LAMMPS MD out. You can build a potential and run simulations with it. That’s real. That’s not theoretical anymore. We did it with Ar (solid + liquid) and water (liquid at 300 K).</p>
+<p>But here’s the thing. This model is exactly as good as the training data you handed it. No better. No worse. It’s a student who studied only the material you gave them. Our Ar model knows FCC at 50 K and liquid at 150 K. Push it to 500 K, to an interface, to anything outside that narrow training window, and it guesses. Sometimes the guess is okay. Sometimes the simulation explodes in 200 steps.</p>
+<p>You need a way to systematically find where it fails. To automatically generate the training data it needs. To converge a potential that covers an entire region of phase space without you manually curating every single frame. You need the model to tell you where it’s uncertain, and you need a system that acts on that uncertainty.</p>
+<p>That’s dpgen. That’s Ch 6.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch05"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch04/first-model.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 4: Your First DeePMD Model</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch06/dpgen-concept.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 6: The dpgen Concept</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pair-style-deepmd-two-lines">pair_style deepmd: Two Lines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-minimal-lammps-input">A Minimal LAMMPS Input</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparing-the-structure-file">Preparing the Structure File</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-simulation">Running the Simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-conservation-check-nve">Energy Conservation Check (NVE)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rdf-comparison">RDF Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-models-for-model-deviation">Multiple Models (for Model Deviation)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

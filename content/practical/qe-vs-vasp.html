@@ -1,0 +1,897 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>QE vs VASP for First-Principles Labeling &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/qe-vs-vasp';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="init_bulk and init_surf: Generating Initial Training Data" href="init-commands.html" />
+    <link rel="prev" title="Apptainer Setup" href="apptainer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/qe-vs-vasp.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/qe-vs-vasp.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/qe-vs-vasp.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>QE vs VASP for First-Principles Labeling</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fp-style-switch">The fp_style Switch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#param-json-vasp-configuration">param.json: VASP Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#param-json-qe-configuration">param.json: QE Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-input-dft-gotcha">The input_dft Gotcha</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-in-input-issue">The <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> Issue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudopotential-handling">Pseudopotential Handling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vasp">VASP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qe">QE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#k-points">K-Points</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">VASP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">QE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#side-by-side-comparison">Side-by-Side Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-and-licensing">Performance and Licensing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-between-vasp-and-qe-configs">Converting Between VASP and QE Configs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qe-fundamentals">QE Fundamentals</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="qe-vs-vasp-for-first-principles-labeling">
+<h1>QE vs VASP for First-Principles Labeling<a class="headerlink" href="#qe-vs-vasp-for-first-principles-labeling" title="Permalink to this heading">#</a></h1>
+<p>Half the dpgen tutorials out there assume you are using VASP. Fair enough; VASP dominates the literature. But you are here because you are using Quantum ESPRESSO. Maybe it is free and open-source and your group does not have a VASP license. Maybe you do have VASP, but you want to understand what actually changes when you switch DFT engines under dpgen’s hood. Either way, the dpgen docs do not make the differences obvious.</p>
+<p>They should. Because the differences will silently break your workflow if you do not know where to look.</p>
+<p>The core dpgen loop is identical regardless of DFT engine: explore with LAMMPS, identify uncertain configurations, label them with first-principles, retrain. But the configuration files (<code class="docutils literal notranslate"><span class="pre">param.json</span></code> and <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>) differ in ways that range from “mildly annoying” to “three days of wasted compute.” Let me trace through every difference that matters.</p>
+<hr class="docutils" />
+<section id="the-fp-style-switch">
+<h2>The fp_style Switch<a class="headerlink" href="#the-fp-style-switch" title="Permalink to this heading">#</a></h2>
+<p>Everything starts with one field in <code class="docutils literal notranslate"><span class="pre">param.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vasp&quot;</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pwscf&quot;</span>
+</pre></div>
+</div>
+<p>Notice that. It is <code class="docutils literal notranslate"><span class="pre">&quot;pwscf&quot;</span></code>. Not <code class="docutils literal notranslate"><span class="pre">&quot;qe&quot;</span></code>. Not <code class="docutils literal notranslate"><span class="pre">&quot;quantum-espresso&quot;</span></code>. The name <code class="docutils literal notranslate"><span class="pre">pwscf</span></code> comes from QE’s plane-wave DFT code <code class="docutils literal notranslate"><span class="pre">pw.x</span></code>, historically called PWscf. dpgen uses the old name. If you type <code class="docutils literal notranslate"><span class="pre">&quot;qe&quot;</span></code>, dpgen does not recognize it. No helpful error message. Just a traceback that does not point at the actual problem.</p>
+<p>Here is what nobody tells you: this single field changes four things at once.</p>
+<ul class="simple">
+<li><p>How dpgen generates input files for each DFT calculation</p></li>
+<li><p>How it reads output (forces, energies, stresses)</p></li>
+<li><p>How it handles pseudopotentials</p></li>
+<li><p>What command it runs</p></li>
+</ul>
+<p>One string. Four consequences.</p>
+</section>
+<hr class="docutils" />
+<section id="param-json-vasp-configuration">
+<h2>param.json: VASP Configuration<a class="headerlink" href="#param-json-vasp-configuration" title="Permalink to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>VASP users specify a separate INCAR file and POTCAR files. dpgen reads the INCAR, generates POSCAR from LAMMPS snapshots, concatenates POTCARs in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order, and creates KPOINTS. The <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> list must match <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order exactly. Wrong order means wrong pseudopotential on each element. VASP won’t complain. The SCF might even converge. The physics will be garbage.</p>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vasp&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_incar&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INCAR&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_pp_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/potcars&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;POTCAR_C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;POTCAR_H&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;fp_aniso_kspacing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>dpgen concatenates <code class="docutils literal notranslate"><span class="pre">POTCAR_C</span></code> then <code class="docutils literal notranslate"><span class="pre">POTCAR_H</span></code> into a single <code class="docutils literal notranslate"><span class="pre">POTCAR</span></code> in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order. That order is load-bearing. More on that below.</p>
+</section>
+<hr class="docutils" />
+<section id="param-json-qe-configuration">
+<h2>param.json: QE Configuration<a class="headerlink" href="#param-json-qe-configuration" title="Permalink to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>QE users don’t provide a separate input file. Instead, all QE input parameters live inside <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code> in <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. dpgen builds the full <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> input file from this dictionary. The nested keys (<code class="docutils literal notranslate"><span class="pre">control</span></code>, <code class="docutils literal notranslate"><span class="pre">system</span></code>, <code class="docutils literal notranslate"><span class="pre">electrons</span></code>) map directly to QE’s <code class="docutils literal notranslate"><span class="pre">&amp;CONTROL</span></code>, <code class="docutils literal notranslate"><span class="pre">&amp;SYSTEM</span></code>, <code class="docutils literal notranslate"><span class="pre">&amp;ELECTRONS</span></code> namelists. Everything in one place. No separate INCAR to keep track of.</p>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pwscf&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_pp_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pseudo&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;user_fp_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;control&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;calculation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scf&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;tprnfor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;tstress&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;pseudo_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;outdir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disk_io&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;system&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;ecutwfc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ecutrho&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;input_dft&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PBE&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;vdw_corr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dft-d3&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;dftd3_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;occupations&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smearing&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;smearing&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cold&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;degauss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;nosym&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;electrons&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;conv_thr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;mixing_beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.4</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;electron_maxstep&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;kspacing&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>For a complete 4-element QE-based dpgen param.json (O, Na, Cl, H in NaCl solution), see the <a class="reference external" href="https://github.com/cesaremalosso/tutorial_ictp2024/tree/main/dpgen">ICTP 2024 tutorial</a>. It uses ONCV pseudopotentials, ecutwfc=80, and a 10-iteration progressive exploration schedule from 300 K to 1100 K and 1 to 50000 bar. Comparing it with our 2-element C+H config highlights how multi-element systems scale the complexity.</p>
+</div>
+<p>Alright, enough theory. Let me walk through the parts that trip people up.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code></strong>: Individual <code class="docutils literal notranslate"><span class="pre">.UPF</span></code> files, one per element, in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order. dpgen copies them into each task directory and sets <code class="docutils literal notranslate"><span class="pre">pseudo_dir</span></code> accordingly. Unlike VASP, there is no concatenation. Each element keeps its own pseudopotential file. But the ordering rule is the same: first file matches first element in <code class="docutils literal notranslate"><span class="pre">type_map</span></code>.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code></strong>: A nested dictionary that maps directly to QE’s namelist structure. <code class="docutils literal notranslate"><span class="pre">control</span></code> becomes <code class="docutils literal notranslate"><span class="pre">&amp;CONTROL</span></code>. <code class="docutils literal notranslate"><span class="pre">system</span></code> becomes <code class="docutils literal notranslate"><span class="pre">&amp;SYSTEM</span></code>. <code class="docutils literal notranslate"><span class="pre">electrons</span></code> becomes <code class="docutils literal notranslate"><span class="pre">&amp;ELECTRONS</span></code>. dpgen translates this dictionary into QE’s input format automatically. You write JSON, QE gets its namelists.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">kspacing</span></code></strong>: Lives at the top level of <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code>, not inside any namelist. dpgen uses this value to auto-generate the <code class="docutils literal notranslate"><span class="pre">K_POINTS</span></code> card based on cell dimensions. One number. dpgen does the math.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">tprnfor</span></code> and <code class="docutils literal notranslate"><span class="pre">tstress</span></code></strong>: These must be <code class="docutils literal notranslate"><span class="pre">true</span></code>. <mark class="hard-req">This is not optional.</mark></p>
+<p>Without <code class="docutils literal notranslate"><span class="pre">tprnfor</span></code>, QE does not print forces. Without <code class="docutils literal notranslate"><span class="pre">tstress</span></code>, QE does not print stresses. dpgen needs both to create training data. If these are missing, <mark class="silent-fail">dpgen silently produces training data with zero forces.</mark> Zero. Your model trains on that. It learns that every atom in every configuration experiences zero force. The training loss looks fine because the model quickly learns to predict zero everywhere. Your MD simulation? Atoms don’t move. Or they explode. Depends on the initial velocities.</p>
+<p>QE does not complain when you forget <code class="docutils literal notranslate"><span class="pre">tprnfor</span></code>. It just silently gives you garbage. Helpful.</p>
+<p>I almost cannot believe this is a silent failure. But it is. I forgot to set <code class="docutils literal notranslate"><span class="pre">tprnfor</span> <span class="pre">=</span> <span class="pre">.true.</span></code> on a project once. dpdata happily converted the output. The forces were all zeros. I trained a model on zero forces. It took me two days to figure out why the model was predicting a flat energy surface everywhere. Two days. Because of a missing boolean.</p>
+</section>
+<hr class="docutils" />
+<section id="the-input-dft-gotcha">
+<h2>The input_dft Gotcha<a class="headerlink" href="#the-input-dft-gotcha" title="Permalink to this heading">#</a></h2>
+<div class="danger admonition">
+<p class="admonition-title">Warning: Energy Scale</p>
+<p><strong>QE 7.3.1 wants <code class="docutils literal notranslate"><span class="pre">input_dft</span> <span class="pre">=</span> <span class="pre">'vdw-df2-b86r'</span></code>, NOT <code class="docutils literal notranslate"><span class="pre">'rev-vdw-df2'</span></code>.</strong></p>
+<p>The label <code class="docutils literal notranslate"><span class="pre">'rev-vdw-df2'</span></code> is obsolete. QE 7.3.1 will accept it without error, but it maps to a <strong>different functional</strong> than what you intended. This is a silent failure. Your DFT energies and forces will be computed with the wrong functional, your training data will be wrong, and your model will learn wrong physics.</p>
+<p>No warning. No error message. QE just does the wrong thing quietly.</p>
+<p>If you’re using van der Waals functionals, <strong>always check the QE source code or documentation for the correct label in your specific QE version.</strong> The labels change between versions. What worked in QE 6.x may silently do something different in QE 7.x.</p>
+</div>
+<p><mark class="silent-fail">This is the kind of bug that costs months.</mark> You run dpgen. Everything converges. The numbers look reasonable. Your model seems fine. Then your collaborator tries to reproduce your results with a different QE version, and the energies do not match. Because the functional was different the entire time. No crash at any point. Nothing suspicious in any log file. Just wrong physics, front to back.</p>
+<p>For the graphene + H2 project, we use PBE with DFT-D3(BJ) dispersion correction instead of a vdW-DF functional, partly to avoid this exact trap:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;input_dft&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PBE&quot;</span><span class="p">,</span>
+<span class="nt">&quot;vdw_corr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dft-d3&quot;</span><span class="p">,</span>
+<span class="nt">&quot;dftd3_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span>
+</pre></div>
+</div>
+<p>Boring? Yes. Reproducible? Also yes. I will take boring and reproducible every single time.</p>
+</section>
+<hr class="docutils" />
+<section id="the-in-input-issue">
+<h2>The <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> Issue<a class="headerlink" href="#the-in-input-issue" title="Permalink to this heading">#</a></h2>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>dpgen (via dpdispatcher) runs QE as <code class="docutils literal notranslate"><span class="pre">pw.x</span> <span class="pre">-in</span> <span class="pre">input</span></code>, NOT as <code class="docutils literal notranslate"><span class="pre">pw.x</span> <span class="pre">&lt;</span> <span class="pre">input</span></code> (stdin redirect). If your <code class="docutils literal notranslate"><span class="pre">machine.json</span></code> command invokes <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> without the <code class="docutils literal notranslate"><span class="pre">-in</span></code> flag, and the input isn’t piped via stdin, QE just sits there. Waiting. For input that will never arrive. Your job burns CPU hours until it hits the walltime limit and gets killed by the scheduler. Make sure your machine.json command includes <code class="docutils literal notranslate"><span class="pre">-in</span></code>.</p>
+</div>
+<p>In your <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>, the QE command looks like:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 64 pw.x -in input&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;machine_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pbs&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For VASP it would be:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 64 vasp_std&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;machine_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pbs&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>VASP reads <code class="docutils literal notranslate"><span class="pre">INCAR</span></code>, <code class="docutils literal notranslate"><span class="pre">POSCAR</span></code>, <code class="docutils literal notranslate"><span class="pre">POTCAR</span></code>, <code class="docutils literal notranslate"><span class="pre">KPOINTS</span></code> from the working directory automatically. Does not need to be told where to look. QE reads a single input file and needs to be pointed at it explicitly. Different conventions, different failure modes.</p>
+</section>
+<hr class="docutils" />
+<section id="pseudopotential-handling">
+<h2>Pseudopotential Handling<a class="headerlink" href="#pseudopotential-handling" title="Permalink to this heading">#</a></h2>
+<p>This is a fundamental architectural difference between the two codes.</p>
+<section id="vasp">
+<h3>VASP<a class="headerlink" href="#vasp" title="Permalink to this heading">#</a></h3>
+<p>VASP uses PAW datasets called POTCARs. One file per element. dpgen concatenates them in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order into a single <code class="docutils literal notranslate"><span class="pre">POTCAR</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">potcars</span><span class="o">/</span>
+    <span class="n">POTCAR_C</span>      <span class="c1"># Carbon PAW dataset</span>
+    <span class="n">POTCAR_H</span>      <span class="c1"># Hydrogen PAW dataset</span>
+</pre></div>
+</div>
+<p>dpgen effectively runs <code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">POTCAR_C</span> <span class="pre">POTCAR_H</span> <span class="pre">&gt;</span> <span class="pre">POTCAR</span></code>. Order matters. If <code class="docutils literal notranslate"><span class="pre">type_map</span></code> says <code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;H&quot;]</span></code> but you list the files as <code class="docutils literal notranslate"><span class="pre">[&quot;POTCAR_H&quot;,</span> <span class="pre">&quot;POTCAR_C&quot;]</span></code>, every carbon atom gets hydrogen’s pseudopotential. VASP will not complain. The SCF might even converge. The results will be completely wrong. And nothing in the output will tell you. This is the wrong-name-on-the-exam problem: every grade assigned to the wrong person, nothing crashes, everything is quietly wrong.</p>
+</section>
+<section id="qe">
+<h3>QE<a class="headerlink" href="#qe" title="Permalink to this heading">#</a></h3>
+<p>QE uses individual <code class="docutils literal notranslate"><span class="pre">.UPF</span></code> files. No concatenation. dpgen copies each file into the task directory and references them in the <code class="docutils literal notranslate"><span class="pre">ATOMIC_SPECIES</span></code> card:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pseudo</span><span class="o">/</span>
+    <span class="n">C</span><span class="o">.</span><span class="n">pbe</span><span class="o">-</span><span class="n">n</span><span class="o">-</span><span class="n">kjpaw_psl</span><span class="mf">.1.0.0</span><span class="o">.</span><span class="n">UPF</span>
+    <span class="n">H</span><span class="o">.</span><span class="n">pbe</span><span class="o">-</span><span class="n">rrkjus_psl</span><span class="mf">.1.0.0</span><span class="o">.</span><span class="n">UPF</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> list must match <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Same rule, same consequence: wrong order, wrong pseudopotentials, wrong physics, silent failure.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>QE pseudopotential filenames are long and ugly. It is tempting to rename them to <code class="docutils literal notranslate"><span class="pre">C.UPF</span></code> and <code class="docutils literal notranslate"><span class="pre">H.UPF</span></code>. Don’t. The full name encodes the functional (pbe), the pseudization method (kjpaw, rrkjus), and the library version (psl.1.0.0). When you inevitably switch pseudopotentials or compare results, you will want to know exactly which files you used. The verbose filename is your documentation. Future you will thank present you.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="k-points">
+<h2>K-Points<a class="headerlink" href="#k-points" title="Permalink to this heading">#</a></h2>
+<section id="id1">
+<h3>VASP<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p>VASP reads k-points from a <code class="docutils literal notranslate"><span class="pre">KPOINTS</span></code> file or uses <code class="docutils literal notranslate"><span class="pre">KSPACING</span></code> in the <code class="docutils literal notranslate"><span class="pre">INCAR</span></code>. dpgen can generate the <code class="docutils literal notranslate"><span class="pre">KPOINTS</span></code> file or pass <code class="docutils literal notranslate"><span class="pre">KSPACING</span></code> through <code class="docutils literal notranslate"><span class="pre">user_incar_params</span></code>.</p>
+</section>
+<section id="id2">
+<h3>QE<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<p>dpgen generates the <code class="docutils literal notranslate"><span class="pre">K_POINTS</span></code> card from the <code class="docutils literal notranslate"><span class="pre">kspacing</span></code> value in <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;kspacing&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+</pre></div>
+</div>
+<p>dpgen computes the k-mesh dimensions from <code class="docutils literal notranslate"><span class="pre">kspacing</span></code> and the cell vectors, then writes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">K_POINTS</span> <span class="n">automatic</span>
+<span class="n">nx</span> <span class="n">ny</span> <span class="n">nz</span>  <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>No separate file. No extra configuration. One number. dpgen handles the rest. This is actually simpler than the VASP approach.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="side-by-side-comparison">
+<h2>Side-by-Side Comparison<a class="headerlink" href="#side-by-side-comparison" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>VASP</p></th>
+<th class="head"><p>QE (PWscf)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fp_style</span></code> value</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;vasp&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;pwscf&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Input specification</p></td>
+<td><p>Separate <code class="docutils literal notranslate"><span class="pre">INCAR</span></code> file via <code class="docutils literal notranslate"><span class="pre">fp_incar</span></code></p></td>
+<td><p>Inline dict via <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Pseudopotentials</p></td>
+<td><p>POTCAR files, concatenated</p></td>
+<td><p>Individual <code class="docutils literal notranslate"><span class="pre">.UPF</span></code> files, copied</p></td>
+</tr>
+<tr class="row-odd"><td><p>PP specification</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fp_pp_files:</span> <span class="pre">[&quot;POTCAR_C&quot;,</span> <span class="pre">&quot;POTCAR_H&quot;]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fp_pp_files:</span> <span class="pre">[&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;,</span> <span class="pre">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>K-points</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">KPOINTS</span></code> file or <code class="docutils literal notranslate"><span class="pre">KSPACING</span></code> in INCAR</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kspacing</span></code> in <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>DFT command</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">vasp_std</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">pw.x</span> <span class="pre">-in</span> <span class="pre">input</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Input file read</p></td>
+<td><p>Auto-reads from working dir</p></td>
+<td><p>Explicit <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> flag</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force output</p></td>
+<td><p>Always printed</p></td>
+<td><p>Requires <code class="docutils literal notranslate"><span class="pre">tprnfor</span> <span class="pre">=</span> <span class="pre">true</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Stress output</p></td>
+<td><p>Always printed (with <code class="docutils literal notranslate"><span class="pre">ISIF</span> <span class="pre">&gt;=</span> <span class="pre">1</span></code>)</p></td>
+<td><p>Requires <code class="docutils literal notranslate"><span class="pre">tstress</span> <span class="pre">=</span> <span class="pre">true</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>License</p></td>
+<td><p>Commercial ($$$)</p></td>
+<td><p>Free (GPL)</p></td>
+</tr>
+<tr class="row-even"><td><p>Typical speed</p></td>
+<td><p>Faster for same system</p></td>
+<td><p>Slightly slower</p></td>
+</tr>
+<tr class="row-odd"><td><p>Scaling</p></td>
+<td><p>License limits node count</p></td>
+<td><p>No license limit</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="performance-and-licensing">
+<h2>Performance and Licensing<a class="headerlink" href="#performance-and-licensing" title="Permalink to this heading">#</a></h2>
+<p>Let me be blunt.</p>
+<p>VASP is faster. For the same system, same functional, same k-mesh, VASP typically finishes 10-30% faster than QE. Decades of optimization for plane-wave PAW calculations. It shows.</p>
+<p>But VASP costs money. A group license runs thousands of dollars per year. And here is the practical constraint that nobody talks about in the tutorials: your VASP license limits how many simultaneous jobs you can run. dpgen can submit dozens or hundreds of DFT labeling jobs per iteration. If your license only covers a few nodes, you bottleneck hard.</p>
+<p>QE is free. Run it on every node in the cluster simultaneously. No license server. No usage tracking. No “license seats exceeded” message killing your jobs at 2 AM.</p>
+<p>For dpgen workflows where you are submitting 50-200 labeling jobs per iteration, this matters more than raw per-job speed. A lot more.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>The real bottleneck in dpgen is almost never the DFT code’s speed. It is how many DFT jobs you can run in parallel. A code that is 20% slower but can run on unlimited nodes finishes the iteration faster than a code that is 20% faster but limited to 4 concurrent jobs by licensing.</p>
+<p>If you have a VASP license with generous node allocation, use VASP. If you are license-limited or license-free, use QE. The model does not care which DFT engine produced the training data. It cares that the data is correct and consistent.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="converting-between-vasp-and-qe-configs">
+<h2>Converting Between VASP and QE Configs<a class="headerlink" href="#converting-between-vasp-and-qe-configs" title="Permalink to this heading">#</a></h2>
+<p>Switching <code class="docutils literal notranslate"><span class="pre">fp_style</span></code> is not a find-and-replace job. Here is the full checklist. Skip a step and something will break silently. I’ve seen this go wrong too many times.</p>
+<ol class="arabic simple">
+<li><p>Change <code class="docutils literal notranslate"><span class="pre">fp_style</span></code> from <code class="docutils literal notranslate"><span class="pre">&quot;vasp&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;pwscf&quot;</span></code> (or vice versa)</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">fp_incar</span></code> with <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code> (or vice versa). Translate every INCAR tag to its QE equivalent. This is tedious. There is no shortcut</p></li>
+<li><p>Replace POTCAR files with <code class="docutils literal notranslate"><span class="pre">.UPF</span></code> files (or vice versa). Make sure the functional matches</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code> and <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code></p></li>
+<li><p>Update the DFT command in <code class="docutils literal notranslate"><span class="pre">machine.json</span></code></p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">tprnfor</span></code> and <code class="docutils literal notranslate"><span class="pre">tstress</span></code> are set (QE only; VASP does this automatically)</p></li>
+<li><p><strong>Run a single-point test calculation on both codes with the same structure and compare energies/forces.</strong> Not optional. Not a suggestion.</p></li>
+</ol>
+<p>That last point is the one people skip because they are in a hurry. Different pseudopotentials, different basis set implementations, different default parameters. Even with “the same” functional, VASP and QE give slightly different absolute energies. The forces should agree to within ~1 meV/A for well-converged calculations. If they do not, your settings are not equivalent. Go back and figure out why before you commit to a 20-iteration dpgen campaign.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Don’t mix VASP-labeled and QE-labeled training data in the same model without verifying energy consistency. Different codes have different energy zeros, different pseudopotential constructions, and subtly different implementations of the same functional. Mixing them introduces systematic noise that the model can’t learn around.</p>
+<p>Pick one DFT code for your entire dpgen campaign. Stick with it. This is not a preference. It is a consistency requirement.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>The DFT engine is a labeling tool. dpgen does not care whether the labels come from VASP or QE. It cares that they are accurate and consistent.</p>
+<p>If you are using QE, three things will actually bite you: <code class="docutils literal notranslate"><span class="pre">fp_style</span></code> must be <code class="docutils literal notranslate"><span class="pre">&quot;pwscf&quot;</span></code> (not <code class="docutils literal notranslate"><span class="pre">&quot;qe&quot;</span></code>), <code class="docutils literal notranslate"><span class="pre">tprnfor</span></code> and <code class="docutils literal notranslate"><span class="pre">tstress</span></code> must be <code class="docutils literal notranslate"><span class="pre">true</span></code>, and you need to double-check your <code class="docutils literal notranslate"><span class="pre">input_dft</span></code> label against your specific QE version. Everything else is bookkeeping. Important bookkeeping, but bookkeeping.</p>
+<p>Get those three things right and the rest falls into place.</p>
+</section>
+<section id="qe-fundamentals">
+<h2>QE Fundamentals<a class="headerlink" href="#qe-fundamentals" title="Permalink to this heading">#</a></h2>
+<p>If you are coming from VASP and need a QE refresher, the <a class="reference external" href="https://github.com/cesaremalosso/workshop-july-2023/tree/main/hands-on-sessions/day-1/2-quantum-espresso">CSI Princeton Workshop (Session 2)</a> covers QE input anatomy, ecutwfc/kpoint convergence testing, and vc-relax workflows with ASE integration.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="apptainer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Apptainer Setup</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="init-commands.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">init_bulk and init_surf: Generating Initial Training Data</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fp-style-switch">The fp_style Switch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#param-json-vasp-configuration">param.json: VASP Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#param-json-qe-configuration">param.json: QE Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-input-dft-gotcha">The input_dft Gotcha</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-in-input-issue">The <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> Issue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudopotential-handling">Pseudopotential Handling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vasp">VASP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qe">QE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#k-points">K-Points</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">VASP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">QE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#side-by-side-comparison">Side-by-Side Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-and-licensing">Performance and Licensing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-between-vasp-and-qe-configs">Converting Between VASP and QE Configs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qe-fundamentals">QE Fundamentals</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

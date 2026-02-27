@@ -1,0 +1,1404 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 8: Writing machine.json &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch08/machine-json';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 9: Running dpgen" href="../ch09/running-dpgen.html" />
+    <link rel="prev" title="Ch 7: Writing param.json" href="../ch07/param-json.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch08/machine-json.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch08/machine-json.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch08/machine-json.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 8: Writing machine.json</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-machine-json-actually-does">What machine.json Actually Does</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-ways-to-run-dpgen">Three Ways to Run dpgen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-real-machine-json-mixed-mode-example">The Real machine.json: Mixed-Mode Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-train-block-teaching-the-models">The <code class="docutils literal notranslate"><span class="pre">train</span></code> Block: Teaching the Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-command-field">The <code class="docutils literal notranslate"><span class="pre">command</span></code> Field</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-machine-sub-block">The <code class="docutils literal notranslate"><span class="pre">machine</span></code> Sub-block</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-resources-sub-block">The <code class="docutils literal notranslate"><span class="pre">resources</span></code> Sub-block</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-devi-block-sending-the-models-on-a-field-trip">The <code class="docutils literal notranslate"><span class="pre">model_devi</span></code> Block: Sending the Models on a Field Trip</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fp-block-calling-in-dft">The <code class="docutils literal notranslate"><span class="pre">fp</span></code> Block: Calling in DFT</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-command-why-in-input-matters">The <code class="docutils literal notranslate"><span class="pre">command</span></code>: Why <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> Matters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-machine-torque-not-shell">The <code class="docutils literal notranslate"><span class="pre">machine</span></code>: Torque, Not Shell</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-resources-everything-the-scheduler-needs">The <code class="docutils literal notranslate"><span class="pre">resources</span></code>: Everything the Scheduler Needs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-size-deep-dive">The <code class="docutils literal notranslate"><span class="pre">group_size</span></code> Deep Dive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-variants-side-by-side">The Three Variants Side by Side</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-1-local-shell-everything-local">Variant 1: Local Shell (Everything Local)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-2-full-hpc-pbs-slurm-everywhere">Variant 2: Full HPC (PBS/Slurm Everywhere)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-3-mixed-mode-the-real-config">Variant 3: Mixed-Mode (The Real Config)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#apptainer-integration-running-in-a-container">Apptainer Integration: Running in a Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#remote-root-the-disk-space-trap"><code class="docutils literal notranslate"><span class="pre">remote_root</span></code>: The Disk Space Trap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-actually-happens-when-dpgen-runs">What Actually Happens When dpgen Runs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference-every-field-in-machine-json">Quick Reference: Every Field in machine.json</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-pitfalls-hall-of-fame">The Pitfalls Hall of Fame</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-8-writing-machine-json">
+<h1>Ch 8: Writing machine.json<a class="headerlink" href="#ch-8-writing-machine-json" title="Permalink to this heading">#</a></h1>
+<p>You just spent all of Ch 7 telling dpgen <em>what</em> to do. Every training parameter. Every exploration temperature. Every DFT setting.</p>
+<p>None of it matters if you can’t tell dpgen <em>where</em> to do it.</p>
+<p>That’s machine.json. And I need to be honest: this file destroyed two days of my life. Not because the concepts are hard. They aren’t. This is plumbing. Pure infrastructure. But it’s plumbing where one wrong path, one mismatched <code class="docutils literal notranslate"><span class="pre">batch_type</span></code>, one missing bind mount will cause <mark class="silent-fail">dpgen to fail silently</mark>, submit jobs that die on arrival, or (my personal favorite) submit 200 DFT jobs to the wrong queue and incinerate your entire HPC allocation before you even notice.</p>
+<p>Here’s what nobody tells you. param.json is the brain. machine.json is the hands and feet. It tells dpgen which nodes to use, how many cores, which GPU, what scheduler to talk to, what container to run inside, what scripts to source. Get it wrong and the brain has no body. Get it right and you never think about it again.</p>
+<section id="what-machine-json-actually-does">
+<h2>What machine.json Actually Does<a class="headerlink" href="#what-machine-json-actually-does" title="Permalink to this heading">#</a></h2>
+<p>Let’s ground this before we go anywhere. dpgen has three stages per iteration: <strong>train</strong>, <strong>model_devi</strong> (exploration), and <strong>fp</strong> (first-principles labeling). Each stage needs to run an executable somewhere. machine.json tells dpgen, for each stage:</p>
+<ol class="arabic simple">
+<li><p><strong>What command to run.</strong> <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">lmp</span></code>, <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">pw.x</span> <span class="pre">-in</span> <span class="pre">input</span></code>.</p></li>
+<li><p><strong>Where to run it.</strong> Locally via shell? Submitted to PBS/Torque? Slurm? LSF?</p></li>
+<li><p><strong>What resources to request.</strong> CPUs, GPUs, nodes, walltime, queue name.</p></li>
+<li><p><strong>How to set up the environment.</strong> Module loads, container sourcing, env vars.</p></li>
+</ol>
+<p>Three blocks (<code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">model_devi</span></code>, <code class="docutils literal notranslate"><span class="pre">fp</span></code>), each with the same structure: <code class="docutils literal notranslate"><span class="pre">command</span></code>, <code class="docutils literal notranslate"><span class="pre">machine</span></code>, <code class="docutils literal notranslate"><span class="pre">resources</span></code>. That’s the whole file. And that’s the whole trick.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>machine.json has nothing to do with your science. Zero. It doesn’t affect what the model learns or how structures are selected. It only controls the <em>execution infrastructure</em>. You could swap machine.json between a laptop and a 10,000-node supercomputer and param.json wouldn’t change at all. The science lives in param.json. The logistics live here. Keep that separation clean in your head.</p>
+</div>
+</section>
+<section id="three-ways-to-run-dpgen">
+<h2>Three Ways to Run dpgen<a class="headerlink" href="#three-ways-to-run-dpgen" title="Permalink to this heading">#</a></h2>
+<p>Before we look at the real config, let me show you the three common setups. Most people land in one of these.</p>
+<p><strong>Variant 1: Local Shell.</strong> Everything runs on your workstation or a single GPU node. Training, LAMMPS, and DFT all happen right there. No job scheduler. No queuing. This is what you use for testing your config on a small system (like Ar or water) before throwing it at the cluster. Simplest possible setup.</p>
+<p><strong>Variant 2: Full HPC.</strong> Training goes to a GPU queue via PBS/Slurm. LAMMPS exploration also goes to a GPU queue. DFT goes to a CPU queue. Every stage is a submitted job that sits in the queue, waits its turn, runs, reports back. Textbook setup for production runs when you don’t have dedicated node access.</p>
+<p><strong>Variant 3: Mixed-mode.</strong> This is what I actually use. You sit on a GPU node (interactive job or dedicated allocation), run training and LAMMPS locally on that node via Shell, and submit DFT jobs to the CPU queue via PBS/Torque. GPU work happens immediately. CPU work goes through the scheduler.</p>
+<p>Why mixed-mode? Because on my HPC, GPU nodes are scarce and the queue is brutal. Getting an interactive GPU session means I have the GPUs <em>right now</em>. Training 4 models takes 15 minutes. LAMMPS exploration takes 5 minutes. Why would I submit those to a queue and wait 2 hours for them to start? I run them locally, on my node, immediately. But DFT on 128 CPU cores? That goes to the CPU queue where nodes are plentiful and wait times are short.</p>
+<p>This is the part the docs skip. Nobody tells you which variant to pick. So here it is, no hedging: if you can get interactive GPU access, use mixed-mode. If you can’t, use Full HPC. If you’re just learning, use Local Shell. Start there. Adjust later.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>The “right” variant depends entirely on your cluster’s architecture and queue policies. Dedicated GPU node for 48 hours? Mixed-mode. Only batch submissions allowed? Full HPC. Learning dpgen on your laptop? Local Shell. There’s no universal answer. Ask your sysadmin. Read your queue policies. Then pick.</p>
+</div>
+<figure class="align-default" id="machine-modes-diagram">
+<a class="reference internal image-reference" href="../../_images/machine_modes.svg"><img alt="../../_images/machine_modes.svg" src="../../_images/machine_modes.svg" width="95%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 23 </span><span class="caption-text">The three machine.json execution modes compared. Local Shell runs everything on one machine. Full HPC submits all stages to the job scheduler. Mixed-mode (recommended) uses the GPU node directly for training and exploration, while submitting DFT jobs to the CPU cluster.</span><a class="headerlink" href="#machine-modes-diagram" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="the-real-machine-json-mixed-mode-example">
+<h2>The Real machine.json: Mixed-Mode Example<a class="headerlink" href="#the-real-machine-json-mixed-mode-example" title="Permalink to this heading">#</a></h2>
+<div class="seealso admonition">
+<p class="admonition-title">Real-World Research Example</p>
+<p>The machine.json walkthrough below uses a graphene + H₂ research project as the concrete example. machine.json is system-agnostic (it controls infrastructure, not science), so the same structure works for Ar, water, or any system. The paths and core counts change; the pattern doesn’t.</p>
+</div>
+<p>Alright, enough theory. Let me show you the actual config. This is from a real research project running on an HPC with 2 GPUs and PBS/Torque for CPU queues. Not a toy example. Not a simplified version. The real thing.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HPC mixed-mode: train+model_devi on GPU node (Shell), FP via PBS to CPU nodes&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;api_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;deepmd_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.1.2&quot;</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">&quot;train&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/dp_auto_gpu.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/deepmd_container.sh&quot;</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;model_devi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/lmp_auto_gpu.sh&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/deepmd_container.sh&quot;</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;fp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 128 pw.x -nk 1 -in input&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./fp_work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">128</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;queue_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;custom_flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;#PBS -P ioe.che.jayati.1&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#PBS -l select=1:ncpus=128:mpiprocs=128:centos=genoa&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#PBS -l walltime=24:00:00&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/qe_hpc.sh&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;envs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>72 lines. Three blocks. Let’s trace through this.</p>
+</section>
+<section id="the-train-block-teaching-the-models">
+<h2>The <code class="docutils literal notranslate"><span class="pre">train</span></code> Block: Teaching the Models<a class="headerlink" href="#the-train-block-teaching-the-models" title="Permalink to this heading">#</a></h2>
+<p>The training stage runs <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code> to build 4 DeePMD models. On our setup, this happens locally on a 2-GPU node. No scheduler. No waiting. Just go.</p>
+<section id="the-command-field">
+<h3>The <code class="docutils literal notranslate"><span class="pre">command</span></code> Field<a class="headerlink" href="#the-command-field" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/dp_auto_gpu.sh&quot;</span>
+</pre></div>
+</div>
+<p>Wait. Why isn’t this just <code class="docutils literal notranslate"><span class="pre">&quot;dp</span> <span class="pre">train&quot;</span></code>?</p>
+<p>Here’s where it gets interesting. We have 4 models and 2 GPUs. If dpgen launches all 4 training jobs at once (and it does when <code class="docutils literal notranslate"><span class="pre">group_size</span></code> is 1), they’ll all try to grab GPU 0. Three of them crash. Or worse, all four share one GPU and crawl at 25% speed each. Either way, you’re not happy.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">dp_auto_gpu.sh</span></code> script is a semaphore-based GPU assigner. It solves the problem elegantly. Open that file. I’ll wait.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># Semaphore-based GPU assignment for concurrent DeePMD training.</span>
+<span class="nv">MAX_GPUS</span><span class="o">=</span><span class="m">2</span>
+<span class="nv">LOCK_BASE</span><span class="o">=</span>/tmp/dpgen_gpu
+
+<span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>gpu_id<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="k">$((</span><span class="nv">MAX_GPUS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="k">)))</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">        </span><span class="nv">LOCKDIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">LOCK_BASE</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">gpu_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span>mkdir<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCKDIR</span><span class="s2">&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">export</span><span class="w"> </span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="nv">$gpu_id</span>
+<span class="w">            </span><span class="nb">trap</span><span class="w"> </span><span class="s2">&quot;rmdir &#39;</span><span class="nv">$LOCKDIR</span><span class="s2">&#39; 2&gt;/dev/null&quot;</span><span class="w"> </span>EXIT<span class="w"> </span>INT<span class="w"> </span>TERM
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;[dp_auto_gpu] PID=</span><span class="nv">$$</span><span class="s2"> acquired GPU </span><span class="nv">$gpu_id</span><span class="s2">&quot;</span>
+<span class="w">            </span>dp<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+<span class="w">            </span><span class="nv">rc</span><span class="o">=</span><span class="nv">$?</span>
+<span class="w">            </span>rmdir<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCKDIR</span><span class="s2">&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<span class="w">            </span><span class="nb">exit</span><span class="w"> </span><span class="nv">$rc</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">done</span>
+<span class="w">    </span>sleep<span class="w"> </span><span class="m">15</span><span class="w">   </span><span class="c1"># All GPUs busy — wait and retry</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>Are you seeing this? Each model tries to create a lock directory (<code class="docutils literal notranslate"><span class="pre">/tmp/dpgen_gpu_0</span></code> or <code class="docutils literal notranslate"><span class="pre">/tmp/dpgen_gpu_1</span></code>). If it succeeds, it owns that GPU. If both are taken, it waits 15 seconds and tries again. When a model finishes training, it removes the lock. Models 0 and 1 run in parallel on the 2 GPUs. Models 2 and 3 wait their turn. Clean.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Do NOT use <code class="docutils literal notranslate"><span class="pre">exec</span> <span class="pre">dp</span> <span class="pre">&quot;$&#64;&quot;</span></code></strong> inside the GPU script. I know it looks cleaner. This one will bite you. <code class="docutils literal notranslate"><span class="pre">exec</span></code> replaces the bash process, which means the <code class="docutils literal notranslate"><span class="pre">trap</span></code> handler never fires. The lock directory never gets cleaned up. All subsequent models spin-wait forever for a GPU that will never be released. I learned this the expensive way. 11 PM. My dpgen run had been “training” for 6 hours and nothing was happening. The lock was orphaned. Models 2 and 3 were just sitting there, politely waiting, forever. Don’t be me.</p>
+</div>
+<p>If you have a simpler setup (one GPU, or you’re fine with sequential training), the command can just be <code class="docutils literal notranslate"><span class="pre">&quot;dp</span> <span class="pre">train</span> <span class="pre">input.json&quot;</span></code>. But for multi-GPU nodes, you need something like this script.</p>
+</section>
+<section id="the-machine-sub-block">
+<h3>The <code class="docutils literal notranslate"><span class="pre">machine</span></code> Sub-block<a class="headerlink" href="#the-machine-sub-block" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Four fields, each doing one specific thing:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>What it does</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">batch_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Shell&quot;</span></code></p></td>
+<td><p>Run it as a shell command, right here, right now. No scheduler. No <code class="docutils literal notranslate"><span class="pre">qsub</span></code>. No <code class="docutils literal notranslate"><span class="pre">sbatch</span></code>. Alternatives: <code class="docutils literal notranslate"><span class="pre">&quot;Torque&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Slurm&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;LSF&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;PBS&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">context_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;local&quot;</span></code></p></td>
+<td><p>Local and remote filesystems are the same machine (or share a filesystem). Alternatives: <code class="docutils literal notranslate"><span class="pre">&quot;ssh&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;lazy-local&quot;</span></code> (symlinks instead of copies)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">local_root</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./&quot;</span></code></p></td>
+<td><p>Where dpgen’s working directory lives. The directory where you ran <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">remote_root</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;./work&quot;</span></code></p></td>
+<td><p>Where dpdispatcher stages the actual job files. Creates a <code class="docutils literal notranslate"><span class="pre">work/</span></code> subdirectory. Files get copied here, the job runs, results get copied back</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">local_root</span></code> / <code class="docutils literal notranslate"><span class="pre">remote_root</span></code> split exists because dpdispatcher was designed for remote job submission. Even when you’re running locally, it still copies files from <code class="docutils literal notranslate"><span class="pre">local_root</span></code> to <code class="docutils literal notranslate"><span class="pre">remote_root</span></code>, runs the job there, and copies results back. Extra disk I/O you don’t strictly need, but it keeps the architecture clean. For HPC with shared filesystems, both can be <code class="docutils literal notranslate"><span class="pre">&quot;./&quot;</span></code>.</p>
+</div>
+</section>
+<section id="the-resources-sub-block">
+<h3>The <code class="docutils literal notranslate"><span class="pre">resources</span></code> Sub-block<a class="headerlink" href="#the-resources-sub-block" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/deepmd_container.sh&quot;</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">number_node</span></code></strong>: How many nodes per job. Training is always 1 node. DeePMD doesn’t do multi-node training.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">cpu_per_node</span></code></strong>: CPUs to request. For GPU training, you don’t need many. 8 is fine for data loading.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">gpu_per_node</span></code></strong>: GPUs to request. We have 2 and the GPU script handles assignment.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">group_size</span></code></strong>: Pay attention to this next part. This controls how many tasks get batched into a single job submission. For training, it’s <code class="docutils literal notranslate"><span class="pre">1</span></code>. Why? Because each of the 4 models is an independent training run. With <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">1</span></code>, each model gets its own job. If model 2 crashes (bad luck, GPU OOM, cosmic ray), models 0, 1, and 3 keep going. I’ll do a deep dive on <code class="docutils literal notranslate"><span class="pre">group_size</span></code> shortly. It’s the single most misunderstood field in this entire file.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">source_list</span></code></strong>: Shell scripts to source before running the command. This is where your environment gets set up. Here’s what <code class="docutils literal notranslate"><span class="pre">deepmd_container.sh</span></code> looks like:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># DeePMD-kit environment inside Apptainer container</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PYTORCH_CUDA_ALLOC_CONF</span><span class="o">=</span>expandable_segments:True
+</pre></div>
+</div>
+<p>Short. Since we’re already running inside an Apptainer container (we launched dpgen from within it), <code class="docutils literal notranslate"><span class="pre">dp</span></code> and <code class="docutils literal notranslate"><span class="pre">lmp</span></code> are already in the PATH. We just set a couple of environment variables and we’re done.</p>
+</section>
+</section>
+<section id="the-model-devi-block-sending-the-models-on-a-field-trip">
+<h2>The <code class="docutils literal notranslate"><span class="pre">model_devi</span></code> Block: Sending the Models on a Field Trip<a class="headerlink" href="#the-model-devi-block-sending-the-models-on-a-field-trip" title="Permalink to this heading">#</a></h2>
+<p>Exploration runs LAMMPS with all 4 frozen models to see where they disagree. Structurally, this block is almost identical to <code class="docutils literal notranslate"><span class="pre">train</span></code>. The models are the students. LAMMPS is the exam hall. The field trip is about to begin.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/lmp_auto_gpu.sh&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/deepmd_container.sh&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Two differences from <code class="docutils literal notranslate"><span class="pre">train</span></code>:</p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">command</span></code></strong> is <code class="docutils literal notranslate"><span class="pre">lmp_auto_gpu.sh</span></code> instead of <code class="docutils literal notranslate"><span class="pre">dp_auto_gpu.sh</span></code>. Same GPU-semaphore pattern, but it calls <code class="docutils literal notranslate"><span class="pre">lmp</span></code> (LAMMPS) instead of <code class="docutils literal notranslate"><span class="pre">dp</span></code>. LAMMPS with a DeePMD pair_style needs a GPU too.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">group_size</span></code> is 5</strong> instead of 1. This is the important change. Remember from Ch 6: the exploration runs a matrix of simulations. 3 systems times 3 temperatures = 9 LAMMPS jobs in iteration 0. With <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">5</span></code>, dpdispatcher batches 5 of those into a single submission. So instead of 9 separate shell commands, you get 2 submissions (one with 5 tasks, one with 4).</p></li>
+</ol>
+<p>Why 5? Each individual LAMMPS exploration is short. A few minutes on a GPU. Launching 9 separate jobs would be more overhead than the actual compute. But you also don’t want <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">50</span></code> because if one task fails, the entire group gets marked as failed. 5 is the middle ground. If one LAMMPS simulation blows up (the model produced insane forces and atoms went flying), you lose at most 5 tasks, not all 9. Trust me on this one.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>How <code class="docutils literal notranslate"><span class="pre">group_size</span></code> works under the hood</strong>: dpdispatcher takes all the tasks for a stage, splits them into groups of <code class="docutils literal notranslate"><span class="pre">group_size</span></code>, and creates one job submission per group. Within each group, the tasks run <em>sequentially</em> in the same job script. So <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">5</span></code> means 5 LAMMPS runs one after another inside one shell script. Not 5 in parallel.</p>
+<p>This matters for timing. If each LAMMPS run takes 3 minutes, a group of 5 takes 15 minutes. If one of the 5 segfaults, the remaining tasks in that group might still run (dpdispatcher tries), but the group status is “failed” and dpgen may retry the whole group.</p>
+</div>
+</section>
+<section id="the-fp-block-calling-in-dft">
+<h2>The <code class="docutils literal notranslate"><span class="pre">fp</span></code> Block: Calling in DFT<a class="headerlink" href="#the-fp-block-calling-in-dft" title="Permalink to this heading">#</a></h2>
+<p>This is where machine.json gets real. Training and exploration are GPU work. Fast. Lightweight. First-principles labeling is the opposite: 128 CPU cores per job, 24 hours of walltime, submitted to a PBS queue, potentially dozens of jobs per iteration.</p>
+<p>Training and exploration are the sprinters. DFT is the marathon runner. And the marathon runner sets the pace for the whole race.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 128 pw.x -nk 1 -in input&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./fp_work&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">128</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;queue_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;custom_flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;#PBS -P ioe.che.jayati.1&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;#PBS -l select=1:ncpus=128:mpiprocs=128:centos=genoa&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;#PBS -l walltime=24:00:00&quot;</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/qe_hpc.sh&quot;</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;envs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let’s trace through this piece by piece.</p>
+<section id="the-command-why-in-input-matters">
+<h3>The <code class="docutils literal notranslate"><span class="pre">command</span></code>: Why <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> Matters<a class="headerlink" href="#the-command-why-in-input-matters" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 128 pw.x -nk 1 -in input&quot;</span>
+</pre></div>
+</div>
+<p>Every word matters.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">-np</span> <span class="pre">128</span></code></strong>: Launch 128 MPI processes. This number must match <code class="docutils literal notranslate"><span class="pre">cpu_per_node</span></code> and the <code class="docutils literal notranslate"><span class="pre">mpiprocs=128</span></code> in the PBS flags. These three numbers must agree. Mismatch and you get idle cores (wasteful) or <mark class="silent-fail">oversubscription (wrong results, silently)</mark>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pw.x</span></code></strong>: Quantum ESPRESSO’s main executable.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">-nk</span> <span class="pre">1</span></code></strong>: Number of k-point pools. For single-point SCF on small cells (which is what dpgen fp does), 1 pool is fine.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code></strong>: Read input from a file called <code class="docutils literal notranslate"><span class="pre">input</span></code>. This looks innocent. It’s critical.</p></li>
+</ul>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>You MUST use <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code>, not <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">input</span></code> (stdin redirect).</strong> Not optional. Not a suggestion.</p>
+<p>I’m going to say that again. <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code>. Not <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">input</span></code>.</p>
+<p>If you write <code class="docutils literal notranslate"><span class="pre">&quot;command&quot;:</span> <span class="pre">&quot;mpirun</span> <span class="pre">-np</span> <span class="pre">128</span> <span class="pre">pw.x</span> <span class="pre">&lt;</span> <span class="pre">input&quot;</span></code>, it won’t work. dpdispatcher wraps your command in a job script and the stdin redirect doesn’t propagate correctly through the script layers. The <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> flag tells <code class="docutils literal notranslate"><span class="pre">pw.x</span></code> to open the file directly. This is a QE-specific gotcha that doesn’t exist with VASP (which reads <code class="docutils literal notranslate"><span class="pre">INCAR</span></code>/<code class="docutils literal notranslate"><span class="pre">POSCAR</span></code>/<code class="docutils literal notranslate"><span class="pre">KPOINTS</span></code> by convention).</p>
+<p>dpgen names the QE input file <code class="docutils literal notranslate"><span class="pre">input</span></code> automatically when <code class="docutils literal notranslate"><span class="pre">fp_style</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;qe&quot;</span></code>. You don’t choose the filename. It’s always <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p>
+</div>
+</section>
+<section id="the-machine-torque-not-shell">
+<h3>The <code class="docutils literal notranslate"><span class="pre">machine</span></code>: Torque, Not Shell<a class="headerlink" href="#the-machine-torque-not-shell" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./fp_work&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;batch_type&quot;:</span> <span class="pre">&quot;Torque&quot;</span></code>. Now we’re talking to a scheduler. dpdispatcher generates a PBS job script, calls <code class="docutils literal notranslate"><span class="pre">qsub</span></code>, and polls <code class="docutils literal notranslate"><span class="pre">qstat</span></code> to check if the job is done. This is fundamentally different from Shell. Your dpgen process sits there, waiting, periodically poking the scheduler: “Is my job done yet?” The scheduler ignores it for a while. Then eventually it responds. Helpful.</p>
+<p>Notice <code class="docutils literal notranslate"><span class="pre">remote_root</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;./fp_work&quot;</span></code> instead of <code class="docutils literal notranslate"><span class="pre">&quot;./work&quot;</span></code>. I keep them separate so I can easily find and clean up DFT staging files without accidentally nuking the training/exploration work directories. I learned this the expensive way.</p>
+<p><code class="docutils literal notranslate"><span class="pre">context_type</span></code> is still <code class="docutils literal notranslate"><span class="pre">&quot;local&quot;</span></code> because the GPU node and the CPU nodes share the same filesystem. dpgen writes input files locally, submits the job via <code class="docutils literal notranslate"><span class="pre">qsub</span></code>, and the compute nodes can see the files because they mount the same <code class="docutils literal notranslate"><span class="pre">/home</span></code> and <code class="docutils literal notranslate"><span class="pre">/scratch</span></code>.</p>
+</section>
+<section id="the-resources-everything-the-scheduler-needs">
+<h3>The <code class="docutils literal notranslate"><span class="pre">resources</span></code>: Everything the Scheduler Needs<a class="headerlink" href="#the-resources-everything-the-scheduler-needs" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">128</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;queue_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;custom_flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;#PBS -P ioe.che.jayati.1&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;#PBS -l select=1:ncpus=128:mpiprocs=128:centos=genoa&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;#PBS -l walltime=24:00:00&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;/home/chemical/phd/chz218339/scratch/hpc_jobs/env_scripts/qe_hpc.sh&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;envs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here’s every field:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">cpu_per_node:</span> <span class="pre">128</span></code></strong>: AMD EPYC Genoa node. 128 physical cores. Full node allocation.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">gpu_per_node:</span> <span class="pre">0</span></code></strong>: DFT doesn’t need GPUs. We’re not paying the GPU premium for SCF calculations.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">queue_name:</span> <span class="pre">&quot;standard&quot;</span></code></strong>: The PBS queue to submit to. Your cluster has its own queue names: <code class="docutils literal notranslate"><span class="pre">standard</span></code>, <code class="docutils literal notranslate"><span class="pre">gpu</span></code>, <code class="docutils literal notranslate"><span class="pre">long</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>, whatever they decided to call them. Check with <code class="docutils literal notranslate"><span class="pre">qstat</span> <span class="pre">-Q</span></code> or your HPC docs.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">group_size:</span> <span class="pre">5</span></code></strong>: Batch 5 DFT calculations per PBS job. This is a judgment call. Each SCF calculation on a graphene slab takes maybe 30-60 minutes on 128 cores. Five of them run sequentially in one job = roughly 5 hours per submission. With 50 candidate structures per iteration (our <code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code>), that’s 10 PBS jobs. Manageable.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">custom_flags</span></code></strong>: Raw PBS directives injected straight into the job script. dpdispatcher doesn’t interpret them. It just pastes them into the <code class="docutils literal notranslate"><span class="pre">#PBS</span></code> header. This is your escape hatch for cluster-specific requirements that dpdispatcher doesn’t natively understand.</p></li>
+</ul>
+<p>Let me unpack each flag:</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><code class="docutils literal notranslate"><span class="pre">#PBS</span> <span class="pre">-P</span> <span class="pre">ioe.che.jayati.1</span></code> – Project/allocation code. Most HPCs require you to charge compute time to a specific project. Without this, <code class="docutils literal notranslate"><span class="pre">qsub</span></code> looks at your request and says no. Rejected. No project code, no compute.</p>
+<p><code class="docutils literal notranslate"><span class="pre">#PBS</span> <span class="pre">-l</span> <span class="pre">select=1:ncpus=128:mpiprocs=128:centos=genoa</span></code> – Resource selection. One chunk, 128 CPUs, 128 MPI processes, on a CentOS Genoa-architecture node. The <code class="docutils literal notranslate"><span class="pre">centos=genoa</span></code> part is cluster-specific node filtering. Your HPC may not need it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">#PBS</span> <span class="pre">-l</span> <span class="pre">walltime=24:00:00</span></code> – Maximum job duration. 24 hours. If a DFT job hits this limit, PBS kills it. No mercy. Since we have <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">5</span></code> and each SCF takes roughly 1 hour, 24 hours gives plenty of margin. But if your SCF calculations are bigger (larger cells, more k-points), you may need to increase this or decrease <code class="docutils literal notranslate"><span class="pre">group_size</span></code>.</p>
+</div>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">source_list</span></code></strong>: The QE environment setup script. Here’s what <code class="docutils literal notranslate"><span class="pre">qe_hpc.sh</span></code> does:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># QE environment for HPC (CPU-only, MPI)</span>
+<span class="nb">ulimit</span><span class="w"> </span>-n<span class="w"> </span><span class="m">65536</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+
+<span class="nv">INTEL_BASE</span><span class="o">=</span>/home/soft/intel2020u4/compilers_and_libraries_2020.4.304/linux
+<span class="nv">QE_BIN</span><span class="o">=</span>/home/apps/centos7/Quantum_Espresso/7.3.1/bin
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">QE_BIN</span><span class="si">}</span>:<span class="si">${</span><span class="nv">INTEL_BASE</span><span class="si">}</span>/mpi/intel64/bin:<span class="si">${</span><span class="nv">PATH</span><span class="si">}</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">INTEL_BASE</span><span class="si">}</span>/mkl/lib/intel64_lin:...
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">2</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">I_MPI_FABRICS</span><span class="o">=</span>shm:ofi
+</pre></div>
+</div>
+<p>No <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span></code> here. Why? Because we’re running dpgen inside an Apptainer container, and the host’s module system isn’t available inside the container. So we set the paths manually. The QE binary itself (<code class="docutils literal notranslate"><span class="pre">pw.x</span></code>) lives on the host filesystem at <code class="docutils literal notranslate"><span class="pre">/home/apps/...</span></code>, and we make it accessible through bind mounts. Ugly? Yes. Reliable? Also yes. More on this in the Apptainer section below.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">envs</span></code></strong>: Environment variables set directly by dpdispatcher. <code class="docutils literal notranslate"><span class="pre">&quot;OMP_NUM_THREADS&quot;:</span> <span class="pre">&quot;1&quot;</span></code> overrides whatever was in the source script. And yeah, you caught that. The source script sets <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=2</span></code> and the envs block sets it to <code class="docutils literal notranslate"><span class="pre">1</span></code>. The <code class="docutils literal notranslate"><span class="pre">envs</span></code> block runs <em>after</em> the source scripts, so it wins. In this case, pure MPI (no OpenMP threading) turned out to work better for our cell sizes. The source script’s <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=2</span></code> is a leftover from standalone QE runs that I never cleaned up.</p></li>
+</ul>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p><strong>The <code class="docutils literal notranslate"><span class="pre">source_list</span></code> vs <code class="docutils literal notranslate"><span class="pre">envs</span></code> ordering matters.</strong> dpdispatcher sources scripts first, then sets <code class="docutils literal notranslate"><span class="pre">envs</span></code> variables. If you set <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=4</span></code> in your source script and <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=1</span></code> in <code class="docutils literal notranslate"><span class="pre">envs</span></code>, you get 1. This is useful (intentional overrides) but also a subtle bug source if you’re not aware of the ordering. When something environment-related breaks, check both places.</p>
+</div>
+</section>
+</section>
+<section id="the-group-size-deep-dive">
+<h2>The <code class="docutils literal notranslate"><span class="pre">group_size</span></code> Deep Dive<a class="headerlink" href="#the-group-size-deep-dive" title="Permalink to this heading">#</a></h2>
+<p>I keep bringing up <code class="docutils literal notranslate"><span class="pre">group_size</span></code> because it’s the single most impactful parameter in machine.json for your day-to-day sanity. I cannot stress this enough. Let me give you the full picture.</p>
+<p><code class="docutils literal notranslate"><span class="pre">group_size</span></code> controls how many individual tasks dpdispatcher bundles into one job submission. Think of it like packing boxes for shipping. You have 50 items to send. Do you ship 50 individual packages? Or pack them 5 to a box?</p>
+<p><strong>Small <code class="docutils literal notranslate"><span class="pre">group_size</span></code> (1-2):</strong></p>
+<ul class="simple">
+<li><p>Each task gets its own job. Clean isolation.</p></li>
+<li><p>If one fails, only that one fails.</p></li>
+<li><p>But you submit many jobs to the scheduler.</p></li>
+<li><p>Queue wait time adds up: 50 DFT jobs, each waiting 30 minutes in the queue = 25 hours of pure waiting. The scheduler is laughing at you.</p></li>
+</ul>
+<p><strong>Large <code class="docutils literal notranslate"><span class="pre">group_size</span></code> (20-50):</strong></p>
+<ul class="simple">
+<li><p>Fewer total jobs submitted.</p></li>
+<li><p>Less queue overhead. The scheduler is happy.</p></li>
+<li><p>But if task 3 of 50 crashes, the whole group is in trouble.</p></li>
+<li><p>And one job hogs a node forever: 50 DFT jobs at 1 hour each = 50 hours of walltime. Hope you set the walltime high enough.</p></li>
+</ul>
+<p><strong>The sweet spot for our graphene project:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Stage</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">group_size</span></code></p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">train</span></code></p></td>
+<td><p>1</p></td>
+<td><p>Only 4 tasks total. Each is independent. No reason to batch</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model_devi</span></code></p></td>
+<td><p>5</p></td>
+<td><p>9-30 short LAMMPS runs. Batching 5 reduces overhead without much risk</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fp</span></code></p></td>
+<td><p>5</p></td>
+<td><p>50 DFT jobs. 10 submissions. Each takes a few hours. If one SCF diverges, you lose 5 tasks, not 50</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Setting <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">50</span></code> for fp</strong>: “I’ll just batch everything into one job to minimize queue time!” Sounds smart. Then one SCF calculation diverges. Maybe it’s a weird geometry where the H2 molecule pressed its face against the graphene sheet. The whole job script errors out. 50 DFT calculations gone. You have to delete the record.dpgen line and re-run the entire fp stage. I’ve seen this go wrong too many times. Start with <code class="docutils literal notranslate"><span class="pre">group_size</span></code> of 1-5 until you trust your DFT settings, then cautiously increase.</p>
+</div>
+</section>
+<section id="the-three-variants-side-by-side">
+<h2>The Three Variants Side by Side<a class="headerlink" href="#the-three-variants-side-by-side" title="Permalink to this heading">#</a></h2>
+<p>Now that you understand the real mixed-mode config, let me show you how the same file looks for the other two variants. I’ll focus on the structural differences.</p>
+<section id="variant-1-local-shell-everything-local">
+<h3>Variant 1: Local Shell (Everything Local)<a class="headerlink" href="#variant-1-local-shell-everything-local" title="Permalink to this heading">#</a></h3>
+<p>For testing on your workstation or a single-node tutorial:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;api_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;deepmd_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.1.2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;train&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;model_devi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lmp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 4 pw.x -nk 1 -in input&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shell&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Look at how clean this is. <code class="docutils literal notranslate"><span class="pre">batch_type</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;Shell&quot;</span></code> everywhere. No <code class="docutils literal notranslate"><span class="pre">custom_flags</span></code>, no <code class="docutils literal notranslate"><span class="pre">queue_name</span></code>, no <code class="docutils literal notranslate"><span class="pre">source_list</span></code>. Commands are bare executables (<code class="docutils literal notranslate"><span class="pre">dp</span></code>, <code class="docutils literal notranslate"><span class="pre">lmp</span></code>). <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">4</span></code> for training means all 4 models run sequentially in one shell process. Fine for a single GPU. Works on your laptop. Clean.</p>
+</section>
+<section id="variant-2-full-hpc-pbs-slurm-everywhere">
+<h3>Variant 2: Full HPC (PBS/Slurm Everywhere)<a class="headerlink" href="#variant-2-full-hpc-pbs-slurm-everywhere" title="Permalink to this heading">#</a></h3>
+<p>When every stage goes through the scheduler:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;api_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;deepmd_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.1.2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;train&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Slurm&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;queue_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpu&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;custom_flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --gres=gpu:1&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --time=02:00:00&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --account=myproject&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/path/to/deepmd_env.sh&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;model_devi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lmp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Slurm&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;queue_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpu&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;custom_flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --gres=gpu:1&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --time=01:00:00&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --account=myproject&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/path/to/deepmd_env.sh&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpirun -np 64 pw.x -nk 1 -in input&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;batch_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Slurm&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;context_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;local_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./fp_work&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;number_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;cpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;gpu_per_node&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;queue_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;group_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;custom_flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --time=24:00:00&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;#SBATCH --account=myproject&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;source_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/path/to/qe_env.sh&quot;</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;envs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Everything is <code class="docutils literal notranslate"><span class="pre">&quot;Slurm&quot;</span></code>. Every stage needs <code class="docutils literal notranslate"><span class="pre">queue_name</span></code> and <code class="docutils literal notranslate"><span class="pre">custom_flags</span></code>. dpgen submits, waits, polls, collects results. The training <code class="docutils literal notranslate"><span class="pre">group_size</span></code> is 4 because with Slurm you want to minimize job submissions. GPU queue waits can be brutal. One job, 4 models sequentially, done.</p>
+<p>The downside: every iteration involves <em>at least</em> 3 queue waits (one per stage). If your GPU queue has a 4-hour wait, that’s 8+ hours of pure waiting per iteration just for train + model_devi. You’re paying in wall-clock time for the convenience of not needing an interactive session. This is exactly why mixed-mode is so attractive if you can get interactive GPU access.</p>
+</section>
+<section id="variant-3-mixed-mode-the-real-config">
+<h3>Variant 3: Mixed-Mode (The Real Config)<a class="headerlink" href="#variant-3-mixed-mode-the-real-config" title="Permalink to this heading">#</a></h3>
+<p>That’s the graphene config we already walked through. Train and model_devi via Shell on the GPU node. FP via Torque to the CPU queue. Best of both worlds.</p>
+<p>The core insight: <strong>you’re already sitting on the GPU node</strong>. You launched dpgen from within an interactive session or a dedicated allocation. Training and model_devi don’t need a scheduler. They just run. Immediately. No queue. The only stage that needs the scheduler is fp, because DFT runs on different hardware (CPU nodes). That’s the whole trick.</p>
+</section>
+</section>
+<section id="apptainer-integration-running-in-a-container">
+<h2>Apptainer Integration: Running in a Container<a class="headerlink" href="#apptainer-integration-running-in-a-container" title="Permalink to this heading">#</a></h2>
+<p>Here’s the part that had me confused for a solid day. Our DeePMD-kit, LAMMPS, and dpgen all live inside an Apptainer container. QE lives on the host. Training and exploration run inside the container. DFT runs outside it (sort of). How does any of this work together?</p>
+<p>The approach: <strong>launch dpgen from inside the container</strong>, but submit PBS jobs that run on the host.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--writable-tmpfs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/home:/home<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/opt/pbs:/opt/pbs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>~/deepmd-dpgen.sif<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s1">&#39;export PATH=/opt/pbs/default/bin:$PATH &amp;&amp; dpgen run param.json machine.json&#39;</span>
+</pre></div>
+</div>
+<p>Let me unpack this:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--nv</span></code></strong>: GPU passthrough. Makes NVIDIA drivers visible inside the container. <mark class="silent-fail">Without <code class="docutils literal notranslate"><span class="pre">--nv</span></code>, <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code> silently falls back to CPU training. 50x slower.</mark> You’ll know something is wrong when training takes 8 hours instead of 15 minutes. Ask me how I know.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--writable-tmpfs</span></code></strong>: Container filesystem is read-only by default. This gives you a writable overlay in memory so dpgen can create its working directories. Without it, random “Read-only file system” errors start popping up from Python packages trying to write <code class="docutils literal notranslate"><span class="pre">.pyc</span></code> files. Fun to debug at midnight.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/home:/home</span> <span class="pre">--bind</span> <span class="pre">/scratch:/scratch</span></code></strong>: Mount the host’s <code class="docutils literal notranslate"><span class="pre">/home</span></code> and <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> inside the container at the same paths. All our file paths in machine.json use host paths like <code class="docutils literal notranslate"><span class="pre">/home/chemical/phd/...</span></code>. If these aren’t mounted, dpgen looks at your paths, sees nothing, panics.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/opt/pbs:/opt/pbs</span></code></strong>: This is the sneaky one. For the fp stage, dpgen calls <code class="docutils literal notranslate"><span class="pre">qsub</span></code> to submit PBS jobs. The <code class="docutils literal notranslate"><span class="pre">qsub</span></code> binary lives at <code class="docutils literal notranslate"><span class="pre">/opt/pbs/default/bin/qsub</span></code> on the host. By binding <code class="docutils literal notranslate"><span class="pre">/opt/pbs</span></code> into the container and adding it to PATH, dpgen can call <code class="docutils literal notranslate"><span class="pre">qsub</span></code> from inside the container. Without this bind mount, the fp stage fails immediately with <code class="docutils literal notranslate"><span class="pre">qsub:</span> <span class="pre">command</span> <span class="pre">not</span> <span class="pre">found</span></code>. The scheduler doesn’t exist as far as the container is concerned.</p></li>
+</ul>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p><strong>The PBS/Slurm bind mount is the #1 source of container headaches.</strong> On some clusters, PBS libraries live in <code class="docutils literal notranslate"><span class="pre">/var/spool/pbs</span></code> or <code class="docutils literal notranslate"><span class="pre">/opt/torque</span></code>. Slurm might need <code class="docutils literal notranslate"><span class="pre">/usr/lib/slurm</span></code> or <code class="docutils literal notranslate"><span class="pre">/run/munge</span></code>. You need to figure out where your scheduler’s binaries and libraries live on the host and bind-mount all of them. If <code class="docutils literal notranslate"><span class="pre">qsub</span></code> or <code class="docutils literal notranslate"><span class="pre">sbatch</span></code> fails inside the container with a GLIBC version mismatch or missing shared library, this is almost certainly the cause.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">qsub</span></code> and <code class="docutils literal notranslate"><span class="pre">ldd</span> <span class="pre">$(which</span> <span class="pre">qsub)</span></code> on the host to find all the dependencies. Then bind-mount every directory that contains a required shared library. Tedious? Yes. Necessary? Absolutely. There is no good reason to skip this step.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">source_list</span></code> scripts handle the rest. Inside the container, <code class="docutils literal notranslate"><span class="pre">dp</span></code> and <code class="docutils literal notranslate"><span class="pre">lmp</span></code> are already in PATH (the container was built with them). Outside the container (for fp jobs running on CPU nodes), the <code class="docutils literal notranslate"><span class="pre">qe_hpc.sh</span></code> script sets up QE paths manually since the module system isn’t available through the container’s environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># QE environment for HPC (CPU-only, MPI)</span>
+<span class="nb">ulimit</span><span class="w"> </span>-n<span class="w"> </span><span class="m">65536</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+
+<span class="nv">INTEL_BASE</span><span class="o">=</span>/home/soft/intel2020u4/compilers_and_libraries_2020.4.304/linux
+<span class="nv">QE_BIN</span><span class="o">=</span>/home/apps/centos7/Quantum_Espresso/7.3.1/bin
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">QE_BIN</span><span class="si">}</span>:<span class="si">${</span><span class="nv">INTEL_BASE</span><span class="si">}</span>/mpi/intel64/bin:<span class="si">${</span><span class="nv">PATH</span><span class="si">}</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">INTEL_BASE</span><span class="si">}</span>/mkl/lib/intel64_lin:<span class="si">${</span><span class="nv">INTEL_BASE</span><span class="si">}</span>/mpi/intel64/lib:...
+<span class="nb">export</span><span class="w"> </span><span class="nv">I_MPI_FABRICS</span><span class="o">=</span>shm:ofi
+</pre></div>
+</div>
+<p>Hard-coded paths instead of <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">intel</span></code> and <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">qe</span></code>. Ugly but reliable. Modules depend on the shell environment being initialized properly, which often fails inside job scripts spawned from containers. Hard paths don’t care about your shell. They just work.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>The fp jobs run on the host, not inside the container.</strong> When dpdispatcher submits a PBS job via <code class="docutils literal notranslate"><span class="pre">qsub</span></code>, that job runs on whatever compute node PBS assigns. The compute node doesn’t know your Apptainer container exists. It runs <code class="docutils literal notranslate"><span class="pre">qe_hpc.sh</span></code> and then <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">pw.x</span></code> using the host’s QE installation. The container is only involved in dpgen orchestration and GPU work (training + exploration). This is why mixed-mode works so naturally with containers: the container handles the GPU/ML stack, the host handles the CPU/DFT stack. Clean separation.</p>
+</div>
+</section>
+<section id="remote-root-the-disk-space-trap">
+<h2><code class="docutils literal notranslate"><span class="pre">remote_root</span></code>: The Disk Space Trap<a class="headerlink" href="#remote-root-the-disk-space-trap" title="Permalink to this heading">#</a></h2>
+<p>Here’s what nobody tells you until your <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> is 98% full and the sysadmin is emailing you.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;remote_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./work&quot;</span>
+</pre></div>
+</div>
+<p>Every time dpgen runs a stage, dpdispatcher copies files into <code class="docutils literal notranslate"><span class="pre">remote_root</span></code>. For training: input JSONs, initial model files. For exploration: LAMMPS input scripts, frozen model files (4 of them, each 50-200 MB). For fp: QE input files, pseudopotential files.</p>
+<p>Over 10 iterations with 30 LAMMPS tasks and 50 DFT tasks each, this adds up. The frozen models alone: 4 models x 150 MB x 10 iterations x 30 tasks = 180 GB. Is dpdispatcher smart enough to clean up? Sometimes. Depends on the version and whether the job completed cleanly.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Not monitoring disk usage during a dpgen run.</strong> After 5-6 iterations, check your disk. If the <code class="docutils literal notranslate"><span class="pre">work/</span></code> or <code class="docutils literal notranslate"><span class="pre">fp_work/</span></code> directories are ballooning, you can safely delete completed iteration data from these staging directories. The <em>actual</em> results (model files, training data, model_devi.out, DFT outputs) live in the <code class="docutils literal notranslate"><span class="pre">iter.XXXXXX/</span></code> directories, not in <code class="docutils literal notranslate"><span class="pre">remote_root</span></code>. The staging directories are just scratch space.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>du<span class="w"> </span>-sh<span class="w"> </span>./work<span class="w"> </span>./fp_work
+
+<span class="gp"># </span>Safe<span class="w"> </span>to<span class="w"> </span>delete<span class="w"> </span>after<span class="w"> </span>iteration<span class="w"> </span>is<span class="w"> </span>fully<span class="w"> </span><span class="nb">complete</span><span class="w"> </span>and<span class="w"> </span>verified
+<span class="gp">$ </span>rm<span class="w"> </span>-rf<span class="w"> </span>./work/iter.000000_*<span class="w"> </span>./fp_work/iter.000000_*
+</pre></div>
+</div>
+</div>
+</section>
+<section id="what-actually-happens-when-dpgen-runs">
+<h2>What Actually Happens When dpgen Runs<a class="headerlink" href="#what-actually-happens-when-dpgen-runs" title="Permalink to this heading">#</a></h2>
+<p>Let me trace through what machine.json causes at each stage of iteration 0. Not the dpgen logic (that’s Ch 6 and Ch 9), but the <em>execution</em> side. The nuts and bolts of what fires when.</p>
+<p><strong>Stage: train (iteration 0)</strong></p>
+<ol class="arabic simple">
+<li><p>dpgen creates <code class="docutils literal notranslate"><span class="pre">iter.000000/00.train/000/</span></code>, <code class="docutils literal notranslate"><span class="pre">001/</span></code>, <code class="docutils literal notranslate"><span class="pre">002/</span></code>, <code class="docutils literal notranslate"><span class="pre">003/</span></code>. One per model.</p></li>
+<li><p>dpdispatcher reads the <code class="docutils literal notranslate"><span class="pre">train</span></code> block in machine.json.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_type</span> <span class="pre">=</span> <span class="pre">Shell</span></code>. No job submission. Just run it.</p></li>
+<li><p>It sources <code class="docutils literal notranslate"><span class="pre">deepmd_container.sh</span></code> (sets <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS=1</span></code>).</p></li>
+<li><p>For each task directory, it runs the command: <code class="docutils literal notranslate"><span class="pre">dp_auto_gpu.sh</span> <span class="pre">train</span> <span class="pre">input.json</span></code>.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">1</span></code>, all 4 models launch in parallel as separate processes.</p></li>
+<li><p>The GPU semaphore script assigns GPU 0 to model 0, GPU 1 to model 1. Models 2 and 3 wait.</p></li>
+<li><p>Model 0 finishes (~15 min). Releases GPU 0 lock. Model 2 grabs it immediately.</p></li>
+<li><p>All 4 models finish. dpdispatcher reports success.</p></li>
+<li><p>Total wall time: ~30 minutes (2 batches of 2 models on 2 GPUs).</p></li>
+</ol>
+<p><strong>Stage: model_devi (iteration 0)</strong></p>
+<ol class="arabic simple">
+<li><p>dpgen creates <code class="docutils literal notranslate"><span class="pre">iter.000000/01.model_devi/task.000.000000/</span></code> through <code class="docutils literal notranslate"><span class="pre">task.000.000008/</span></code>. 9 LAMMPS tasks (3 systems x 3 temps).</p></li>
+<li><p>dpdispatcher reads the <code class="docutils literal notranslate"><span class="pre">model_devi</span></code> block.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_type</span> <span class="pre">=</span> <span class="pre">Shell</span></code>, <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">5</span></code>.</p></li>
+<li><p>Group 1: tasks 0-4 run sequentially. Group 2: tasks 5-8 run sequentially.</p></li>
+<li><p>Each LAMMPS run: 2-5 minutes on a GPU.</p></li>
+<li><p>Total: 15-25 minutes for all 9 tasks.</p></li>
+</ol>
+<p><strong>Stage: fp (iteration 0)</strong></p>
+<ol class="arabic simple">
+<li><p>dpgen selects candidate structures (say 45 out of the explored frames).</p></li>
+<li><p>Creates <code class="docutils literal notranslate"><span class="pre">iter.000000/02.fp/task.000.000000/</span></code> through <code class="docutils literal notranslate"><span class="pre">task.000.000044/</span></code>.</p></li>
+<li><p>dpdispatcher reads the <code class="docutils literal notranslate"><span class="pre">fp</span></code> block.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_type</span> <span class="pre">=</span> <span class="pre">Torque</span></code>, <code class="docutils literal notranslate"><span class="pre">group_size</span> <span class="pre">=</span> <span class="pre">5</span></code>.</p></li>
+<li><p>Generates 9 PBS job scripts. Each script sources <code class="docutils literal notranslate"><span class="pre">qe_hpc.sh</span></code> and runs 5 sequential <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">pw.x</span></code> calls.</p></li>
+<li><p>Submits all 9 via <code class="docutils literal notranslate"><span class="pre">qsub</span></code>. Job IDs: 12345.hpc, 12346.hpc, …</p></li>
+<li><p>Polls <code class="docutils literal notranslate"><span class="pre">qstat</span></code> every 30 seconds (dpdispatcher’s default polling interval).</p></li>
+<li><p>Jobs sit in queue for 0-60 minutes depending on cluster load.</p></li>
+<li><p>Each job runs for roughly 5 hours (5 SCF calculations at about 1 hour each).</p></li>
+<li><p>All 9 jobs finish. dpdispatcher collects outputs.</p></li>
+<li><p>Total: 1-6 hours depending on queue wait and SCF convergence.</p></li>
+</ol>
+<p><strong>Total iteration 0 wall time</strong>: 2-7 hours. Training is 30 min. Exploration is 20 min. DFT is 1-6 hours. Stage 3 dominates. Always. Every single time. Check the numbers.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p><strong>DFT is always the bottleneck.</strong> In our graphene project, training takes 30 minutes, exploration takes 20 minutes, and DFT takes 4-8 hours per iteration. Over 10 iterations, that’s roughly 5 hours of GPU time and 60 hours of CPU time. Plan your HPC allocation accordingly. You need a lot more CPU-hours than GPU-hours. This surprises everyone the first time.</p>
+</div>
+</section>
+<section id="quick-reference-every-field-in-machine-json">
+<h2>Quick Reference: Every Field in machine.json<a class="headerlink" href="#quick-reference-every-field-in-machine-json" title="Permalink to this heading">#</a></h2>
+<p>Here’s the complete field reference. Keep this open while writing your own.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Where</p></th>
+<th class="head"><p>What it does</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">command</span></code></p></td>
+<td><p>Top level of each block</p></td>
+<td><p>The executable to run. <code class="docutils literal notranslate"><span class="pre">dp</span></code>, <code class="docutils literal notranslate"><span class="pre">lmp</span></code>, <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">pw.x</span> <span class="pre">-in</span> <span class="pre">input</span></code>, or a wrapper script</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">batch_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">machine</span></code></p></td>
+<td><p>Job submission method: <code class="docutils literal notranslate"><span class="pre">Shell</span></code>, <code class="docutils literal notranslate"><span class="pre">Torque</span></code>, <code class="docutils literal notranslate"><span class="pre">Slurm</span></code>, <code class="docutils literal notranslate"><span class="pre">PBS</span></code>, <code class="docutils literal notranslate"><span class="pre">LSF</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">context_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">machine</span></code></p></td>
+<td><p>File transfer method: <code class="docutils literal notranslate"><span class="pre">local</span></code>, <code class="docutils literal notranslate"><span class="pre">ssh</span></code>, <code class="docutils literal notranslate"><span class="pre">lazy-local</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">local_root</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">machine</span></code></p></td>
+<td><p>Where dpgen’s files live. Usually <code class="docutils literal notranslate"><span class="pre">&quot;./&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">remote_root</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">machine</span></code></p></td>
+<td><p>Where dpdispatcher stages job files. <code class="docutils literal notranslate"><span class="pre">&quot;./work&quot;</span></code> or similar</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">number_node</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>Nodes per job. Almost always <code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cpu_per_node</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>CPUs to request</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gpu_per_node</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>GPUs to request. <code class="docutils literal notranslate"><span class="pre">0</span></code> for DFT</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">group_size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>Tasks per job submission. Start small (1-5)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">queue_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>Scheduler queue. Only for Torque/Slurm/PBS</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">custom_flags</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>Raw <code class="docutils literal notranslate"><span class="pre">#PBS</span></code> or <code class="docutils literal notranslate"><span class="pre">#SBATCH</span></code> lines. Your escape hatch</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">source_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>Shell scripts to source before running. Environment setup</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">envs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resources</span></code></p></td>
+<td><p>Environment variables. Applied after <code class="docutils literal notranslate"><span class="pre">source_list</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">api_version</span></code></p></td>
+<td><p>Top level</p></td>
+<td><p>dpdispatcher API version. Use <code class="docutils literal notranslate"><span class="pre">&quot;1.0&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deepmd_version</span></code></p></td>
+<td><p>Top level</p></td>
+<td><p>DeePMD-kit version. Informational</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-pitfalls-hall-of-fame">
+<h2>The Pitfalls Hall of Fame<a class="headerlink" href="#the-pitfalls-hall-of-fame" title="Permalink to this heading">#</a></h2>
+<p>Let me consolidate every trap in this file, ranked by how many hours they’ve personally cost me. I’m serious. Learn from my suffering.</p>
+<p><strong>1. QE stdin redirect (2 days lost).</strong> <code class="docutils literal notranslate"><span class="pre">pw.x</span> <span class="pre">&lt;</span> <span class="pre">input</span></code> does not work through dpdispatcher. Use <code class="docutils literal notranslate"><span class="pre">pw.x</span> <span class="pre">-in</span> <span class="pre">input</span></code>. I tried every variation of quoting and escaping. Nothing works. Use the flag. Move on.</p>
+<p><strong>2. Orphaned GPU locks (6 hours lost).</strong> If your dpgen process gets killed (Ctrl+C, OOM, node reboot) while training is running, the <code class="docutils literal notranslate"><span class="pre">/tmp/dpgen_gpu_*</span></code> lock directories may survive. Next run, the models sit there spin-waiting for a GPU that will never be released. The lock’s previous owner is dead, but the lock doesn’t know that. Fix: <code class="docutils literal notranslate"><span class="pre">rmdir</span> <span class="pre">/tmp/dpgen_gpu_*</span></code> manually before restarting. Three days of compute. Gone. Because of a lock directory.</p>
+<p><strong>3. GLIBC mismatch in container (1 day lost).</strong> Container built on Ubuntu 22.04, host runs CentOS 7. <code class="docutils literal notranslate"><span class="pre">qsub</span></code> links against a newer GLIBC than the host provides. The error looks like <code class="docutils literal notranslate"><span class="pre">qsub:</span> <span class="pre">/lib64/libc.so.6:</span> <span class="pre">version</span> <span class="pre">'GLIBC_2.34'</span> <span class="pre">not</span> <span class="pre">found</span></code>. The container and host are speaking different dialects. Fix: bind-mount the host’s PBS/Slurm libraries into the container so it uses the host’s versions.</p>
+<p><strong>4. <code class="docutils literal notranslate"><span class="pre">group_size</span></code> too large (4 hours lost per incident).</strong> One divergent SCF kills a group of 20 DFT calculations. You notice 8 hours later when you check on the run. Set it to 5 or less until your DFT settings are battle-tested.</p>
+<p><strong>5. <code class="docutils literal notranslate"><span class="pre">remote_root</span></code> filling up disk (subtle, ongoing).</strong> 200 GB of staging files accumulated over 2 weeks. Nobody noticed until the filesystem hit quota and the sysadmin sent that email. Monitor <code class="docutils literal notranslate"><span class="pre">du</span> <span class="pre">-sh</span> <span class="pre">./work</span> <span class="pre">./fp_work</span></code> periodically.</p>
+<p><strong>6. <code class="docutils literal notranslate"><span class="pre">custom_flags</span></code> missing project code (instant failure).</strong> <code class="docutils literal notranslate"><span class="pre">qsub</span></code> rejects your job with a cryptic “project not specified” error. The fix is adding <code class="docutils literal notranslate"><span class="pre">#PBS</span> <span class="pre">-P</span> <span class="pre">your.project.code</span></code> to <code class="docutils literal notranslate"><span class="pre">custom_flags</span></code>. Easy to forget when you’re adapting someone else’s machine.json.</p>
+<p><strong>7. <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">-np</span></code> mismatch (wrong results or crash).</strong> If <code class="docutils literal notranslate"><span class="pre">-np</span> <span class="pre">128</span></code> doesn’t match <code class="docutils literal notranslate"><span class="pre">cpu_per_node</span></code> or <code class="docutils literal notranslate"><span class="pre">mpiprocs</span></code> in the PBS flags, you either waste cores or oversubscribe. Some MPI implementations silently oversubscribe and produce wrong results instead of crashing. Silent wrong answers. The worst kind. Triple-check your numbers.</p>
+</section>
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>machine.json is three blocks of plumbing: <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">model_devi</span></code>, <code class="docutils literal notranslate"><span class="pre">fp</span></code>. Each one says what command to run, where to run it, and what resources to request. The science is in param.json. The suffering is in machine.json.</p>
+<p>Start with the Local Shell variant to test your workflow. Once it works, adapt to your cluster’s scheduler and queue setup. Use the real graphene config as a template. Swap the paths, adjust the core counts, change the PBS flags to match your HPC. The structure doesn’t change. Only the details do.</p>
+<p>In Ch 9, we actually run <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span> <span class="pre">param.json</span> <span class="pre">machine.json</span></code> and watch what happens.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch08"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch07/param-json.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 7: Writing param.json</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch09/running-dpgen.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 9: Running dpgen</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-machine-json-actually-does">What machine.json Actually Does</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-ways-to-run-dpgen">Three Ways to Run dpgen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-real-machine-json-mixed-mode-example">The Real machine.json: Mixed-Mode Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-train-block-teaching-the-models">The <code class="docutils literal notranslate"><span class="pre">train</span></code> Block: Teaching the Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-command-field">The <code class="docutils literal notranslate"><span class="pre">command</span></code> Field</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-machine-sub-block">The <code class="docutils literal notranslate"><span class="pre">machine</span></code> Sub-block</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-resources-sub-block">The <code class="docutils literal notranslate"><span class="pre">resources</span></code> Sub-block</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-devi-block-sending-the-models-on-a-field-trip">The <code class="docutils literal notranslate"><span class="pre">model_devi</span></code> Block: Sending the Models on a Field Trip</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fp-block-calling-in-dft">The <code class="docutils literal notranslate"><span class="pre">fp</span></code> Block: Calling in DFT</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-command-why-in-input-matters">The <code class="docutils literal notranslate"><span class="pre">command</span></code>: Why <code class="docutils literal notranslate"><span class="pre">-in</span> <span class="pre">input</span></code> Matters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-machine-torque-not-shell">The <code class="docutils literal notranslate"><span class="pre">machine</span></code>: Torque, Not Shell</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-resources-everything-the-scheduler-needs">The <code class="docutils literal notranslate"><span class="pre">resources</span></code>: Everything the Scheduler Needs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-size-deep-dive">The <code class="docutils literal notranslate"><span class="pre">group_size</span></code> Deep Dive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-variants-side-by-side">The Three Variants Side by Side</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-1-local-shell-everything-local">Variant 1: Local Shell (Everything Local)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-2-full-hpc-pbs-slurm-everywhere">Variant 2: Full HPC (PBS/Slurm Everywhere)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-3-mixed-mode-the-real-config">Variant 3: Mixed-Mode (The Real Config)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#apptainer-integration-running-in-a-container">Apptainer Integration: Running in a Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#remote-root-the-disk-space-trap"><code class="docutils literal notranslate"><span class="pre">remote_root</span></code>: The Disk Space Trap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-actually-happens-when-dpgen-runs">What Actually Happens When dpgen Runs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference-every-field-in-machine-json">Quick Reference: Every Field in machine.json</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-pitfalls-hall-of-fame">The Pitfalls Hall of Fame</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

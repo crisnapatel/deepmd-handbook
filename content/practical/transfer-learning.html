@@ -1,0 +1,844 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Transfer Learning &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/transfer-learning';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Apptainer Setup" href="apptainer.html" />
+    <link rel="prev" title="Energy Scale Traps" href="energy-scale.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/transfer-learning.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/transfer-learning.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/transfer-learning.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transfer Learning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-transfer-learning-actually-is">What Transfer Learning Actually Is</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-dpgen-implements-it-training-reuse-iter">How dpgen Implements It: <code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-iter-5"><code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code>: 5</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-numb-steps-400-000"><code class="docutils literal notranslate"><span class="pre">training_reuse_numb_steps</span></code>: 400,000</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-start-lr-0-0001"><code class="docutils literal notranslate"><span class="pre">training_reuse_start_lr</span></code>: 0.0001</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-start-pref-e-and-training-reuse-start-pref-f"><code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_e</span></code> and <code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_f</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-old-ratio-auto"><code class="docutils literal notranslate"><span class="pre">training_reuse_old_ratio</span></code>: “auto”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-picture">The Full Picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-transfer-learning-shines">When Transfer Learning Shines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-it-doesn-t">When It Doesn’t</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-monitoring-lcurve-out">Practical Monitoring: lcurve.out</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-in-your-param-json">Putting It in Your param.json</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="transfer-learning">
+<h1>Transfer Learning<a class="headerlink" href="#transfer-learning" title="Permalink to this heading">#</a></h1>
+<p>Training a model from scratch takes 1,000,000 steps. Transfer learning? 400,000. Same accuracy. That is not a rounding error. That is slashing your GPU bill in half.</p>
+<p>And if you’re on an HPC cluster where GPU hours are rationed like lab equipment during finals week, this is the difference between finishing your project this semester and writing an embarrassing supplemental allocation request. I’ve been on both sides of that. Trust me on this one.</p>
+<hr class="docutils" />
+<section id="what-transfer-learning-actually-is">
+<h2>What Transfer Learning Actually Is<a class="headerlink" href="#what-transfer-learning-actually-is" title="Permalink to this heading">#</a></h2>
+<p>Picture this. Every dpgen iteration, four neural networks get initialized with <strong>random weights</strong> and train from scratch. Every. Single. Iteration. The model from iteration 3? Gone. Iteration 4 starts over with random noise where knowledge used to be.</p>
+<p>Think about that for a second.</p>
+<p>By iteration 5, the model already knows 95% of what it needs to know. Carbon is carbon. Hydrogen is hydrogen. The C-C bond in graphene is 1.42 A. The H-H bond is 0.74 A. The model learned all of that in iterations 0 through 4. And then dpgen throws it in the trash and says “learn it again from nothing.”</p>
+<p>That’s like making a student who already passed Physics 101 re-derive F=ma from first principles before they can start Physics 201. Every semester. From scratch. The student already knows mechanics. Let them build on it.</p>
+<p>Transfer learning says: <strong><mark class="key-insight">stop throwing away the previous model.</mark></strong> Instead of random initialization, start from the weights trained in the previous iteration. The network already “knows” the general shape of the potential energy surface. It just needs to absorb the 50-100 new configurations that the <code class="docutils literal notranslate"><span class="pre">fp</span></code> step just labeled.</p>
+<p>The result: faster convergence, fewer training steps, lower compute cost. Same accuracy in less than half the wall time.</p>
+<p>This is the part that made it click for me. Those first 5 iterations do the heavy lifting. Everything after that is refinement. And refinement does not require starting from zero.</p>
+</section>
+<hr class="docutils" />
+<section id="how-dpgen-implements-it-training-reuse-iter">
+<h2>How dpgen Implements It: <code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code><a class="headerlink" href="#how-dpgen-implements-it-training-reuse-iter" title="Permalink to this heading">#</a></h2>
+<p>One field in your <code class="docutils literal notranslate"><span class="pre">param.json</span></code> flips the switch. <code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code> tells dpgen: “starting from this iteration number, reuse the model from the previous iteration instead of training from scratch.”</p>
+<p>Here’s the config from a real graphene + H2 <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. Pull up your param.json and compare.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;training_reuse_iter&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400000</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_old_ratio&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+</pre></div>
+</div>
+<p>Six fields. Let me walk through every single one.</p>
+<section id="training-reuse-iter-5">
+<h3><code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code>: 5<a class="headerlink" href="#training-reuse-iter-5" title="Permalink to this heading">#</a></h3>
+<p>Iterations 0 through 4 train from scratch. Iteration 5 onward reuses the previous model.</p>
+<p>Why not from iteration 0? Because <strong>the initial model is random garbage.</strong> There is nothing worth reusing. You need a few rounds of honest, from-scratch training so the model develops a real representation of your system. Trying to do transfer learning on a model that doesn’t know anything yet is just training from scratch with extra overhead.</p>
+<p>Five is a solid default. By that point, the model has seen enough DFT-labeled configurations to have a baseline worth preserving. Simple system? Maybe 3. Multi-element system with lots of configurations? Try 7 or 8. Start there. Adjust later.</p>
+</section>
+<section id="training-reuse-numb-steps-400-000">
+<h3><code class="docutils literal notranslate"><span class="pre">training_reuse_numb_steps</span></code>: 400,000<a class="headerlink" href="#training-reuse-numb-steps-400-000" title="Permalink to this heading">#</a></h3>
+<p>During transfer learning iterations, train for 400k steps instead of the full million. The model already has good weights. It does not need a million steps to converge. Just enough to absorb the new data and fine-tune.</p>
+<p>This is where the savings actually live. Let me put real numbers on it. 400k steps at ~0.03 seconds/step on one GPU is about 3.3 hours. Versus ~8.3 hours for a million steps. Multiply that by 4 models per iteration, times 10-20 iterations. You are saving real time. Not hypothetical time. Real wall-clock hours you can use for something else.</p>
+</section>
+<section id="training-reuse-start-lr-0-0001">
+<h3><code class="docutils literal notranslate"><span class="pre">training_reuse_start_lr</span></code>: 0.0001<a class="headerlink" href="#training-reuse-start-lr-0-0001" title="Permalink to this heading">#</a></h3>
+<p>A lower starting learning rate. 10x smaller than the default 0.001. Not optional. Not a suggestion.</p>
+<p>Think about it. The model already has good weights. If you slam it with a high learning rate, you destroy the learned representations in the first few thousand steps. The network “forgets” everything it knew and has to relearn it. You just defeated the entire purpose of transfer learning.</p>
+<p>0.0001 makes gentle corrections. The model nudges itself toward fitting the new data without bulldozing the old knowledge.</p>
+<div class="warning admonition">
+<p class="admonition-title">Catastrophic Forgetting</p>
+<p>This is a real phenomenon in neural network fine-tuning. Not just a scary name. If the learning rate is too high, the model overwrites weights that encoded previous knowledge with weights optimized only for the new batch. Great performance on the new data, terrible performance on everything else.</p>
+<p>I learned this the expensive way. Set <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to the default 0.001 on a transfer learning run, watched the loss spike at step 0, and spent an hour wondering what broke. The model had basically reset itself. Wiped clean. All that previous training, gone in the first few hundred steps. The lower learning rate is the defense. Don’t skip it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># What I saw in lcurve.out when I got the LR wrong:</span>
+<span class="c1"># step 0:    loss = 84.3   &lt;-- the model FORGOT everything</span>
+<span class="c1"># step 1000: loss = 12.1   &lt;-- relearning from scratch</span>
+<span class="c1"># ...that&#39;s not transfer learning, that&#39;s amnesia</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="training-reuse-start-pref-e-and-training-reuse-start-pref-f">
+<h3><code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_e</span></code> and <code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_f</span></code><a class="headerlink" href="#training-reuse-start-pref-e-and-training-reuse-start-pref-f" title="Permalink to this heading">#</a></h3>
+<p>Loss function prefactors during transfer learning.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">start_pref_e:</span> <span class="pre">1.0</span></code>: weight on energy errors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_pref_f:</span> <span class="pre">100</span></code>: weight on force errors</p></li>
+</ul>
+<p>Forces get 100x the weight of energies. This is standard DeePMD practice. Forces provide much richer per-atom gradient information than a single total energy number. During fine-tuning, you especially want the model to nail the forces on the new configurations, because that is what determines whether your MD simulation stays alive or launches atoms into the void.</p>
+<p>These may differ from your initial training prefactors. That is intentional. Fine-tuning has different priorities than from-scratch training.</p>
+</section>
+<section id="training-reuse-old-ratio-auto">
+<h3><code class="docutils literal notranslate"><span class="pre">training_reuse_old_ratio</span></code>: “auto”<a class="headerlink" href="#training-reuse-old-ratio-auto" title="Permalink to this heading">#</a></h3>
+<p>How dpgen balances old versus new training data during transfer learning.</p>
+<p>Set it to <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> and dpgen figures out a reasonable ratio based on dataset sizes. You don’t want the model to only see new data (catastrophic forgetting again). You also don’t want the old data to drown out the new data (no learning). <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> finds the middle ground.</p>
+<p>If you need manual control, set this to a float between 0 and 1 (e.g., 0.7 means 70% old data, 30% new). But <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> works in practice. Don’t overthink it.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-full-picture">
+<h2>The Full Picture<a class="headerlink" href="#the-full-picture" title="Permalink to this heading">#</a></h2>
+<p>Here is what a dpgen run looks like with transfer learning enabled:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Iteration</p></th>
+<th class="head"><p>Training Mode</p></th>
+<th class="head"><p>Steps</p></th>
+<th class="head"><p>Starting LR</p></th>
+<th class="head"><p>Model Init</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>From scratch</p></td>
+<td><p>1,000,000</p></td>
+<td><p>0.001</p></td>
+<td><p>Random weights</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>From scratch</p></td>
+<td><p>1,000,000</p></td>
+<td><p>0.001</p></td>
+<td><p>Random weights</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>From scratch</p></td>
+<td><p>1,000,000</p></td>
+<td><p>0.001</p></td>
+<td><p>Random weights</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>From scratch</p></td>
+<td><p>1,000,000</p></td>
+<td><p>0.001</p></td>
+<td><p>Random weights</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>From scratch</p></td>
+<td><p>1,000,000</p></td>
+<td><p>0.001</p></td>
+<td><p>Random weights</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p><strong>Transfer</strong></p></td>
+<td><p><strong>400,000</strong></p></td>
+<td><p><strong>0.0001</strong></p></td>
+<td><p>Previous model</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p><strong>Transfer</strong></p></td>
+<td><p><strong>400,000</strong></p></td>
+<td><p><strong>0.0001</strong></p></td>
+<td><p>Previous model</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p><strong>Transfer</strong></p></td>
+<td><p><strong>400,000</strong></p></td>
+<td><p><strong>0.0001</strong></p></td>
+<td><p>Previous model</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Iterations 0-4: full training from nothing. Iterations 5+: the model builds on what it already knows. If your dpgen run goes 20 iterations, you just saved 15 iterations worth of training time. Real GPU hours. Real money (or real allocation units, same thing).</p>
+</section>
+<hr class="docutils" />
+<section id="when-transfer-learning-shines">
+<h2>When Transfer Learning Shines<a class="headerlink" href="#when-transfer-learning-shines" title="Permalink to this heading">#</a></h2>
+<p>Transfer learning works best when the new data is <strong>similar but not identical</strong> to what the model already knows:</p>
+<ul class="simple">
+<li><p><strong>Same chemistry, new thermodynamic conditions.</strong> Trained at 300 K, now adding data from 500 K. The bonding is the same, just more thermal motion. The existing weights are a perfect starting point.</p></li>
+<li><p><strong>Same elements, slightly different environments.</strong> H2 at 3 A above graphene vs. H2 at 2.5 A. The model already knows C-H and H-H interactions. It just needs to learn the closer approach.</p></li>
+<li><p><strong>Adding data from new dpgen iterations.</strong> The most common case. Each iteration adds a handful of new configurations that are variations on what the model already knows.</p></li>
+<li><p><strong>Same system, different cell sizes.</strong> Trained on a 2x2 supercell, now adding 3x3 data. Local chemistry is identical, just more atoms.</p></li>
+</ul>
+<p>In all of these cases, the model’s existing weights are a legitimate head start. The new data does not require fundamentally different representations, just refinements.</p>
+</section>
+<section id="when-it-doesn-t">
+<h2>When It Doesn’t<a class="headerlink" href="#when-it-doesn-t" title="Permalink to this heading">#</a></h2>
+<p>Be honest with yourself here. Transfer learning is not magic. I’ve seen people waste more time debugging a bad warm start than they would have spent just training from scratch.</p>
+<ul class="simple">
+<li><p><strong>Completely different elements.</strong> A model trained on C and H knows nothing useful about Si and O. The learned weights encode C-H chemistry. Reusing them for silica is starting from a bad place, not a good one. You are not saving time. You are adding confusion.</p></li>
+<li><p><strong>Wildly different energy scales.</strong> If the previous model was trained on bulk structures at -278 eV/atom and you suddenly feed it isolated molecules at -16 eV/atom, the existing weights are calibrated to the wrong scale. Transfer learning will fight itself trying to reconcile the two. (See the <a class="reference internal" href="energy-scale.html"><span class="doc std std-doc">energy scale traps</span></a> page for why this gap is so destructive.)</p></li>
+<li><p><strong>The previous model was bad.</strong> If iteration 4 produced a terrible model (high loss, unstable MD), reusing it for iteration 5 just propagates bad weights forward. Garbage in, garbage out. Sometimes you need a clean start.</p></li>
+<li><p><strong>You changed the model architecture.</strong> Different <code class="docutils literal notranslate"><span class="pre">sel</span></code>, <code class="docutils literal notranslate"><span class="pre">neuron</span></code>, or <code class="docutils literal notranslate"><span class="pre">rcut</span></code> between iterations means the weight tensors have different shapes. You literally cannot load the old weights into the new architecture. dpgen falls back to fresh training automatically, but know that it is happening.</p></li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Transfer learning?</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>New dpgen iteration, same system</p></td>
+<td><p>Yes</p></td>
+<td><p>Most common case; small incremental changes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Higher temperature, same chemistry</p></td>
+<td><p>Yes</p></td>
+<td><p>Bonding is the same, just more thermal motion</p></td>
+</tr>
+<tr class="row-even"><td><p>Completely different elements (C+H to Si+O)</p></td>
+<td><p>No</p></td>
+<td><p>Learned weights encode wrong chemistry</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wildly different energy scales</p></td>
+<td><p>No</p></td>
+<td><p>Weights calibrated to wrong scale</p></td>
+</tr>
+<tr class="row-even"><td><p>Previous model was bad (high loss)</p></td>
+<td><p>No</p></td>
+<td><p>Propagates bad weights</p></td>
+</tr>
+<tr class="row-odd"><td><p>Changed model architecture (<code class="docutils literal notranslate"><span class="pre">sel</span></code>, <code class="docutils literal notranslate"><span class="pre">rcut</span></code>)</p></td>
+<td><p>Can’t</p></td>
+<td><p>Weight tensors have incompatible shapes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="caution admonition">
+<p class="admonition-title">Honest Assessment</p>
+<p>Transfer learning is a warm start. If the warm start is pointing in the wrong direction, you will spend more steps correcting course than you would have spent starting from scratch. When in doubt, compare <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code> from a transfer learning iteration against a from-scratch iteration on the same data. If the transfer learning loss starts higher or converges slower, your warm start is not helping. It is hurting.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="practical-monitoring-lcurve-out">
+<h2>Practical Monitoring: lcurve.out<a class="headerlink" href="#practical-monitoring-lcurve-out" title="Permalink to this heading">#</a></h2>
+<p>Here is how you verify that transfer learning is actually doing its job. After each training run, open that <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code>. That is the file DeePMD-kit writes with training and validation loss at each step.</p>
+<p><strong>From-scratch iteration (iteration 2)</strong>, loss starts high and grinds down over 1M steps:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># step      l2_tst    l2_trn    l2_e_tst  l2_e_trn  l2_f_tst  l2_f_trn</span>
+      <span class="mi">0</span>    <span class="mf">8.43e+01</span>  <span class="mf">7.82e+01</span>  <span class="mf">2.11e+00</span>  <span class="mf">1.96e+00</span>  <span class="mf">8.43e+01</span>  <span class="mf">7.82e+01</span>
+  <span class="mi">10000</span>    <span class="mf">2.15e+00</span>  <span class="mf">2.08e+00</span>  <span class="mf">4.32e-02</span>  <span class="mf">3.89e-02</span>  <span class="mf">2.15e+00</span>  <span class="mf">2.08e+00</span>
+ <span class="mi">100000</span>    <span class="mf">3.45e-01</span>  <span class="mf">3.21e-01</span>  <span class="mf">8.12e-03</span>  <span class="mf">7.54e-03</span>  <span class="mf">3.45e-01</span>  <span class="mf">3.21e-01</span>
+<span class="mi">1000000</span>    <span class="mf">8.72e-02</span>  <span class="mf">7.95e-02</span>  <span class="mf">2.15e-03</span>  <span class="mf">1.98e-03</span>  <span class="mf">8.72e-02</span>  <span class="mf">7.95e-02</span>
+</pre></div>
+</div>
+<p><strong>Transfer learning iteration (iteration 7)</strong>, loss starts LOW and refines further in just 400k steps:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># step      l2_tst    l2_trn    l2_e_tst  l2_e_trn  l2_f_tst  l2_f_trn</span>
+      <span class="mi">0</span>    <span class="mf">1.24e-01</span>  <span class="mf">1.15e-01</span>  <span class="mf">3.82e-03</span>  <span class="mf">3.51e-03</span>  <span class="mf">1.24e-01</span>  <span class="mf">1.15e-01</span>
+  <span class="mi">10000</span>    <span class="mf">1.08e-01</span>  <span class="mf">9.87e-02</span>  <span class="mf">3.14e-03</span>  <span class="mf">2.89e-03</span>  <span class="mf">1.08e-01</span>  <span class="mf">9.87e-02</span>
+ <span class="mi">100000</span>    <span class="mf">7.65e-02</span>  <span class="mf">7.12e-02</span>  <span class="mf">2.43e-03</span>  <span class="mf">2.21e-03</span>  <span class="mf">7.65e-02</span>  <span class="mf">7.12e-02</span>
+ <span class="mi">400000</span>    <span class="mf">6.89e-02</span>  <span class="mf">6.34e-02</span>  <span class="mf">1.98e-03</span>  <span class="mf">1.82e-03</span>  <span class="mf">6.89e-02</span>  <span class="mf">6.34e-02</span>
+</pre></div>
+</div>
+<p>See it? The transfer learning iteration starts at step 0 with a loss of ~0.12. Not ~84. That is the previous model’s knowledge carrying over. It refines down to ~0.07 in just 400k steps. The from-scratch run needed all 1M steps to reach ~0.08.</p>
+<p>That first number at step 0 is your sanity check. If it is low, transfer learning is working. If it is high, something went wrong.</p>
+<p><strong>The red flag:</strong> If your transfer learning iteration starts with a loss <strong>higher</strong> than where the previous iteration ended, stop. Check your learning rate. Check your data paths. Check that dpgen is actually loading the previous model and not a random initialization. Something is broken. Pay attention to this next part: a loss that spikes at step 0 of a transfer learning iteration almost always means the learning rate is too high or the model weights did not load correctly. Those are the only two causes I have ever encountered.</p>
+</section>
+<hr class="docutils" />
+<section id="putting-it-in-your-param-json">
+<h2>Putting It in Your param.json<a class="headerlink" href="#putting-it-in-your-param-json" title="Permalink to this heading">#</a></h2>
+<p>Here is a minimal addition to your existing <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. You do not need to restructure anything. Just add the <code class="docutils literal notranslate"><span class="pre">training_reuse_*</span></code> keys alongside your existing training configuration:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;disp_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;save_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;stop_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.51e-08</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;training_reuse_iter&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training_reuse_numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training_reuse_start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training_reuse_start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training_reuse_start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training_reuse_old_ratio&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><mark class="silent-fail">The <code class="docutils literal notranslate"><span class="pre">training_reuse_*</span></code> keys go at the <strong>top level</strong> of <code class="docutils literal notranslate"><span class="pre">param.json</span></code>, not inside the <code class="docutils literal notranslate"><span class="pre">training</span></code> block.</mark> dpgen reads them separately and overrides the training configuration when the current iteration number meets or exceeds <code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code>. Put them inside the <code class="docutils literal notranslate"><span class="pre">training</span></code> block and dpgen ignores them. No error. No warning. Just full million-step training every iteration, and you wondering why your run is taking twice as long as expected.</p>
+<p>Read that again. Seriously. Top level. Not nested.</p>
+<p>Six lines. That is the whole change.</p>
+</section>
+<hr class="docutils" />
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>Transfer learning in dpgen is a straightforward optimization with outsized payoff. Set <code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code> to 5, drop the step count to 400k, lower the learning rate to 0.0001, and let dpgen handle the rest. The model reuses what it already knows and spends its limited training budget on what is actually new.</p>
+<p>But do not treat it as a silver bullet. Watch <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code>. Verify the loss starts low at step 0. And if you are switching to fundamentally different chemistry, skip transfer learning and train from scratch. A bad warm start is worse than a cold one. I’ve seen this go wrong too many times to sugarcoat it.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="energy-scale.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Energy Scale Traps</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="apptainer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Apptainer Setup</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-transfer-learning-actually-is">What Transfer Learning Actually Is</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-dpgen-implements-it-training-reuse-iter">How dpgen Implements It: <code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-iter-5"><code class="docutils literal notranslate"><span class="pre">training_reuse_iter</span></code>: 5</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-numb-steps-400-000"><code class="docutils literal notranslate"><span class="pre">training_reuse_numb_steps</span></code>: 400,000</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-start-lr-0-0001"><code class="docutils literal notranslate"><span class="pre">training_reuse_start_lr</span></code>: 0.0001</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-start-pref-e-and-training-reuse-start-pref-f"><code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_e</span></code> and <code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_f</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-old-ratio-auto"><code class="docutils literal notranslate"><span class="pre">training_reuse_old_ratio</span></code>: “auto”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-picture">The Full Picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-transfer-learning-shines">When Transfer Learning Shines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-it-doesn-t">When It Doesn’t</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-monitoring-lcurve-out">Practical Monitoring: lcurve.out</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-in-your-param-json">Putting It in Your param.json</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

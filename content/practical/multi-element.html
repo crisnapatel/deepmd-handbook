@@ -1,0 +1,901 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Multi-Element Systems &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/multi-element';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Energy Scale Traps" href="energy-scale.html" />
+    <link rel="prev" title="Gap-Filling: Manual Data Curation" href="gap-filling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/multi-element.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/multi-element.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/multi-element.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Multi-Element Systems</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-map-the-one-rule">type_map: The One Rule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-raw-what-the-model-actually-sees">type.raw: What the Model Actually Sees</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sel-for-multi-element-different-neighbor-counts">sel for Multi-Element: Different Neighbor Counts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudopotential-ordering-qe-fp-pp-files-must-match-type-map">Pseudopotential Ordering (QE): fp_pp_files Must Match type_map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poscar-sys-configs-element-order-in-structure-files">POSCAR / sys_configs: Element Order in Structure Files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-complete-graphanol-config-what-changed-from-graphene">The Complete Graphanol Config: What Changed From Graphene</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-parameters">Training Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#system-configurations-and-initial-data">System Configurations and Initial Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-failure-mode-nobody-warns-you-about">The Failure Mode Nobody Warns You About</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verification-checklist">Verification Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="multi-element-systems">
+<h1>Multi-Element Systems<a class="headerlink" href="#multi-element-systems" title="Permalink to this heading">#</a></h1>
+<p>I spent three days training a C+O+H model before realizing the type_map was wrong. <mark class="silent-fail">The model learned that hydrogen was oxygen and oxygen was hydrogen.</mark> Three days of GPU time. The loss curve looked normal. The dpgen loop ran without a single error. Every iteration completed. Every stage reported success. The model converged on confidently predicting oxygen behavior for hydrogen atoms and hydrogen behavior for oxygen atoms.</p>
+<p>Nothing crashed. Nothing warned me. Not dpgen. Not DeePMD-kit. Not QE.</p>
+<p>There is no automatic check that catches a type_map mismatch. None. You catch it yourself, or you discover it three weeks later when your adsorption energies make zero sense and you start questioning your DFT settings, your vdW functional, your pseudopotentials, everything except the one thing that is actually wrong: line 2 of your <code class="docutils literal notranslate"><span class="pre">param.json</span></code>.</p>
+<p>This chapter is about moving from single-element or two-element systems to multi-element systems (C+O+H for graphanol, C+N+H for graphamine). The complexity does not add. It multiplies. And every single failure mode is silent. I cannot stress this enough.</p>
+<hr class="docutils" />
+<section id="type-map-the-one-rule">
+<h2>type_map: The One Rule<a class="headerlink" href="#type-map-the-one-rule" title="Permalink to this heading">#</a></h2>
+<p>Let me start with the simplest multi-element case: water.</p>
+<p><strong>Water (2 elements, from our tutorial):</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;mass_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">15.999</span><span class="p">,</span><span class="w"> </span><span class="mf">1.008</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Two elements. O is type 0, H is type 1. The <code class="docutils literal notranslate"><span class="pre">sel</span></code> array in the descriptor has two values: <code class="docutils literal notranslate"><span class="pre">[46,</span> <span class="pre">92]</span></code> meaning up to 46 oxygen neighbors and 92 hydrogen neighbors within <code class="docutils literal notranslate"><span class="pre">rcut</span></code>. The <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> file contains a mix of <code class="docutils literal notranslate"><span class="pre">0</span></code>s and <code class="docutils literal notranslate"><span class="pre">1</span></code>s matching the atom ordering in each frame. This is the pattern.</p>
+<p>Now let me put the research-scale configs side by side. Graphene + H₂ (two elements) and graphanol + H₂ (three elements).</p>
+<p><strong>Graphene (2 elements):</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;mass_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">12.011</span><span class="p">,</span><span class="w"> </span><span class="mf">1.008</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Graphanol (3 elements):</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;mass_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">12.011</span><span class="p">,</span><span class="w"> </span><span class="mf">15.999</span><span class="p">,</span><span class="w"> </span><span class="mf">1.008</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Oxygen goes in position 1. Hydrogen moves to position 2. This ordering is arbitrary. You could put them in any sequence. But the moment you choose, that order becomes law. Not a guideline. Not a convention. Not a preference. Law. It propagates to every single file in your entire pipeline, and if one file disagrees, the model silently trains on scrambled data.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Why not just append oxygen at the end as <code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;H&quot;,</span> <span class="pre">&quot;O&quot;]</span></code>? You could. Conventionally, heavier elements go first. But the real issue is deeper: <strong>pick an order and never change it.</strong> If you have existing training data from a C+H run and want to add oxygen, you face a choice:</p>
+<ol class="arabic simple">
+<li><p>Put O at the end: <code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;H&quot;,</span> <span class="pre">&quot;O&quot;]</span></code>. Existing C+H data stays compatible (types 0 and 1 unchanged).</p></li>
+<li><p>Put O in the middle: <code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>. You <strong>must</strong> relabel every existing <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> file to remap H from type 1 to type 2.</p></li>
+</ol>
+<p>Option 1 is easier for backward compatibility. Option 2 is cleaner conceptually. We chose option 2. That meant rewriting every <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> file from the graphene project. Fun times.</p>
+</div>
+<p>Here is where it gets interesting. This is what <code class="docutils literal notranslate"><span class="pre">type_map</span> <span class="pre">=</span> <span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code> propagates to. Every single one of these must be consistent. Miss one and the model silently trains on scrambled data.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>File / Field</p></th>
+<th class="head"><p>Requirement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type_map</span></code> in param.json (top level)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">type_map</span></code> in <code class="docutils literal notranslate"><span class="pre">default_training_param.model</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mass_map</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[12.011,</span> <span class="pre">15.999,</span> <span class="pre">1.008]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[&quot;C.upf&quot;,</span> <span class="pre">&quot;O.upf&quot;,</span> <span class="pre">&quot;H.upf&quot;]</span></code> (same order)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type.raw</span></code> in every training dataset</p></td>
+<td><p>0=C, 1=O, 2=H</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sel</span></code> in descriptor</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[C_neighbors,</span> <span class="pre">O_neighbors,</span> <span class="pre">H_neighbors]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>POSCAR / structure files</p></td>
+<td><p>Atoms listed in type_map order</p></td>
+</tr>
+<tr class="row-odd"><td><p>POTCAR (VASP)</p></td>
+<td><p>Concatenated in type_map order</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><mark class="key-insight">Eight places. At minimum. Miss one, and you get silent corruption.</mark> dpgen will not warn you. It will happily train a model on hydrogen-labeled-as-oxygen and produce a converged loss curve. Ask me how I know.</p>
+<figure class="align-default" id="type-map-ordering">
+<a class="reference internal image-reference" href="../../_images/type_map_ordering.svg"><img alt="../../_images/type_map_ordering.svg" src="../../_images/type_map_ordering.svg" width="85%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 32 </span><span class="caption-text">The type_map ordering must be consistent across every file in the workflow. A mismatch in any single location (param.json, type.raw, POSCAR, pseudopotentials, sel) means the model trains on scrambled data. dpgen will not warn you.</span><a class="headerlink" href="#type-map-ordering" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<hr class="docutils" />
+<section id="type-raw-what-the-model-actually-sees">
+<h2>type.raw: What the Model Actually Sees<a class="headerlink" href="#type-raw-what-the-model-actually-sees" title="Permalink to this heading">#</a></h2>
+<p>The model does not know element names. It does not know what carbon is. It does not know what oxygen does. It knows integers. Type 0. Type 1. Type 2. That is the entire vocabulary.</p>
+<p>For a graphanol system with 72 C atoms, 24 O atoms, and 24 H atoms (120 atoms total), the <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> file contains one integer per atom:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Integers <code class="docutils literal notranslate"><span class="pre">0</span></code> (positions 0-71): Carbon atoms, mapped to <code class="docutils literal notranslate"><span class="pre">type_map[0]</span> <span class="pre">=</span> <span class="pre">&quot;C&quot;</span></code></p></li>
+<li><p>Integers <code class="docutils literal notranslate"><span class="pre">1</span></code> (positions 72-95): Oxygen atoms, mapped to <code class="docutils literal notranslate"><span class="pre">type_map[1]</span> <span class="pre">=</span> <span class="pre">&quot;O&quot;</span></code></p></li>
+<li><p>Integers <code class="docutils literal notranslate"><span class="pre">2</span></code> (positions 96-119): Hydrogen atoms, mapped to <code class="docutils literal notranslate"><span class="pre">type_map[2]</span> <span class="pre">=</span> <span class="pre">&quot;H&quot;</span></code></p></li>
+</ul>
+<p>That is all the model has to work with. 0, 1, 2. It does not know that 1 “should” be oxygen. Whatever data you hand it for type 1, that is what type 1 becomes.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>If your <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> says type 1 sits at positions 72-95, but those positions actually contain hydrogen atoms, and your <code class="docutils literal notranslate"><span class="pre">type_map</span></code> says index 1 is oxygen, the model trains on hydrogen data with the oxygen label. It will learn. The loss will go down. The forces will look plausible in aggregate. The physics will be complete garbage.</p>
+<p>If you feed it hydrogen environments labeled as oxygen, it learns a weird hybrid that is neither hydrogen nor oxygen. A fitting network is a universal function approximator. It will find patterns. They will be the wrong patterns.</p>
+<p><strong>Run this before every dpgen launch:</strong></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span><span class="w"> </span>d<span class="w"> </span><span class="k">in</span><span class="w"> </span>init_data/set_*/<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="go">    echo &quot;$d: $(cat $d/type.raw | sort -u | tr &#39;\n&#39; &#39; &#39;)&quot;</span>
+<span class="go">done</span>
+</pre></div>
+</div>
+<p>If any dataset has type indices outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">n_elements-1]</span></code>, something is wrong. Fix it now. Not after three days of training.</p>
+</div>
+<p>Here is the scenario that burns people. Pay attention.</p>
+<p>You have a C+O+H system with <code class="docutils literal notranslate"><span class="pre">type_map</span> <span class="pre">=</span> <span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>. Every training dataset must use 0 for carbon, 1 for oxygen, 2 for hydrogen. But one dataset is left over from your earlier C+H workflow, where <code class="docutils literal notranslate"><span class="pre">type_map</span></code> was <code class="docutils literal notranslate"><span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>, meaning 0=C and 1=H. You feed that dataset into the C+O+H training run without relabeling. The model reads those hydrogen atoms (type 1 in the old scheme) as oxygen (type 1 in the new scheme).</p>
+<p>Three days of compute. Gone. Because of a leftover dataset with the old labeling scheme. And the loss curve looked perfectly normal the entire time.</p>
+<p>Don’t be me. Relabel before you retrain.</p>
+</section>
+<hr class="docutils" />
+<section id="sel-for-multi-element-different-neighbor-counts">
+<h2>sel for Multi-Element: Different Neighbor Counts<a class="headerlink" href="#sel-for-multi-element-different-neighbor-counts" title="Permalink to this heading">#</a></h2>
+<p>This is where physics enters the picture. In a two-element system, <code class="docutils literal notranslate"><span class="pre">sel</span></code> has 2 entries. For three elements, 3. The numbers must reflect the actual neighbor counts in your real structures. Not guesses. Measurements.</p>
+<p><strong>Graphene + H2 (C, H):</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">120</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Up to 60 carbon neighbors, 120 hydrogen neighbors within the 6 Angstrom cutoff.</p>
+<p><strong>Graphanol + H2 (C, O, H):</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">56</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Up to 48 carbon neighbors, 48 oxygen neighbors, 56 hydrogen neighbors.</p>
+<p>You might look at that and think, “Why not just use <code class="docutils literal notranslate"><span class="pre">[60,</span> <span class="pre">60,</span> <span class="pre">120]</span></code> for graphanol? Keep it generous.” Two reasons. Both matter.</p>
+<p><strong>Memory and cost scale with <code class="docutils literal notranslate"><span class="pre">sum(sel)</span></code>.</strong> Graphene: 60 + 120 = 180 total neighbors. If you naively use <code class="docutils literal notranslate"><span class="pre">[60,</span> <span class="pre">60,</span> <span class="pre">120]</span></code> for graphanol: 60 + 60 + 120 = 240. The descriptor matrix grows 33%. Training slows down. GPU memory usage climbs. On a 16 GB GPU with large systems and <code class="docutils literal notranslate"><span class="pre">batch_size=auto</span></code>, that 33% can push you straight into an out-of-memory crash. Not a subtle degradation. A hard crash on a job you waited 6 hours in queue for.</p>
+<p><strong>The physical neighbor counts differ by element.</strong> In graphanol, each atom sees roughly equal numbers of C and O neighbors (the material has a C:O ratio near 1:1), but more H neighbors (from both the OH groups and nearby H2 gas molecules). Hydrogen is small and mobile. It shows up everywhere. So 48 C + 48 O + 56 H is tailored to the actual chemistry, not padded for paranoia.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>How to determine <code class="docutils literal notranslate"><span class="pre">sel</span></code>:</strong></p>
+<p>Do not guess. Measure neighbor counts from your initial structures:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ase.neighborlist</span><span class="w"> </span><span class="kn">import</span> <span class="n">neighbor_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
+
+<span class="n">atoms</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;sys_configs/sys_bare/POSCAR&quot;</span><span class="p">)</span>
+<span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span> <span class="o">=</span> <span class="n">neighbor_list</span><span class="p">(</span><span class="s1">&#39;ij&#39;</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span>
+<span class="n">symbols</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">center</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)):</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">i_idx</span> <span class="o">==</span> <span class="n">center</span><span class="p">)</span>
+    <span class="n">neighbor_syms</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbols</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">j_idx</span><span class="p">[</span><span class="n">mask</span><span class="p">]]</span>
+    <span class="n">n_C</span> <span class="o">=</span> <span class="n">neighbor_syms</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="n">n_O</span> <span class="o">=</span> <span class="n">neighbor_syms</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">)</span>
+    <span class="n">n_H</span> <span class="o">=</span> <span class="n">neighbor_syms</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
+    <span class="c1"># Track the maximum of each across all atoms</span>
+</pre></div>
+</div>
+<p>Take the maximum neighbor count for each element across all your systems (including the densest: high H2 loading, large supercells from gap-filling). Multiply by 1.5 for safety margin. <mark class="silent-fail">If you run out of <code class="docutils literal notranslate"><span class="pre">sel</span></code>, DeePMD silently ignores the extra neighbors beyond the limit.</mark> No warning. No error. Just missing information that the model needed and did not get. Silent truncation. Silent degradation. Silent frustration when the forces do not converge and you cannot figure out why.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="pseudopotential-ordering-qe-fp-pp-files-must-match-type-map">
+<h2>Pseudopotential Ordering (QE): fp_pp_files Must Match type_map<a class="headerlink" href="#pseudopotential-ordering-qe-fp-pp-files-must-match-type-map" title="Permalink to this heading">#</a></h2>
+<p>The second most common source of silent corruption after <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> mismatches. This one will bite you if you are not careful.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> list must match the <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order. Not alphabetical. Not by atomic number. By <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Period.</p>
+<p><strong>Graphene + H2:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Position 0: Carbon pseudopotential. Position 1: Hydrogen pseudopotential. Matches <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Good.</p>
+<p><strong>Graphanol + H2:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;O.pbe-n-kjpaw_psl.0.1.UPF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Position 0: Carbon. Position 1: Oxygen. Position 2: Hydrogen. Matches <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Clean.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>If you accidentally write:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;O.pbe-n-kjpaw_psl.0.1.UPF&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>dpgen uses the hydrogen pseudopotential for oxygen atoms and the oxygen pseudopotential for hydrogen atoms. QE runs. It might even converge. (SCF does not know your physics. It just solves the Kohn-Sham equations for whatever nuclear charges and pseudopotentials you gave it.) The energies and forces will be wrong. The model trains on wrong energies and wrong forces. Nothing crashes. Nothing warns you. You discover it weeks later, or never.</p>
+<p>For VASP users: the POTCAR must be concatenated in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order. Same rule. Same consequences.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="poscar-sys-configs-element-order-in-structure-files">
+<h2>POSCAR / sys_configs: Element Order in Structure Files<a class="headerlink" href="#poscar-sys-configs-element-order-in-structure-files" title="Permalink to this heading">#</a></h2>
+<p>The POSCAR element order must match <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Here is a graphanol + H2 header:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Graphanol + 4H2
+1.0
+  12.780000   0.000000   0.000000
+  -6.390000  11.067569   0.000000
+   0.000000   0.000000  25.000000
+C  O  H
+72  24  32
+Direct
+  0.0833  0.0833  0.4000  ! C atom (type 0)
+  0.1667  0.0833  0.4000  ! C atom (type 0)
+  ...
+  0.0833  0.0833  0.4500  ! O atom (type 1)
+  ...
+  0.0833  0.0833  0.4800  ! H atom (type 2)
+  ...
+</pre></div>
+</div>
+<p>The species line reads <code class="docutils literal notranslate"><span class="pre">C</span>&#160; <span class="pre">O</span>&#160; <span class="pre">H</span></code> with counts <code class="docutils literal notranslate"><span class="pre">72</span>&#160; <span class="pre">24</span>&#160; <span class="pre">32</span></code>. Carbon first, oxygen second, hydrogen third. Matching <code class="docutils literal notranslate"><span class="pre">type_map</span> <span class="pre">=</span> <span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>.</p>
+<p>Now imagine you wrote <code class="docutils literal notranslate"><span class="pre">C</span>&#160; <span class="pre">H</span>&#160; <span class="pre">O</span></code> on the species line with counts <code class="docutils literal notranslate"><span class="pre">72</span>&#160; <span class="pre">32</span>&#160; <span class="pre">24</span></code>. Swapped H and O. Let me trace through what happens. dpgen reads the first 72 atoms as C. Correct. The next 32 as type 1 (which it thinks is O based on the type_map). But physically those 32 atoms are hydrogen. The last 24 as type 2 (which it thinks is H). They are actually oxygen. You just fed the model hydrogen environments labeled as oxygen and oxygen environments labeled as hydrogen.</p>
+<p>The model trains. The loss goes down. The dpgen loop runs. Three days later you are staring at adsorption energies that are physically impossible and wondering if your vdW functional is broken.</p>
+<p>It is not the functional. It is line 6 of the POSCAR. I am serious.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>Quick verification for POSCAR files:</strong></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span>sys_configs/*/POSCAR<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="go">    echo &quot;=== $f ===&quot;</span>
+<span class="go">    head -8 &quot;$f&quot;</span>
+<span class="go">    echo &quot;&quot;</span>
+<span class="go">done</span>
+</pre></div>
+</div>
+<p>The element line (line 6) must match your <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. The count line (line 7) must match the number of each element. Cross-reference with the actual atom positions. This takes 30 seconds. A type_map mismatch takes 3 days to discover and 3 more to re-run. 30 seconds vs. 6 days. Do the math.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="the-complete-graphanol-config-what-changed-from-graphene">
+<h2>The Complete Graphanol Config: What Changed From Graphene<a class="headerlink" href="#the-complete-graphanol-config-what-changed-from-graphene" title="Permalink to this heading">#</a></h2>
+<p>Alright, enough about what can go wrong. Let me show you what a correct multi-element config actually looks like. This is the real graphanol <code class="docutils literal notranslate"><span class="pre">param.json</span></code>, and I will walk through every difference from the graphene version.</p>
+<section id="training-parameters">
+<h3>Training Parameters<a class="headerlink" href="#training-parameters" title="Permalink to this heading">#</a></h3>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>Descriptor:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;rcut_smth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">56</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The only change from the graphene config: <code class="docutils literal notranslate"><span class="pre">sel</span></code> went from <code class="docutils literal notranslate"><span class="pre">[60,</span> <span class="pre">120]</span></code> to <code class="docutils literal notranslate"><span class="pre">[48,</span> <span class="pre">48,</span> <span class="pre">56]</span></code>. The embedding network (<code class="docutils literal notranslate"><span class="pre">neuron</span></code>, <code class="docutils literal notranslate"><span class="pre">axis_neuron</span></code>) stays identical. The complexity of the local chemical environment in graphanol is similar to graphene + H2, just with one more element type to track.</p>
+<p><strong>Fitting network</strong>: <code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code>, unchanged. The fitting net does not depend on the number of elements directly. It receives the descriptor output, which already encodes element-type information. Internally, DeePMD-kit creates one fitting network per element type, but they share the same architecture.</p>
+<p><strong>Loss function</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Virial prefactors are now non-zero. Here is why. Graphanol has OH groups that create internal stress when H2 adsorbs, and the model needs to capture that stress-strain coupling. For pure graphene (a 2D slab with a vacuum gap), the stress tensor from QE is not physically meaningful in the z-direction, so we kept <code class="docutils literal notranslate"><span class="pre">pref_v</span> <span class="pre">=</span> <span class="pre">0</span></code>. Graphanol’s OH groups make the virial physically meaningful again.</p>
+</div>
+</section>
+<section id="system-configurations-and-initial-data">
+<h3>System Configurations and Initial Data<a class="headerlink" href="#system-configurations-and-initial-data" title="Permalink to this heading">#</a></h3>
+<p>Graphanol has 9 <code class="docutils literal notranslate"><span class="pre">sys_configs</span></code> systems (vs graphene’s 5). The OH groups create distinct adsorption sites that need separate exploration. Initial data grew to 20 <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> datasets (vs graphene’s 16), including graphanol-specific structures like <code class="docutils literal notranslate"><span class="pre">set_76atoms</span></code> (72 C + 4 O). More elements means more compositions to cover. More compositions means more initial data. There is no shortcut here. If you try to shortcut it, you pay in wasted iterations.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>When going from C+H to C+O+H, you <strong>must</strong> have initial training data that includes oxygen-containing structures. You cannot bootstrap a three-element model from two-element data alone. The model has never seen oxygen. It does not know what oxygen does. It does not know what an O-H bond looks like. It does not know that oxygen is electronegative.</p>
+<p>Generate initial C+O+H data from short AIMD runs on the graphanol structure. Even 50-100 frames of the bare graphanol slab at 300 K gives the model a starting point. Without this, the first few dpgen iterations will be chaos. The model will predict random forces for any atom near oxygen, the exploration will be useless, and you will waste several iterations before the training set accumulates enough oxygen data to become useful. I’ve seen this go wrong too many times.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-failure-mode-nobody-warns-you-about">
+<h2>The Failure Mode Nobody Warns You About<a class="headerlink" href="#the-failure-mode-nobody-warns-you-about" title="Permalink to this heading">#</a></h2>
+<p>Let me be very specific about what the corruption looks like, because understanding the mechanism is the only way to guard against it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">type_map</span> <span class="pre">=</span> <span class="pre">[&quot;C&quot;,</span> <span class="pre">&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>. But your POSCAR lists atoms as C, H, O (hydrogen before oxygen). Let’s trace through this.</p>
+<p>dpgen reads the first 72 atoms as type 0 (C). Correct. The next 24 as type 1. It thinks oxygen, because type_map says index 1 is O. But they are actually hydrogen. The last 24 as type 2. It thinks hydrogen. They are actually oxygen.</p>
+<p>The model trains. The loss drops because the fitting network is a universal function approximator. It finds correlations. They are the wrong correlations. The descriptor for “type 1” is built from hydrogen atomic environments, but the model associates type 1 with the oxygen fitting network. Forces might look reasonable in aggregate because the network is flexible enough to partially compensate. But adsorption energies are wrong. Diffusion barriers are wrong. Every property that depends on getting O and H right is contaminated.</p>
+<p>And the really infuriating part: the model might even pass basic validation. RDFs can look plausible. Stability tests can pass. The corruption shows up only when you compare against careful DFT benchmarks for specific oxygen-sensitive properties. By then, you have weeks of production data that is quietly wrong.</p>
+<p>That is the trap.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>dpgen will not warn you about swapped element types. DeePMD-kit will not warn you. QE will not warn you. The loss function will not warn you. The only thing that warns you is careful manual verification before you press submit.</p>
+<p>This is not hypothetical. I have seen it happen on two separate projects. Both times, the error was discovered only after production simulations produced results that matched no published literature. Both times, the root cause was a <code class="docutils literal notranslate"><span class="pre">type_map</span></code> / POSCAR mismatch. Both times, the fix was starting over from scratch.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="verification-checklist">
+<h2>Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permalink to this heading">#</a></h2>
+<p>Before launching dpgen on a multi-element system, go through this. Every item. No shortcuts. No “I’m pretty sure it’s right.” Verify.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>grep<span class="w"> </span><span class="s1">&#39;&quot;type_map&quot;&#39;</span><span class="w"> </span>param.json
+
+<span class="gp">$ </span><span class="k">for</span><span class="w"> </span>d<span class="w"> </span><span class="k">in</span><span class="w"> </span>init_data/set_*/<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="go">    echo &quot;$d: types=$(cat $d/type.raw | sort -u | tr &#39;\n&#39; &#39; &#39;) count=$(wc -w &lt; $d/type.raw)&quot;</span>
+<span class="go">done</span>
+
+<span class="gp">$ </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s1">&#39;&quot;fp_pp_files&quot;&#39;</span><span class="w"> </span>param.json
+
+<span class="gp">$ </span><span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span>sys_configs/*/POSCAR<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="go">    echo &quot;=== $f ===&quot;; sed -n &#39;6,7p&#39; &quot;$f&quot;</span>
+<span class="go">done</span>
+
+<span class="gp">$ </span>grep<span class="w"> </span><span class="s1">&#39;&quot;sel&quot;&#39;</span><span class="w"> </span>param.json
+
+<span class="gp">$ </span>grep<span class="w"> </span><span class="s1">&#39;&quot;mass_map&quot;&#39;</span><span class="w"> </span>param.json
+</pre></div>
+</div>
+<p>Six commands. Two minutes. That is the price of not wasting three days.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>This checklist takes 2 minutes. A type_map mismatch takes 3 days to discover and 3 more days to re-run. I know people who have been burned by this twice. On the second time, they wrote a shell script that runs the checklist automatically before every <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code>. Automate the thing that burns you twice. Not optional. Not a suggestion.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>Adding an element to your dpgen workflow is not adding a line to a list. It is a propagation problem. <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order must be consistent across <code class="docutils literal notranslate"><span class="pre">param.json</span></code>, training data <code class="docutils literal notranslate"><span class="pre">type.raw</span></code>, pseudopotentials <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code>, structure files POSCAR, and the descriptor <code class="docutils literal notranslate"><span class="pre">sel</span></code>. Eight places minimum. One mismatch, and the model silently learns the wrong chemistry. For three days. While the loss curve looks perfectly healthy.</p>
+<p>If you are extending a C+H workflow to C+O+H: relabel all <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> files, generate fresh initial data with the new element, update every field in <code class="docutils literal notranslate"><span class="pre">param.json</span></code>, run the verification checklist, and start dpgen from scratch. Do not try to continue a previous run. Different <code class="docutils literal notranslate"><span class="pre">sel</span></code> means a different descriptor size means incompatible model architecture.</p>
+<p>Check the type_map. Check it again. Then check it one more time. Then write a script that checks it for you.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="gap-filling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Gap-Filling: Manual Data Curation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="energy-scale.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Energy Scale Traps</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-map-the-one-rule">type_map: The One Rule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-raw-what-the-model-actually-sees">type.raw: What the Model Actually Sees</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sel-for-multi-element-different-neighbor-counts">sel for Multi-Element: Different Neighbor Counts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudopotential-ordering-qe-fp-pp-files-must-match-type-map">Pseudopotential Ordering (QE): fp_pp_files Must Match type_map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poscar-sys-configs-element-order-in-structure-files">POSCAR / sys_configs: Element Order in Structure Files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-complete-graphanol-config-what-changed-from-graphene">The Complete Graphanol Config: What Changed From Graphene</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-parameters">Training Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#system-configurations-and-initial-data">System Configurations and Initial Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-failure-mode-nobody-warns-you-about">The Failure Mode Nobody Warns You About</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verification-checklist">Verification Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

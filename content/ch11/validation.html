@@ -1,0 +1,1079 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 11: Validation &amp; Production &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch11/validation';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Gap-Filling: Manual Data Curation" href="../practical/gap-filling.html" />
+    <link rel="prev" title="Ch 10: Monitoring &amp; Troubleshooting" href="../ch10/monitoring.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch11/validation.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch11/validation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch11/validation.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 11: Validation & Production</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-validation-is-not-optional">Why Validation Is Not Optional</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-dp-test-the-report-card">Step 1: dp test (The Report Card)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-numbers-are-good-enough">What Numbers Are “Good Enough”?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dp-test-on-subsystems-the-trap-i-fell-into">dp test on Subsystems: The Trap I Fell Into</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-long-md-stability-test">Step 2: Long-MD Stability Test</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-long-should-it-survive">How Long Should It Survive?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-property-validation">Step 3: Property Validation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radial-distribution-function-rdf">Radial Distribution Function (RDF)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diffusion-coefficient">Diffusion Coefficient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equation-of-state-eos">Equation of State (EOS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phonon-dispersion">Phonon Dispersion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-hallucinated-stability-problem">The “Hallucinated Stability” Problem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-guard-against-it">How to Guard Against It</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-good-enough">When Is “Good Enough”?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-qualitative-studies-trends-screening-mechanism-identification">For qualitative studies (trends, screening, mechanism identification):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-quantitative-studies-binding-energies-barriers-diffusion-coefficients">For quantitative studies (binding energies, barriers, diffusion coefficients):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-publication-quality-results">For publication-quality results:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#going-to-production">Going to Production</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#npt-and-the-virial-question">NPT and the Virial Question</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-pipeline-what-you-just-built">The Full Pipeline: What You Just Built</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-11-validation-production">
+<h1>Ch 11: Validation &amp; Production<a class="headerlink" href="#ch-11-validation-production" title="Permalink to this heading">#</a></h1>
+<p>You trained the model. The dpgen loop converged. 98% of frames came back “accurate.” Model deviations flattened out. The loss curve is a textbook exponential decay. You are looking at those numbers thinking, “This is it. Time to run production and start writing.”</p>
+<p>Stop.</p>
+<p>I made this exact mistake. I saw 98% accurate and assumed convergence meant correctness. It does not. <mark class="key-insight">A converged dpgen loop means your four models agree with each other. That is the entirety of what it means.</mark> They could be agreeing on complete nonsense. Four students who studied the same bad textbook will all ace the same bad test. Low deviation. High confidence. Totally wrong.</p>
+<p>This chapter is about answering the question that actually matters: did your model learn physics, or did it learn to agree with itself? You figure that out now, before you burn weeks of GPU time producing publishable garbage.</p>
+<section id="why-validation-is-not-optional">
+<h2>Why Validation Is Not Optional<a class="headerlink" href="#why-validation-is-not-optional" title="Permalink to this heading">#</a></h2>
+<p>Here is what tripped me up. I saw that 98% accurate ratio and my brain immediately filed the project under “done.” Three weeks into production, a collaborator asked why the bond length was wrong. The model was confident. It was stable. It was wrong.</p>
+<p>Model deviation measures agreement between four independently initialized networks. That is all it measures. If all four networks learned the same bias (because they trained on the same biased data), they will happily agree on the wrong answer. Low deviation. Zero alarm bells. And you are deep into production before the physics catches up with you.</p>
+<p>This happens more often than anyone admits. And it happens for real, structural reasons:</p>
+<ul class="simple">
+<li><p>Your training data has a systematic gap. All structures came from NVT at mild temperatures. No repulsive close-contact configurations. The model has never seen atoms pushed together, so it invents what happens there. Confidently.</p></li>
+<li><p>Your DFT settings have a bug. Wrong pseudopotential. Missing vdW correction. Converged to the wrong electronic state. Every label in your training set is consistently wrong, and the model learned those wrong labels perfectly.</p></li>
+<li><p>Your energy scales are mismatched (see <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a>). The model nailed the slab and completely ignored the molecules.</p></li>
+<li><p>The model found a shortcut. Some spurious correlation in the training data that predicts forces well enough on those specific frames but collapses on anything new.</p></li>
+</ul>
+<p>Validation catches these. Production MD does not. Production MD just gives you more data from a model you never verified. That is not science. That is amplified guessing.</p>
+<figure class="align-default" id="validation-workflow">
+<a class="reference internal image-reference" href="../../_images/validation_workflow.svg"><img alt="../../_images/validation_workflow.svg" src="../../_images/validation_workflow.svg" width="90%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 28 </span><span class="caption-text">The three-stage validation pipeline. Start with <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> for quantitative RMSE benchmarks, then run long MD simulations to check stability, and finally validate physical properties (RDF, diffusion, EOS) against DFT or experiment. If any stage fails, the remedy depends on the failure mode.</span><a class="headerlink" href="#validation-workflow" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<hr class="docutils" />
+<section id="step-1-dp-test-the-report-card">
+<h2>Step 1: dp test (The Report Card)<a class="headerlink" href="#step-1-dp-test-the-report-card" title="Permalink to this heading">#</a></h2>
+<p>First thing after training. Always. There is no good reason to skip this step.</p>
+<p><code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> takes your frozen model, feeds it a held-out test set, and tells you how far off it is from DFT. Energy RMSE, force RMSE, virial RMSE. Three numbers. Your first reality check.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/02_test/
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_fcc/<span class="w"> </span>-n<span class="w"> </span><span class="m">500</span><span class="w"> </span>-d<span class="w"> </span>results
+
+<span class="gp"># </span>This<span class="w"> </span>produces:
+<span class="gp">#   </span>results.e.out<span class="w">       </span>-<span class="w"> </span>predicted<span class="w"> </span>vs.<span class="w"> </span>DFT<span class="w"> </span>energy<span class="w"> </span>per<span class="w"> </span>frame
+<span class="gp">#   </span>results.e_peratom.out<span class="w"> </span>-<span class="w"> </span>per-atom<span class="w"> </span>energy<span class="w"> </span><span class="o">(</span>more<span class="w"> </span>useful<span class="w"> </span><span class="k">for</span><span class="w"> </span>comparison<span class="o">)</span>
+<span class="gp">#   </span>results.f.out<span class="w">       </span>-<span class="w"> </span>predicted<span class="w"> </span>vs.<span class="w"> </span>DFT<span class="w"> </span>forces<span class="w"> </span>per<span class="w"> </span>atom<span class="w"> </span>per<span class="w"> </span>component
+<span class="gp">#   </span>results.v.out<span class="w">       </span>-<span class="w"> </span>predicted<span class="w"> </span>vs.<span class="w"> </span>DFT<span class="w"> </span>virial<span class="w"> </span>per<span class="w"> </span>frame<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>available<span class="o">)</span>
+</pre></div>
+</div>
+<p>Here are the actual numbers from our tutorial models:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head text-center"><p>Ar (FCC)</p></th>
+<th class="head text-center"><p>Ar (Liquid)</p></th>
+<th class="head text-center"><p>Water</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy RMSE/atom</p></td>
+<td class="text-center"><p>0.3 meV</p></td>
+<td class="text-center"><p>0.3 meV</p></td>
+<td class="text-center"><p>0.43 meV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force RMSE</p></td>
+<td class="text-center"><p>2.9 meV/Angstrom</p></td>
+<td class="text-center"><p>5.0 meV/Angstrom</p></td>
+<td class="text-center"><p>38.5 meV/Angstrom</p></td>
+</tr>
+<tr class="row-even"><td><p>Virial RMSE/atom</p></td>
+<td class="text-center"><p>0.17 meV</p></td>
+<td class="text-center"><p>0.27 meV</p></td>
+<td class="text-center"><p>N/A (no virial)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Check the numbers. Ar is excellent across the board. Water forces are ~10x larger, and that’s expected. Hydrogen atoms vibrate fast, feel strong intramolecular forces. 38.5 meV/Angstrom for a condensed-phase multi-element system with 320 training frames is solid.</p>
+<section id="what-numbers-are-good-enough">
+<h3>What Numbers Are “Good Enough”?<a class="headerlink" href="#what-numbers-are-good-enough" title="Permalink to this heading">#</a></h3>
+<p>Everyone asks this. The honest answer: it depends entirely on what you are trying to measure. But you need a starting point, so here are rough benchmarks from the literature and from runs I have actually done:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Excellent</p></th>
+<th class="head"><p>Good</p></th>
+<th class="head"><p>Acceptable</p></th>
+<th class="head"><p>Concerning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy RMSE/atom</p></td>
+<td><p>&lt; 1 meV</p></td>
+<td><p>1-3 meV</p></td>
+<td><p>3-5 meV</p></td>
+<td><p>&gt; 5 meV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force RMSE</p></td>
+<td><p>&lt; 30 meV/A</p></td>
+<td><p>30-60 meV/A</p></td>
+<td><p>60-100 meV/A</p></td>
+<td><p>&gt; 100 meV/A</p></td>
+</tr>
+<tr class="row-even"><td><p>Virial RMSE/atom</p></td>
+<td><p>&lt; 5 meV</p></td>
+<td><p>5-15 meV</p></td>
+<td><p>15-30 meV</p></td>
+<td><p>&gt; 30 meV</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Those numbers look clean on the page. In practice, they lie.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>A 3 meV/atom energy RMSE is excellent for a bulk metal. It is terrible for a weakly bound physisorption system where the binding energy is 30-50 meV/molecule. If your error is 10% of the thing you are measuring, the model is useless for that measurement. The absolute number means nothing without context.</p>
+<p>Always compare your RMSE to the <em>energy scale of the physics you care about</em>. A model with 5 meV/atom error studying a 2 eV reaction barrier? Perfectly fine. The same model studying a 30 meV adsorption energy? You are measuring noise.</p>
+</div>
+<div class="seealso admonition">
+<p class="admonition-title">Simulation</p>
+<p>For a hands-on error analysis walkthrough using Python, see the <a class="reference external" href="https://github.com/cesaremalosso/workshop-july-2023/tree/main/hands-on-sessions/day-2/6-error-analysis">CSI Princeton Workshop (Session 6)</a>. The notebook demonstrates programmatic model evaluation using <code class="docutils literal notranslate"><span class="pre">deepmd.infer.DeepPot</span></code> and <code class="docutils literal notranslate"><span class="pre">dpdata.LabeledSystem</span></code>, with parity plots and per-system error decomposition.</p>
+</div>
+</section>
+<section id="dp-test-on-subsystems-the-trap-i-fell-into">
+<h3>dp test on Subsystems: The Trap I Fell Into<a class="headerlink" href="#dp-test-on-subsystems-the-trap-i-fell-into" title="Permalink to this heading">#</a></h3>
+<p>This is the part the docs skip.</p>
+<p>We tested our Ar model on FCC and liquid separately. Look at the table above. FCC force RMSE: 2.9 meV/Angstrom. Liquid: 5.0 meV/Angstrom. If we had tested on “all Ar” combined, we’d get something around 4 meV/Angstrom. Not terrible, but the per-subsystem split shows the model is slightly weaker on the more disordered liquid phase. Actionable information that the aggregate hides.</p>
+<p>This matters even more for multi-component systems. I ran <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> on a mixed graphene + H₂ dataset once. Got 40 meV/Angstrom overall. Seemed fine. Tested subsystems separately: graphene slab was 28 meV/Angstrom (great), but isolated H₂ gas was 350 meV/Angstrom (catastrophic). The slab frames (72 atoms each, hundreds of frames) completely swamped the H₂ frames (2 atoms, a few dozen frames). The aggregate number hid a disaster.</p>
+<p>Test each subsystem independently:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/02_test/
+
+<span class="gp"># </span>For<span class="w"> </span>Ar:<span class="w"> </span><span class="nb">test</span><span class="w"> </span>FCC<span class="w"> </span>and<span class="w"> </span>liquid<span class="w"> </span>separately
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_fcc/<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-d<span class="w"> </span>test_fcc
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_liquid/<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-d<span class="w"> </span>test_liquid
+
+<span class="gp"># </span>For<span class="w"> </span>multi-component<span class="w"> </span>systems:<span class="w"> </span><span class="nb">test</span><span class="w"> </span>each<span class="w"> </span>system<span class="w"> </span><span class="nb">type</span>
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>test_data/slab/<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>-d<span class="w"> </span>test_slab
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>test_data/molecule/<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>-d<span class="w"> </span>test_mol
+</pre></div>
+</div>
+<p>Compare the numbers side by side. If one subsystem is 5-10x worse than the others, you found your problem. (See <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a> for the full story on why multi-component energy scales cause trouble.)</p>
+<p>So that is step 1. Test the model. Test it on each subsystem separately. Do not let an aggregate number hide a catastrophe.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-2-long-md-stability-test">
+<h2>Step 2: Long-MD Stability Test<a class="headerlink" href="#step-2-long-md-stability-test" title="Permalink to this heading">#</a></h2>
+<p>Your <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> numbers look good. The model knows its training data. Now the real question: can it survive dynamics?</p>
+<p>A model can have beautiful RMSE on static test frames and then explode at step 50,000. Let me explain why, because this is important. MD is sequential. A small force error pushes an atom to a slightly wrong position. Next timestep, the atom is somewhere the model has never seen. The prediction gets worse. The position drifts further. The error compounds. Within a few thousand steps, you have atoms traveling at the speed of sound.</p>
+<p>The model did not “crash.” It confidently predicted its way into physical absurdity, one timestep at a time. And the really insidious part? The energy might look fine at every individual step. The accumulated drift is invisible until the simulation is fully unhinged.</p>
+<p>The test is dead simple. Run a long NVT simulation and see if it survives:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/03_lammps/
+
+<span class="gp"># </span>Run<span class="w"> </span>a<span class="w"> </span>long<span class="w"> </span>NVT<span class="w"> </span>simulation<span class="w"> </span>and<span class="w"> </span>see<span class="w"> </span><span class="k">if</span><span class="w"> </span>it<span class="w"> </span>survives
+<span class="gp"># </span><span class="m">1</span><span class="w"> </span><span class="nv">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>,000<span class="w"> </span><span class="nv">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>,000,000<span class="w"> </span>steps<span class="w"> </span>at<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span>fs<span class="w"> </span>timestep
+<span class="gp">$ </span>lmp<span class="w"> </span>-in<span class="w"> </span>stability_test.in
+</pre></div>
+</div>
+<p>Your LAMMPS input should look something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">units</span>           <span class="n">metal</span>
+<span class="n">atom_style</span>      <span class="n">atomic</span>
+<span class="n">read_data</span>       <span class="n">your_system</span><span class="o">.</span><span class="n">data</span>
+<span class="n">pair_style</span>      <span class="n">deepmd</span> <span class="n">frozen_model</span><span class="o">.</span><span class="n">pb</span>
+<span class="n">pair_coeff</span>      <span class="o">*</span> <span class="o">*</span>
+
+<span class="n">velocity</span>        <span class="nb">all</span> <span class="n">create</span> <span class="mf">300.0</span> <span class="mi">12345</span>
+<span class="n">fix</span>             <span class="mi">1</span> <span class="nb">all</span> <span class="n">nvt</span> <span class="n">temp</span> <span class="mf">300.0</span> <span class="mf">300.0</span> <span class="mf">0.1</span>
+<span class="n">timestep</span>        <span class="mf">0.0005</span>
+
+<span class="n">thermo</span>          <span class="mi">1000</span>
+<span class="n">thermo_style</span>    <span class="n">custom</span> <span class="n">step</span> <span class="n">temp</span> <span class="n">pe</span> <span class="n">ke</span> <span class="n">etotal</span> <span class="n">press</span>
+<span class="n">dump</span>            <span class="mi">1</span> <span class="nb">all</span> <span class="n">custom</span> <span class="mi">10000</span> <span class="n">stability</span><span class="o">.</span><span class="n">dump</span> <span class="nb">id</span> <span class="nb">type</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="n">fx</span> <span class="n">fy</span> <span class="n">fz</span>
+
+<span class="n">run</span>             <span class="mi">2000000</span>
+</pre></div>
+</div>
+<p>Plain English: 2 million steps at 0.5 femtoseconds each. One nanosecond total. NVT at 300 K. Log thermodynamics every 1,000 steps, dump configurations every 10,000.</p>
+<p>Now watch for four things:</p>
+<ol class="arabic simple">
+<li><p><strong>Temperature explosion.</strong> Temperature should fluctuate around 300 K (the thermostat handles that). If it suddenly rockets to 10,000 K, the model broke. Check which step it happened. How long did it survive before losing its mind?</p></li>
+<li><p><strong>Energy drift.</strong> In NVE (not NVT), total energy should be roughly conserved. Drift below 1 meV/atom/ps is excellent. Above 10 meV/atom/ps is a red flag. The model’s potential energy surface is not smooth enough for energy conservation.</p></li>
+<li><p><strong>Structural integrity.</strong> Does the crystal stay crystalline? Do molecules stay intact? Do bond lengths stay physical? Dump configurations and look at them in OVITO or VMD. Your eyes catch things that metrics miss. I cannot stress this enough. Look at the trajectory. Actually look at it.</p></li>
+<li><p><strong>Ghost physics.</strong> Atoms overlapping. Bonds breaking at room temperature. If the model has never seen repulsive close contacts, it does not know those should cost a fortune in energy. Atoms walk right through each other like they are not even there.</p></li>
+</ol>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>A 1 ns NVT simulation with a DeePMD potential on a 100-atom system takes maybe 30 minutes on a single GPU. That is nothing. There is no excuse to skip this.</p>
+<p>Run at multiple temperatures: 77 K, 300 K, 500 K, and the extremes of your training range. If it survives at 300 K but detonates at 500 K, your high-temperature training data is thin. You know exactly what to fix.</p>
+</div>
+<section id="how-long-should-it-survive">
+<h3>How Long Should It Survive?<a class="headerlink" href="#how-long-should-it-survive" title="Permalink to this heading">#</a></h3>
+<p>If you need nanosecond-scale production runs, it needs to survive nanoseconds without going haywire. That is the bar. Simple.</p>
+<p>If it survives 100 ps but dies at 200 ps, you have a time bomb. Not a model. It will produce “results” that are actually artifacts of a model slowly losing contact with reality. You will not know where the physics ends and the fiction begins.</p>
+<p>For our Ar model, we ran 10 ps NVT at 50 K (solid) and 150 K (liquid). Both stable. Temperature fluctuates around the target, total energy is rock-steady. For our water model, NVT at 300 K ran 10 ps without issues. That’s a good sign, but for publication-quality work, you’d want much longer (100+ ps minimum, ideally 1 ns). The length matters because time bombs exist: models that look stable for 100 ps and explode at 200 ps. Specific. Actionable. That is what a good stability test gives you.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-3-property-validation">
+<h2>Step 3: Property Validation<a class="headerlink" href="#step-3-property-validation" title="Permalink to this heading">#</a></h2>
+<p>The model survives long MD. It did not blow up. But does it reproduce actual physics? Stability is necessary. It is not sufficient. A perfectly stable model that gets the C-C bond length wrong by 5% is worthless for studying graphene mechanics.</p>
+<p>This is where you compare against known results. DFT-MD, experiment, literature values. The model needs to get the right answer, not just a stable one.</p>
+<section id="radial-distribution-function-rdf">
+<h3>Radial Distribution Function (RDF)<a class="headerlink" href="#radial-distribution-function-rdf" title="Permalink to this heading">#</a></h3>
+<p>The RDF tells you about local structure. If the model gets the pair distributions right, the basic structural chemistry is correct. Get these wrong and nothing downstream matters.</p>
+<p>Compare your ML-MD RDF against:</p>
+<ul class="simple">
+<li><p>A short DFT-MD trajectory (10-20 ps is enough for an RDF)</p></li>
+<li><p>Experimental pair distribution data if available</p></li>
+</ul>
+<p>Three things to check:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Check</p></th>
+<th class="head"><p>What it means</p></th>
+<th class="head"><p>Red flag</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Peak positions</p></td>
+<td><p>Equilibrium bond lengths / distances</p></td>
+<td><p>Shifted by &gt; 0.05 A from DFT; wrong geometry</p></td>
+</tr>
+<tr class="row-odd"><td><p>Peak heights</p></td>
+<td><p>Coordination environment</p></td>
+<td><p>Off by &gt; 20% from DFT; distorted structure</p></td>
+</tr>
+<tr class="row-even"><td><p>Peak widths</p></td>
+<td><p>Stiffness of potential well</p></td>
+<td><p>Sharper than DFT (too stiff) or broader (too soft)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Our Ar model correctly produces sharp crystalline peaks for the FCC solid and broad liquid peaks at the expected nearest-neighbor distances (see Ch 5). Our water model reproduces the O-O first peak at ~2.7 Angstroms and the O-H hydrogen-bonding structure. If the peaks are in the right place, the right height, the right width, the local chemistry is solid.</p>
+</section>
+<section id="diffusion-coefficient">
+<h3>Diffusion Coefficient<a class="headerlink" href="#diffusion-coefficient" title="Permalink to this heading">#</a></h3>
+<p>For systems with mobile species (H2 on a surface, atoms in a liquid), compute the mean-squared displacement and extract the diffusion coefficient:</p>
+<div class="math notranslate nohighlight">
+\[D = \lim_{t \to \infty} \frac{1}{6t} \langle |r(t) - r(0)|^2 \rangle\]</div>
+<p>Compare against DFT-MD. ML-MD should reproduce DFT-MD diffusivity within the error bars of both calculations. If your ML-MD diffusion is 10x faster or slower, the potential energy surface has wrong barrier heights. 10x faster means the model is letting atoms hop too easily. 10x slower means it is trapping them too aggressively. Either way, the dynamics are wrong even if the statics look fine.</p>
+</section>
+<section id="equation-of-state-eos">
+<h3>Equation of State (EOS)<a class="headerlink" href="#equation-of-state-eos" title="Permalink to this heading">#</a></h3>
+<p>For bulk systems: compute the energy-volume curve. Compress and expand the cell, relax at each volume with the ML potential, compare against DFT.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pseudocode for EOS validation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dpdata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>
+    <span class="c1"># Scale the cell</span>
+    <span class="c1"># Run single-point with ML model</span>
+    <span class="c1"># Run single-point with DFT</span>
+    <span class="c1"># Compare energies</span>
+</pre></div>
+</div>
+<p>Equilibrium volume off by more than 1%? Bulk modulus off by more than 10%? The model needs more data in the compressed and expanded regimes. It learned the bottom of the well but not the walls.</p>
+</section>
+<section id="phonon-dispersion">
+<h3>Phonon Dispersion<a class="headerlink" href="#phonon-dispersion" title="Permalink to this heading">#</a></h3>
+<p>For crystalline systems, phonon dispersions are a brutal test. I am not exaggerating. Forces need to be accurate not just at equilibrium, but for every small displacement in every direction. Use <code class="docutils literal notranslate"><span class="pre">phonopy</span></code> with the DeePMD potential as the force calculator:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/02_test/
+<span class="gp">$ </span>phonopy<span class="w"> </span>--deepmd<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-d<span class="w"> </span>--dim<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">1</span>
+<span class="gp"># </span>...<span class="w"> </span>compute<span class="w"> </span>forces,<span class="w"> </span>extract<span class="w"> </span>phonon<span class="w"> </span>bands
+</pre></div>
+</div>
+<p>Compare against DFT phonons. Acoustic branches should match within roughly 0.5 THz. Optical branches are harder; 1-2 THz errors are common and often acceptable. If you see imaginary frequencies where DFT gives real ones, the model thinks the structure is unstable when it is not. Bad sign. That means the curvature of the potential energy surface at equilibrium is wrong. The model might survive MD (because the thermostat compensates), but the underlying forces are incorrect in a way that will contaminate every derived property.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>You do not need to validate every possible property. Pick the ones that matter for your scientific question:</p>
+<ul class="simple">
+<li><p>Studying adsorption? Validate binding energies and adsorption geometries.</p></li>
+<li><p>Studying diffusion? Validate MSD and diffusion barriers.</p></li>
+<li><p>Studying mechanical properties? Validate elastic constants and phonons.</p></li>
+<li><p>Studying phase transitions? Validate free energies (harder, but unavoidable).</p></li>
+</ul>
+<p>A model that nails RDFs might completely botch reaction barriers. Validate what you plan to publish. Everything else is a distraction.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-hallucinated-stability-problem">
+<h2>The “Hallucinated Stability” Problem<a class="headerlink" href="#the-hallucinated-stability-problem" title="Permalink to this heading">#</a></h2>
+<p>Pay attention to this next part. This one keeps me up at night.</p>
+<p>You train a model. Passes <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code>. Survives 1 ns MD. RDF looks right. You run a long production simulation and observe something new. A phase transition. An adsorption geometry nobody expected. A new stable binding site. You get excited. You start writing the paper.</p>
+<p>Then someone runs a DFT single-point on that structure, and it is 500 meV/atom higher in energy than your model predicted. The “stable” structure your model found does not exist. It never existed. Your model hallucinated it into existence. And the model was so confident about it that you almost published.</p>
+<p>Here is what nobody tells you about neural network potentials. They are interpolators. Inside the training distribution, they are reliable. Outside it, they can predict anything. Anything. Including confidently wrong, smoothly connected, perfectly reasonable-looking potential energy surfaces that have no basis in reality whatsoever. <mark class="silent-fail">The model does not know it left the training distribution.</mark> It has no concept of “I’m guessing now.” It just keeps predicting. Smoothly. Confidently. Wrongly.</p>
+<p>The most dangerous case is not the obvious extrapolation where model deviation spikes. That is easy to catch. The dangerous case is when the model extrapolates to a region of configuration space that is <em>adjacent</em> to the training data. Close enough that model deviation stays low (all four models extrapolate the same way). Far enough that the energetics are garbage. The alarm system is silent because the four models agree. They agree on fiction.</p>
+<p>Read that again. Seriously. Four models can agree perfectly and still be completely wrong.</p>
+<section id="how-to-guard-against-it">
+<h3>How to Guard Against It<a class="headerlink" href="#how-to-guard-against-it" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Spot-check novel structures with DFT.</strong> Your ML-MD produces a structure you did not expect? Run a DFT single-point before you trust it. 30 minutes of compute. Could save you months of wasted publication effort. This is not a suggestion.</p></li>
+<li><p><strong>Monitor model deviation during production.</strong> Not just during dpgen. If you see deviation that slowly creeps up over the trajectory, the system is drifting into territory the model has never mapped. Do not ignore a slow climb. A slow climb means the model is gradually leaving its comfort zone, and at some point it crosses the line from interpolation to fiction.</p></li>
+<li><p><strong>Keep all 4 models after dpgen.</strong> Run production with one for speed, but periodically check deviation with all four. If it crosses <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code>, stop. Investigate. Do not keep collecting “data” from an unreliable model.</p></li>
+<li><p><strong>Validate energetics of key structures.</strong> For adsorption studies: compute the ML binding energy curve and overlay the DFT curve. They should overlap. If they diverge at short distances or unusual geometries, those regions need more training data.</p></li>
+</ol>
+<div class="danger admonition">
+<p class="admonition-title">Warning: Hallucinated Stability</p>
+<p>A neural network potential can predict a perfectly stable, perfectly smooth, perfectly wrong energy surface. Low model deviation does NOT mean the prediction is correct. It means the models agree. Four students can agree on the wrong answer.</p>
+<p><strong>The only ground truth is DFT (or experiment).</strong> Every novel prediction gets a sanity check. No exceptions.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="when-is-good-enough">
+<h2>When Is “Good Enough”?<a class="headerlink" href="#when-is-good-enough" title="Permalink to this heading">#</a></h2>
+<p>This is a judgment call. There is no universal threshold. It depends entirely on what you are trying to do. But here is the framework I use, and it has not steered me wrong.</p>
+<section id="for-qualitative-studies-trends-screening-mechanism-identification">
+<h3>For qualitative studies (trends, screening, mechanism identification):<a class="headerlink" href="#for-qualitative-studies-trends-screening-mechanism-identification" title="Permalink to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Criterion</p></th>
+<th class="head"><p>Target</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy RMSE/atom</p></td>
+<td><p>&lt; 5 meV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force RMSE</p></td>
+<td><p>&lt; 100 meV/A</p></td>
+</tr>
+<tr class="row-even"><td><p>1 ns MD stability</p></td>
+<td><p>Required</p></td>
+</tr>
+<tr class="row-odd"><td><p>RDF matches DFT</p></td>
+<td><p>Required</p></td>
+</tr>
+<tr class="row-even"><td><p>Novel structures spot-checked</p></td>
+<td><p>Required</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="for-quantitative-studies-binding-energies-barriers-diffusion-coefficients">
+<h3>For quantitative studies (binding energies, barriers, diffusion coefficients):<a class="headerlink" href="#for-quantitative-studies-binding-energies-barriers-diffusion-coefficients" title="Permalink to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Criterion</p></th>
+<th class="head"><p>Target</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy RMSE/atom</p></td>
+<td><p>&lt; 2 meV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force RMSE</p></td>
+<td><p>&lt; 50 meV/A</p></td>
+</tr>
+<tr class="row-even"><td><p>1 ns MD stability</p></td>
+<td><p>Required</p></td>
+</tr>
+<tr class="row-odd"><td><p>Property validation against DFT</p></td>
+<td><p>Required (the specific property you are publishing)</p></td>
+</tr>
+<tr class="row-even"><td><p>Error bars from model committee</p></td>
+<td><p>Include in results</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="for-publication-quality-results">
+<h3>For publication-quality results:<a class="headerlink" href="#for-publication-quality-results" title="Permalink to this heading">#</a></h3>
+<p>All of the above, plus:</p>
+<ul class="simple">
+<li><p>Run production with all 4 models independently and report the spread as uncertainty</p></li>
+<li><p>Validate against experimental data where available</p></li>
+<li><p>Show the <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> parity plots (predicted vs. DFT) in the supplementary</p></li>
+<li><p>Report the training data composition: how many frames, what systems, what temperatures</p></li>
+</ul>
+<p>Reviewer 2 will ask about all of this. Have the answers ready.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>The question is never “is this model perfect?” It is “is this model accurate enough for the specific number I am trying to compute?” A 5 meV/atom energy error is devastating if you are computing a 20 meV adsorption energy. It is irrelevant if you are computing a 2 eV reaction barrier.</p>
+<p>Match your accuracy bar to your scientific question. Then validate the specific property you care about. Everything else is a distraction.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="going-to-production">
+<h2>Going to Production<a class="headerlink" href="#going-to-production" title="Permalink to this heading">#</a></h2>
+<p>Your model passed validation. Every stage. Here is the production checklist. Every item matters. I am not padding this list for appearances.</p>
+<ol class="arabic simple">
+<li><p><strong>Freeze the model.</strong> <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">freeze</span> <span class="pre">-o</span> <span class="pre">production_model.pb</span></code>. That is your artifact. The thing you cite. The thing Reviewer 2 asks about. Do not retrain after this point. Any results you publish trace back to this exact file.</p></li>
+<li><p><strong>Document everything.</strong> The dpgen iteration that produced this model. The training data composition. The <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> RMSEs on every subsystem. The validation results. The temperatures tested. The stability test duration. Future-you will need this when Reviewer 2 asks questions six months from now. (Future-you will also thank present-you. Trust me on this one.)</p></li>
+<li><p><strong>Keep all 4 models.</strong> You run with one for speed. You periodically check deviation with all four. It is your early warning system during production. It costs nothing. It catches slow drift into uncharted configuration space before you have a month of bad data.</p></li>
+<li><p><strong>Set up production LAMMPS scripts.</strong> Equilibration (NVT/NPT for 100+ ps). Production (NVT/NVE, as long as needed). Thermo output. Dump files. Restart files. Standard MD workflow. Write it down so it is reproducible.</p></li>
+<li><p><strong>Monitor the first production run.</strong> Do not launch 50 jobs and walk away. Run one. Check the trajectory. Open it in OVITO. Verify the physics looks right. Then scale up. The 30 minutes you spend checking saves you the 3 days you would spend re-running everything when job number 47 reveals a problem that was there from the start.</p></li>
+</ol>
+<p>That is your model. Frozen and ready.</p>
+</section>
+<hr class="docutils" />
+<section id="npt-and-the-virial-question">
+<h2>NPT and the Virial Question<a class="headerlink" href="#npt-and-the-virial-question" title="Permalink to this heading">#</a></h2>
+<p>Here’s a validation test that catches a subtle problem: run NPT and watch the density.</p>
+<p>Our water model was trained without virial data (<code class="docutils literal notranslate"><span class="pre">start_pref_v</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">limit_pref_v</span> <span class="pre">=</span> <span class="pre">0</span></code>). The ICTP training data didn’t include stress tensors. The model is perfectly happy in NVT (fixed volume). But switch to NPT (constant pressure, volume can change), and the density drifts.</p>
+<figure class="align-default" id="water-npt-density">
+<a class="reference internal image-reference" href="../../_images/water_npt_density.png"><img alt="../../_images/water_npt_density.png" src="../../_images/water_npt_density.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 29 </span><span class="caption-text">Water NPT at 300 K: density evolves over time. The experimental value is 1.0 g/cm³. DFT with PBE gives ~0.79 g/cm³ (Jonchiere et al., <em>JCTC</em> 2012), BLYP gives ~0.77. Our model, trained on PBE-level data without virial, shows the density drifting. This is expected. Without virial training, the model has no information about how energy changes with volume. It can’t predict pressure.</span><a class="headerlink" href="#water-npt-density" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>This is not a bug. It’s a feature (of bad planning). If your DFT gives you stress tensors (<code class="docutils literal notranslate"><span class="pre">tstress</span> <span class="pre">=</span> <span class="pre">.true.</span></code> in QE), ALWAYS include virial in training. The cost is zero. The benefit is NPT.</p>
+<figure class="align-default" id="virial-demo">
+<a class="reference internal image-reference" href="../../_images/virial_demo.png"><img alt="../../_images/virial_demo.png" src="../../_images/virial_demo.png" style="width: 70%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 30 </span><span class="caption-text">Ar virial parity: DFT vs DeePMD virial per atom. The model was trained with virial data (<code class="docutils literal notranslate"><span class="pre">start_pref_v</span> <span class="pre">=</span> <span class="pre">0.02</span></code>, <code class="docutils literal notranslate"><span class="pre">limit_pref_v</span> <span class="pre">=</span> <span class="pre">1.0</span></code>), and it reproduces DFT stress tensors accurately. This is why this Ar model can run NPT reliably.</span><a class="headerlink" href="#virial-demo" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Ar model</p></th>
+<th class="head"><p>Water model (ICTP)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Virial weight</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">start_pref_v</span> <span class="pre">=</span> <span class="pre">0.02</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">start_pref_v</span> <span class="pre">=</span> <span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Stress data in training?</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Can predict pressure?</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>NPT reliable?</p></td>
+<td><p>Yes</p></td>
+<td><p>No (density drift)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Rule</strong></p></td>
+<td><p><strong>If DFT gives stress, include virial. The cost is zero. The benefit is NPT.</strong></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>DFT water density is a known challenge.</strong> Even “perfect” DFT functionals get water density wrong. PBE: ~0.79 g/cm³. BLYP: ~0.77 g/cm³. The experimental value is 1.0 g/cm³. This is documented extensively:</p>
+<ul class="simple">
+<li><p>Gillan, Alfè, Michaelides. “Perspective: How good is DFT for water?” <em>J. Chem. Phys.</em> 144, 130901 (2016). <a class="reference external" href="https://doi.org/10.1063/1.4944633">DOI: 10.1063/1.4944633</a></p></li>
+<li><p>Jonchiere et al. “Structure and Dynamics of Liquid Water from AIMD…” <em>JCTC</em> (2012). <a class="reference external" href="https://doi.org/10.1021/ct200482z">DOI: 10.1021/ct200482z</a></p></li>
+<li><p>Palos et al. “Elevating DFT to chemical accuracy…” <em>Nature Commun.</em> 12, 6359 (2021). <a class="reference external" href="https://doi.org/10.1038/s41467-021-27340-2">DOI: 10.1038/s41467-021-27340-2</a></p></li>
+</ul>
+<p>If your ML potential reproduces the DFT density perfectly, it’s doing its job. The density error is in the DFT, not the potential. Don’t chase experimental agreement by fixing the model. Fix the DFT (better functional, dispersion corrections) or accept the systematic error.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="the-full-pipeline-what-you-just-built">
+<h2>The Full Pipeline: What You Just Built<a class="headerlink" href="#the-full-pipeline-what-you-just-built" title="Permalink to this heading">#</a></h2>
+<p>Step back and look at what we covered across this tutorial.</p>
+<figure class="align-default" id="pipeline-timeline">
+<a class="reference internal image-reference" href="../../_images/pipeline_timeline.png"><img alt="../../_images/pipeline_timeline.png" src="../../_images/pipeline_timeline.png" style="width: 95%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 31 </span><span class="caption-text">The complete DeePMD pipeline with real wall times from our tutorial examples. From DFT calculation to production LAMMPS MD, the bottleneck is always DFT. Everything after dpdata conversion is fast. This is the whole point: invest once in DFT, reuse forever in ML-MD.</span><a class="headerlink" href="#pipeline-timeline" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<hr class="docutils" />
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>Validation is not a formality. It is not the boring part between the exciting training and the exciting production. It is the line between a model that produces science and a model that produces confident fiction.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> on each subsystem. Run long MD at multiple temperatures. Compute the specific properties you plan to publish. Spot-check every novel structure with DFT. Do all of this before you trust a single result. Every single result.</p>
+<p>A converged dpgen loop means the model is self-consistent. Validation means the model is correct. One does not imply the other. Not even close.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch11"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch10/monitoring.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 10: Monitoring &amp; Troubleshooting</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../practical/gap-filling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Gap-Filling: Manual Data Curation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-validation-is-not-optional">Why Validation Is Not Optional</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-dp-test-the-report-card">Step 1: dp test (The Report Card)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-numbers-are-good-enough">What Numbers Are “Good Enough”?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dp-test-on-subsystems-the-trap-i-fell-into">dp test on Subsystems: The Trap I Fell Into</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-long-md-stability-test">Step 2: Long-MD Stability Test</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-long-should-it-survive">How Long Should It Survive?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-property-validation">Step 3: Property Validation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radial-distribution-function-rdf">Radial Distribution Function (RDF)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diffusion-coefficient">Diffusion Coefficient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equation-of-state-eos">Equation of State (EOS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phonon-dispersion">Phonon Dispersion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-hallucinated-stability-problem">The “Hallucinated Stability” Problem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-guard-against-it">How to Guard Against It</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-good-enough">When Is “Good Enough”?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-qualitative-studies-trends-screening-mechanism-identification">For qualitative studies (trends, screening, mechanism identification):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-quantitative-studies-binding-energies-barriers-diffusion-coefficients">For quantitative studies (binding energies, barriers, diffusion coefficients):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-publication-quality-results">For publication-quality results:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#going-to-production">Going to Production</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#npt-and-the-virial-question">NPT and the Virial Question</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-pipeline-what-you-just-built">The Full Pipeline: What You Just Built</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

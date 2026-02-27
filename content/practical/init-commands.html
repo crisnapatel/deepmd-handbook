@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>init_bulk and init_surf: Generating Initial Training Data &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/practical/init-commands';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Reading Order" href="../reading-order.html" />
+    <link rel="prev" title="QE vs VASP for First-Principles Labeling" href="qe-vs-vasp.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/practical/init-commands.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/practical/init-commands.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/practical/init-commands.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>init_bulk and init_surf: Generating Initial Training Data</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-chicken-and-egg-problem">The Chicken-and-Egg Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-init-bulk"><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-parameters">Key Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-init-surf"><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-much-initial-data-is-enough">How Much Initial Data Is “Enough”?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-manual-approach-when-init-bulk-init-surf-don-t-fit">The Manual Approach: When init_bulk/init_surf Don’t Fit</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-dpgen">Connecting to dpgen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-reality-what-we-actually-did">Practical Reality: What We Actually Did</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="init-bulk-and-init-surf-generating-initial-training-data">
+<h1>init_bulk and init_surf: Generating Initial Training Data<a class="headerlink" href="#init-bulk-and-init-surf-generating-initial-training-data" title="Permalink to this heading">#</a></h1>
+<p>Before dpgen can learn anything, it needs something to learn FROM. You cannot start the active learning loop with zero data. The model would be random noise pretending to be a potential energy surface. LAMMPS would crash on the first timestep. Nothing happens.</p>
+<p>So you need initial training data. Think of it as the first day of class. Just enough so the student is not completely lost. Not a full education; just enough to survive week one.</p>
+<p>You have a choice: generate it by hand (tedious, full control) or let dpgen do the heavy lifting. But here is the thing. <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code> and <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code> are purpose-built for specific system types. If your system fits neatly into “bulk crystal” or “surface slab,” these tools will save you hours of manual work. If it doesn’t fit (like graphene with adsorbed H2), they will just frustrate you, and you are better off doing it yourself.</p>
+<p>Let me walk you through both paths.</p>
+<hr class="docutils" />
+<section id="the-chicken-and-egg-problem">
+<h2>The Chicken-and-Egg Problem<a class="headerlink" href="#the-chicken-and-egg-problem" title="Permalink to this heading">#</a></h2>
+<p>dpgen’s active learning loop (<code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code>) needs <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> to start. That is initial training data in DeePMD’s npy format. But where does that initial data come from?</p>
+<p>Three options:</p>
+<ol class="arabic simple">
+<li><p><strong>Manual.</strong> Run a few DFT calculations yourself, convert with dpdata. Full control, full effort.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code>.</strong> Automated pipeline for bulk crystal systems.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code>.</strong> Automated pipeline for surface slab systems.</p></li>
+</ol>
+<p>Options 2 and 3 automate the boring parts: generating supercells, perturbing atoms, scaling volumes, submitting DFT jobs, collecting results. They output ready-to-use <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> directories.</p>
+<p>So why not always use them? Because they were designed for textbook systems. Silicon. Copper. Clean FCC surfaces. Your system might not be a textbook system. And forcing a non-textbook system through a textbook tool is how you waste a day wondering why the output doesn’t make sense.</p>
+</section>
+<hr class="docutils" />
+<section id="dpgen-init-bulk">
+<h2><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code><a class="headerlink" href="#dpgen-init-bulk" title="Permalink to this heading">#</a></h2>
+<p>For bulk crystal systems. Silicon. Copper. Diamond. Anything where your starting point is a periodic unit cell that repeats in all three directions.</p>
+<p><strong>Input:</strong> POSCAR (crystal structure) + <code class="docutils literal notranslate"><span class="pre">param.json</span></code> (init config) + <code class="docutils literal notranslate"><span class="pre">machine.json</span></code> (HPC settings).</p>
+<p><strong>What it does:</strong> Takes your unit cell, builds a supercell, randomly perturbs atomic positions, scales the cell volume to different compressions and expansions, runs DFT on every configuration, collects results into DeePMD npy format.</p>
+<p>That is a lot of steps. All automated. One command.</p>
+<section id="key-parameters">
+<h3>Key Parameters<a class="headerlink" href="#key-parameters" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;stages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;cell_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;super_cell&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;elements&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;potcars&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;cell_pert_frac&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.03</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;atom_pert_distance&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;scale&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.98</span><span class="p">,</span><span class="w"> </span><span class="mf">0.99</span><span class="p">,</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span><span class="w"> </span><span class="mf">1.01</span><span class="p">,</span><span class="w"> </span><span class="mf">1.02</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;pert_numb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let me unpack what each field actually controls.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">super_cell</span></code>: [2, 2, 2]</strong>: How many unit cells in each direction. A 2x2x2 supercell of an 8-atom diamond Si cell gives 64 atoms. Bigger supercells give more diverse local environments but cost more in DFT. Start with 2x2x2. You can always go bigger later.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">cell_pert_frac</span></code>: 0.03</strong>: Random strain up to 3% on each lattice vector. This generates structures that are not sitting at perfect equilibrium. The model needs to learn what happens when the lattice is slightly distorted, not just what equilibrium looks like. Give the crystal a shake.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">atom_pert_distance</span></code>: 0.01</strong>: Displace each atom up to 0.01 A from its ideal position. A gentle nudge. Enough to break symmetry without producing something unphysical. If every atom sits at its perfect lattice site, the forces are all zero by symmetry. Zero-force training data teaches the model nothing about how atoms respond to displacement, which is the entire point of a force field.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">scale</span></code>: [0.98, 0.99, 1.00, 1.01, 1.02]</strong>: Volume scaling factors. Compress, equilibrium, expand. 5 scales times 30 perturbations = 150 DFT calculations. That is your initial data budget.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pert_numb</span></code>: 30</strong>: Perturbed configurations per scale factor. 30 gives decent statistical coverage. Less than 10 and you are undersampling. More than 50 and you are spending DFT compute that the active learning loop would have spent more wisely.</p></li>
+</ul>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>Cell perturbation + atomic displacement + volume scaling creates structures that sample the PES around equilibrium. The model learns what happens when you compress, expand, and distort the crystal. What it does NOT learn: high-temperature dynamics, melting, defects, or surfaces. Those are what the dpgen active learning loop is for. The init data just needs to keep the model alive long enough for the loop to start.</p>
+<p>That is the whole point. The init data is not a curriculum. It is a survival kit.</p>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dpgen<span class="w"> </span>init_bulk<span class="w"> </span>param.json<span class="w"> </span>machine.json
+</pre></div>
+</div>
+<p>Hit enter. dpgen submits all DFT jobs, waits for them to finish, collects results. Depending on your queue, you go get coffee. Or lunch.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="dpgen-init-surf">
+<h2><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code><a class="headerlink" href="#dpgen-init-surf" title="Permalink to this heading">#</a></h2>
+<p>Same idea, but for surface slabs. It takes a bulk structure, cleaves it along specified Miller indices, adds vacuum, and generates perturbed configurations.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;cell_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fcc&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;latt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.615</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;super_cell&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;elements&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Cu&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;z_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vacuum_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vacuum_resol&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;millers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]],</span>
+<span class="w">    </span><span class="nt">&quot;scale&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.98</span><span class="p">,</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span><span class="w"> </span><span class="mf">1.02</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;pert_numb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let me trace through this.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">millers</span></code></strong>: Surface orientations to generate. [1,0,0], [1,1,0], [1,1,1] covers the three low-index faces. That is usually enough to get started. If you need higher-index surfaces, add them, but know that each one multiplies your DFT cost.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">z_min</span></code>: 9</strong>: Minimum slab thickness in Angstroms. Thick enough that atoms in the middle behave like bulk. If the slab is too thin, both surfaces interact through the slab. The model learns surface physics contaminated by finite-size artifacts.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vacuum_max</span></code>: 9</strong>: Vacuum above the slab in Angstroms. Prevents periodic images from interacting across the vacuum gap. 9 A is fine for most systems. If you are worried, test convergence of the surface energy with vacuum thickness. But 9 A is a safe default.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">super_cell</span></code>: [2, 2, 1]</strong>: Note the 1 in z. You do not replicate vertically. You only expand in-plane. Replicating in z would just double the slab thickness, not create more diverse surface environments. The diversity comes from the different Miller indices and perturbations, not from stacking slabs.</p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dpgen<span class="w"> </span>init_surf<span class="w"> </span>param.json<span class="w"> </span>machine.json
+</pre></div>
+</div>
+<p>Same workflow. Submit, wait, collect.</p>
+</section>
+<hr class="docutils" />
+<section id="how-much-initial-data-is-enough">
+<h2>How Much Initial Data Is “Enough”?<a class="headerlink" href="#how-much-initial-data-is-enough" title="Permalink to this heading">#</a></h2>
+<p><strong>50-200 frames.</strong> That is the target. Start there.</p>
+<ul class="simple">
+<li><p><strong>Too few (&lt;30):</strong> The model cannot run stable MD in the first exploration step. LAMMPS crashes, atoms fly apart, dpgen stalls at iteration 0. You are stuck before you started.</p></li>
+<li><p><strong>Too many (&gt;500):</strong> Wasted DFT compute. dpgen’s active learning would have selected more informative structures than your brute-force perturbations ever could. You just burned your allocation on data that is mostly redundant. The active learning loop exists precisely because humans are bad at guessing which configurations matter most.</p></li>
+<li><p><strong>50-200:</strong> A rough but functional model. Wrong about many things, but stable enough to run MD without exploding. The loop starts. The model begins to learn for real.</p></li>
+</ul>
+<div class="note admonition">
+<p class="admonition-title">Practical Rule</p>
+<p>Your initial data needs to answer one question: can the model run MD without crashing? It does not need to be accurate. It does not need to predict correct surface energies or diffusion barriers. It just needs to keep atoms from flying apart during the first exploration step. Accuracy comes from the loop. The init data just buys you entry.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="the-manual-approach-when-init-bulk-init-surf-don-t-fit">
+<h2>The Manual Approach: When init_bulk/init_surf Don’t Fit<a class="headerlink" href="#the-manual-approach-when-init-bulk-init-surf-don-t-fit" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">init_bulk</span></code> and <code class="docutils literal notranslate"><span class="pre">init_surf</span></code> work great for textbook systems. FCC copper. Diamond silicon. Clean low-index surfaces. But what about:</p>
+<ul class="simple">
+<li><p>A 2D material (graphene), which is not bulk and not a traditional surface?</p></li>
+<li><p>A slab with adsorbates (graphene + H2), since init_surf does not know how to place molecules?</p></li>
+<li><p>An amorphous structure with no unit cell to perturb?</p></li>
+</ul>
+<p>Those tools will look at your system and have no idea what to do with it. Don’t force it. Go manual.</p>
+<p><strong>Step 1:</strong> Run AIMD for 100-500 steps. NVT, 300 K, 0.5-1.0 fs time step. For QE: <code class="docutils literal notranslate"><span class="pre">calculation</span> <span class="pre">=</span> <span class="pre">'md'</span></code> with <code class="docutils literal notranslate"><span class="pre">ion_dynamics</span> <span class="pre">=</span> <span class="pre">'verlet'</span></code> in <code class="docutils literal notranslate"><span class="pre">&amp;IONS</span></code>. Short, cheap, and it gives you decorrelated snapshots of atoms jiggling around at finite temperature. This is a field trip for your atoms: send them somewhere interesting and record what happens.</p>
+<p><strong>Step 2:</strong> Extract snapshots every 5th-10th frame. <mark class="hard-req">Consecutive MD frames are nearly identical</mark> (the atoms barely moved between two 0.5 fs steps). You need decorrelated structures, not 500 copies of basically the same thing. If you skip this step, you end up training on highly correlated data. The model memorizes one trajectory instead of learning general physics.</p>
+<p><strong>Step 3:</strong> Convert with dpdata.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dpdata</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">dpdata</span><span class="o">.</span><span class="n">LabeledSystem</span><span class="p">(</span><span class="s1">&#39;output/&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;qe/pw/scf&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;deepmd/npy&#39;</span><span class="p">,</span> <span class="s1">&#39;init_data/graphene_h2_aimd&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Three lines. <code class="docutils literal notranslate"><span class="pre">box.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">coord.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">energy.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">force.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">type.raw</span></code>, <code class="docutils literal notranslate"><span class="pre">type_map.raw</span></code>. All ready for <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code>.</p>
+<div class="tip admonition">
+<p class="admonition-title">Pro Tip</p>
+<p>DeePMD requires all frames in a single system directory to have the same atom count and type ordering. If you have mixed atom counts (72-atom bare slabs and 74-atom slab+H2), split them into separate directories. Mix them in one directory and DeePMD-kit will crash with a shape mismatch error that does not clearly tell you what went wrong.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="connecting-to-dpgen">
+<h2>Connecting to dpgen<a class="headerlink" href="#connecting-to-dpgen" title="Permalink to this heading">#</a></h2>
+<p>Whatever method you used, the output format is the same. Each system is a directory with npy files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>init_data/
+├── set_72atoms/       # bare graphene slab frames
+│   ├── set.000/
+│   │   ├── box.npy, coord.npy, energy.npy, force.npy
+│   ├── type.raw
+│   └── type_map.raw
+├── set_74atoms/       # graphene + 1 H₂ frames
+│   ├── set.000/
+│   │   ├── box.npy, coord.npy, energy.npy, force.npy
+│   ├── type.raw
+│   └── type_map.raw
+</pre></div>
+</div>
+<p>Point to them in your <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code> param.json:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;init_data_sys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;init_data/set_72atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;init_data/set_74atoms&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>dpgen trains on ALL of <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> from iteration 0. New data from active learning goes into <code class="docutils literal notranslate"><span class="pre">iter.*/02.fp/data.*</span></code> separately. <mark class="key-insight">The init data stays in the training set forever.</mark> It is the foundation. Every iteration builds on top of it.</p>
+<p>So if your init data is bad (wrong forces, wrong energies, corrupted files), it poisons every single iteration. There is no mechanism to flush it out. The model retrains on init data every time. Bad foundation, bad building. Check your init data before you launch the loop.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Each <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> directory must have frames with the <strong>same atom count and element ordering</strong>. Mixing 72-atom and 74-atom frames in one directory will crash DeePMD-kit. The error message will mention array shape mismatches. It won’t tell you “hey, your atom counts don’t match.” You have to figure that out yourself.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="practical-reality-what-we-actually-did">
+<h2>Practical Reality: What We Actually Did<a class="headerlink" href="#practical-reality-what-we-actually-did" title="Permalink to this heading">#</a></h2>
+<p>For the graphene + H2 project, we used the manual approach. Graphene is not “bulk.” <code class="docutils literal notranslate"><span class="pre">init_surf</span></code> constructs surfaces by cleaving along Miller indices, but graphene is not cleaved from a bulk phase. It is a 2D material. And neither tool places adsorbate molecules.</p>
+<p>So we did it by hand:</p>
+<ol class="arabic simple">
+<li><p>Set up graphene slab + H2 in QE input files (manually positioned)</p></li>
+<li><p>Ran short AIMD at 300 K (50-100 steps per configuration)</p></li>
+<li><p>Extracted snapshots with dpdata</p></li>
+<li><p>Separated into directories by atom count</p></li>
+<li><p>Plugged into <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code></p></li>
+</ol>
+<p>Total effort: a day of setup, a few hours of DFT compute. Because we controlled the configurations, we ensured coverage of specific geometries: different H2 heights above the surface, different orientations, different loadings. That kind of targeted coverage is something <code class="docutils literal notranslate"><span class="pre">init_bulk</span></code> and <code class="docutils literal notranslate"><span class="pre">init_surf</span></code> cannot give you, because they do not know what “H2 approaching a graphene sheet” means. They were not designed for that problem. Forcing them to solve it would have wasted more time than doing it manually.</p>
+<div class="note admonition">
+<p class="admonition-title">Bottom Line</p>
+<p><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code> and <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code> are great when your system fits the mold. Standard bulk crystals and clean surfaces. Use them. They will save you real time.</p>
+<p>But don’t force a square peg into a round hole. For 2D materials with adsorbates, amorphous structures, or anything that doesn’t look like a textbook example, go manual. A day of hands-on curation beats a week of fighting tools that weren’t designed for your problem.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="takeaway">
+<h2>Takeaway<a class="headerlink" href="#takeaway" title="Permalink to this heading">#</a></h2>
+<p>Initial training data is the seed that starts the dpgen loop. Too little and the model cannot run MD. Too much and you wasted DFT compute on structures the active learning loop would have chosen better. 50-200 frames around equilibrium is the sweet spot. <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code> and <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code> automate generation for standard systems. For everything else, run short AIMD, convert with dpdata, and let the active learning loop handle the rest.</p>
+<p>The init data does not need to be great. It just needs to be good enough to survive the first iteration. One iteration down. The loop takes it from there.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/practical"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="qe-vs-vasp.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">QE vs VASP for First-Principles Labeling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../reading-order.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Reading Order</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-chicken-and-egg-problem">The Chicken-and-Egg Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-init-bulk"><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-parameters">Key Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-init-surf"><code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_surf</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-much-initial-data-is-enough">How Much Initial Data Is “Enough”?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-manual-approach-when-init-bulk-init-surf-don-t-fit">The Manual Approach: When init_bulk/init_surf Don’t Fit</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-dpgen">Connecting to dpgen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-reality-what-we-actually-did">Practical Reality: What We Actually Did</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway">Takeaway</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

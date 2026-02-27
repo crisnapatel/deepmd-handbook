@@ -1,0 +1,90 @@
+Bootstrap: docker
+From: deepmodeling/deepmd-kit:3.1.2_cuda129
+
+%labels
+    Description DeepMD-kit 3.1.2 + DP-GEN 0.13.2 + LAMMPS (GPU-enabled)
+    CUDA 12.x
+    DeepMD-kit 3.1.2
+    DP-GEN 0.13.2
+
+%help
+    Container for DeepMD-kit v3.1.2 with LAMMPS integration and DP-GEN v0.13.2.
+    GPU-enabled (NVIDIA CUDA).
+
+    Usage examples:
+      # Training
+      apptainer exec --nv deepmd-dpgen.sif dp train input.json
+
+      # Freeze model
+      apptainer exec --nv deepmd-dpgen.sif dp freeze -o graph.pb
+
+      # LAMMPS MD with DeePMD potential
+      apptainer exec --nv deepmd-dpgen.sif lmp -in in.lammps
+
+      # DP-GEN run
+      apptainer exec --nv deepmd-dpgen.sif dpgen run param.json machine.json
+
+      # Check versions
+      apptainer exec deepmd-dpgen.sif dp --version
+      apptainer exec deepmd-dpgen.sif dpgen --version
+      apptainer exec deepmd-dpgen.sif lmp -h 2>&1 | head -5
+
+%environment
+    export LD_LIBRARY_PATH=/usr/local/lib:/.singularity.d/libs:${LD_LIBRARY_PATH}
+    export LAMMPS_PLUGIN_PATH=/opt/deepmd-kit/lib/deepmd_lmp
+    export TF_CPP_MIN_LOG_LEVEL=2
+    export PYTHONUNBUFFERED=1
+
+%post
+    # The base image already provides:
+    #   - DeepMD-kit 3.1.2 (dp command)
+    #   - LAMMPS with DeePMD-kit plugin (lmp command)
+    #   - PyTorch with CUDA support
+    #   - Python 3.x with pip
+    #   - CUDA runtime libraries
+    #   - MPICH for parallel LAMMPS
+
+    pip install --no-cache-dir --upgrade pip
+
+    pip install --no-cache-dir \
+        dpgen==0.13.2 \
+        dpdata \
+        dpdispatcher \
+        ase
+
+    # Verify installations
+    echo "=== DeepMD-kit version ==="
+    dp --version || true
+    echo "=== DP-GEN version ==="
+    dpgen --version || true
+    echo "=== LAMMPS check ==="
+    lmp -h 2>&1 | head -3 || true
+
+    # Find and export LAMMPS plugin path
+    PLUGIN_PATH=$(find / -name "deepmd_lmp" -type d 2>/dev/null | head -1)
+    if [ -n "$PLUGIN_PATH" ]; then
+        echo "export LAMMPS_PLUGIN_PATH=$PLUGIN_PATH" >> /environment
+    fi
+
+    pip cache purge 2>/dev/null || true
+
+%runscript
+    echo "DeepMD-kit + DP-GEN Container"
+    echo "=============================="
+    echo "DeepMD-kit: $(dp --version 2>&1 || echo 'check with dp --version')"
+    echo "DP-GEN:     $(dpgen --version 2>&1 || echo 'check with dpgen --version')"
+    echo "LAMMPS:     $(lmp -h 2>&1 | head -1 || echo 'available')"
+    echo ""
+    echo "Run with: apptainer exec --nv <container.sif> <command>"
+    exec "$@"
+
+%test
+    echo "Running container tests..."
+    dp --version
+    dpgen --version
+    lmp -h 2>&1 | head -3
+    python -c "import deepmd; print(f'deepmd: {deepmd.__version__}')"
+    python -c "import dpgen; print('dpgen: imported OK')"
+    python -c "import dpdata; print(f'dpdata: {dpdata.__version__}')"
+    python -c "import dpdispatcher; print('dpdispatcher: imported OK')"
+    echo "All tests passed!"

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="700" height="400" viewBox="0 0 700 400">
+<defs>
+<marker markerWidth="7.0" markerHeight="7.0" viewBox="-0.5 -0.5 1.0 1.0" orient="auto" id="d0">
+<path d="M-0.5,-0.5 L-0.5,0.5 L0.5,0 Z" fill="#555" />
+</marker>
+</defs>
+<rect x="0" y="0" width="700" height="400" fill="white" />
+<text x="350" y="25" font-size="18" text-anchor="middle" font-weight="bold" fill="#333">Model Validation Pipeline</text>
+<rect x="25.0" y="100" width="190" height="160" rx="8" ry="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" />
+<text x="120" y="122" font-size="15" text-anchor="middle" font-weight="bold" fill="#1565C0">dp test</text>
+<text x="120" y="138" font-size="10" text-anchor="middle" fill="#888">Quantitative Baseline</text>
+<path d="M35.0,148 L205.0,148" stroke="#1565C0" stroke-width="0.5" opacity="0.3" />
+<circle cx="43.0" cy="165" r="6" fill="#1565C0" opacity="0.15" />
+<text x="43.0" y="168" font-size="8" text-anchor="middle" fill="#1565C0" font-weight="bold">✓</text>
+<text x="55.0" y="168" font-size="10" fill="#555">Energy RMSE &lt; 3 meV/atom</text>
+<circle cx="43.0" cy="193" r="6" fill="#1565C0" opacity="0.15" />
+<text x="43.0" y="196" font-size="8" text-anchor="middle" fill="#1565C0" font-weight="bold">✓</text>
+<text x="55.0" y="196" font-size="10" fill="#555">Force RMSE &lt; 60 meV/Å</text>
+<circle cx="43.0" cy="221" r="6" fill="#1565C0" opacity="0.15" />
+<text x="43.0" y="224" font-size="8" text-anchor="middle" fill="#1565C0" font-weight="bold">✓</text>
+<text x="55.0" y="224" font-size="10" fill="#555">Per-subsystem breakdown</text>
+<path d="M217.0,180.0 L247.0,180.0" stroke="#555" stroke-width="2" marker-end="url(#d0)" />
+<text x="235.0" y="170.0" font-size="9" text-anchor="middle" fill="#999" font-style="italic">Pass?</text>
+<rect x="255.0" y="100" width="190" height="160" rx="8" ry="8" fill="#FFF3E0" stroke="#E65100" stroke-width="2" />
+<text x="350" y="122" font-size="15" text-anchor="middle" font-weight="bold" fill="#E65100">Long MD</text>
+<text x="350" y="138" font-size="10" text-anchor="middle" fill="#888">Stability Test</text>
+<path d="M265.0,148 L435.0,148" stroke="#E65100" stroke-width="0.5" opacity="0.3" />
+<circle cx="273.0" cy="165" r="6" fill="#E65100" opacity="0.15" />
+<text x="273.0" y="168" font-size="8" text-anchor="middle" fill="#E65100" font-weight="bold">✓</text>
+<text x="285.0" y="168" font-size="10" fill="#555">Run 1+ ns NVT/NPT</text>
+<circle cx="273.0" cy="193" r="6" fill="#E65100" opacity="0.15" />
+<text x="273.0" y="196" font-size="8" text-anchor="middle" fill="#E65100" font-weight="bold">✓</text>
+<text x="285.0" y="196" font-size="10" fill="#555">No energy drift</text>
+<circle cx="273.0" cy="221" r="6" fill="#E65100" opacity="0.15" />
+<text x="273.0" y="224" font-size="8" text-anchor="middle" fill="#E65100" font-weight="bold">✓</text>
+<text x="285.0" y="224" font-size="10" fill="#555">No atomic explosions</text>
+<path d="M447.0,180.0 L477.0,180.0" stroke="#555" stroke-width="2" marker-end="url(#d0)" />
+<text x="465.0" y="170.0" font-size="9" text-anchor="middle" fill="#999" font-style="italic">Pass?</text>
+<rect x="485.0" y="100" width="190" height="160" rx="8" ry="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2" />
+<text x="580" y="122" font-size="15" text-anchor="middle" font-weight="bold" fill="#2E7D32">Properties</text>
+<text x="580" y="138" font-size="10" text-anchor="middle" fill="#888">Physical Validation</text>
+<path d="M495.0,148 L665.0,148" stroke="#2E7D32" stroke-width="0.5" opacity="0.3" />
+<circle cx="503.0" cy="165" r="6" fill="#2E7D32" opacity="0.15" />
+<text x="503.0" y="168" font-size="8" text-anchor="middle" fill="#2E7D32" font-weight="bold">✓</text>
+<text x="515.0" y="168" font-size="10" fill="#555">RDF matches DFT/expt</text>
+<circle cx="503.0" cy="193" r="6" fill="#2E7D32" opacity="0.15" />
+<text x="503.0" y="196" font-size="8" text-anchor="middle" fill="#2E7D32" font-weight="bold">✓</text>
+<text x="515.0" y="196" font-size="10" fill="#555">Diffusion coefficient</text>
+<circle cx="503.0" cy="221" r="6" fill="#2E7D32" opacity="0.15" />
+<text x="503.0" y="224" font-size="8" text-anchor="middle" fill="#2E7D32" font-weight="bold">✓</text>
+<text x="515.0" y="224" font-size="10" fill="#555">EOS / phonons</text>
+<rect x="100" y="310" width="500" height="70" rx="8" ry="8" fill="#FCE4EC" stroke="#C62828" stroke-width="1.5" />
+<text x="350" y="328" font-size="12" text-anchor="middle" font-weight="bold" fill="#C62828">If any stage fails:</text>
+<text x="130" y="345" font-size="9" fill="#555">dp test fails → more training data or longer training</text>
+<text x="130" y="358" font-size="9" fill="#555">Long MD unstable → gap-filling or adjust trust levels</text>
+<text x="130" y="371" font-size="9" fill="#555">Properties wrong → check DFT settings, add missing configurations</text>
+<path d="M350,260 L350,308" stroke="#C62828" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#d0)" />
+<text x="360" y="285" font-size="9" fill="#C62828" font-style="italic">Fail</text>
+</svg>

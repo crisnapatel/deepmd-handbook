@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="700" height="380" viewBox="0 0 700 380">
+<defs>
+</defs>
+<rect x="0" y="0" width="700" height="380" fill="white" />
+<text x="350" y="25" font-size="18" text-anchor="middle" font-weight="bold" fill="#333">type_map Must Match Everywhere</text>
+<rect x="250.0" y="55.0" width="200" height="50" rx="8" ry="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5" />
+<text x="350" y="84" font-size="13" text-anchor="middle" font-weight="bold" fill="#1565C0" font-family="monospace">type_map: ["C", "O", "H"]</text>
+<rect x="15.0" y="172.5" width="170" height="55" rx="6" ry="6" fill="#FAFAFA" stroke="#1565C0" stroke-width="1.5" />
+<text x="100" y="192" font-size="12" text-anchor="middle" font-weight="bold" fill="#1565C0" font-family="monospace">param.json</text>
+<text x="100" y="210" font-size="9" text-anchor="middle" fill="#666" font-family="monospace">"type_map": ["C","O","H"]</text>
+<path d="M350,105.0 L100,172.5" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4" />
+<rect x="265.0" y="152.5" width="170" height="55" rx="6" ry="6" fill="#FAFAFA" stroke="#E65100" stroke-width="1.5" />
+<text x="350" y="172" font-size="12" text-anchor="middle" font-weight="bold" fill="#E65100" font-family="monospace">type.raw</text>
+<text x="350" y="190" font-size="9" text-anchor="middle" fill="#666" font-family="monospace">0 0 0...1 1...2 2 2</text>
+<path d="M350,105.0 L350,152.5" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4" />
+<rect x="515.0" y="172.5" width="170" height="55" rx="6" ry="6" fill="#FAFAFA" stroke="#E65100" stroke-width="1.5" />
+<text x="600" y="192" font-size="12" text-anchor="middle" font-weight="bold" fill="#E65100" font-family="monospace">type_map.raw</text>
+<text x="600" y="210" font-size="9" text-anchor="middle" fill="#666" font-family="monospace">C\nO\nH</text>
+<path d="M350,105.0 L600,172.5" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4" />
+<rect x="15.0" y="272.5" width="170" height="55" rx="6" ry="6" fill="#FAFAFA" stroke="#7B1FA2" stroke-width="1.5" />
+<text x="100" y="292" font-size="12" text-anchor="middle" font-weight="bold" fill="#7B1FA2" font-family="monospace">POSCAR</text>
+<text x="100" y="310" font-size="9" text-anchor="middle" fill="#666" font-family="monospace">C  O  H  (element line)</text>
+<path d="M350,105.0 L100,272.5" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4" />
+<rect x="265.0" y="292.5" width="170" height="55" rx="6" ry="6" fill="#FAFAFA" stroke="#2E7D32" stroke-width="1.5" />
+<text x="350" y="312" font-size="12" text-anchor="middle" font-weight="bold" fill="#2E7D32" font-family="monospace">fp_pp_files</text>
+<text x="350" y="330" font-size="9" text-anchor="middle" fill="#666" font-family="monospace">["C.upf", "O.upf", "H.upf"]</text>
+<path d="M350,105.0 L350,292.5" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4" />
+<rect x="515.0" y="272.5" width="170" height="55" rx="6" ry="6" fill="#FAFAFA" stroke="#2E7D32" stroke-width="1.5" />
+<text x="600" y="292" font-size="12" text-anchor="middle" font-weight="bold" fill="#2E7D32" font-family="monospace">sel</text>
+<text x="600" y="310" font-size="9" text-anchor="middle" fill="#666" font-family="monospace">[48, 48, 56]  (C, O, H)</text>
+<path d="M350,105.0 L600,272.5" stroke="#CCC" stroke-width="1.5" stroke-dasharray="4" />
+<rect x="120" y="355" width="460" height="22" rx="4" ry="4" fill="#FFEBEE" stroke="#F44336" stroke-width="1" />
+<text x="350" y="369" font-size="10" text-anchor="middle" fill="#C62828" font-weight="bold">Mismatch in ANY of these = model trains on garbage (silently)</text>
+</svg>

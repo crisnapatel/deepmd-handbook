@@ -1,0 +1,1558 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 10: Monitoring &amp; Troubleshooting &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch10/monitoring';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 11: Validation &amp; Production" href="../ch11/validation.html" />
+    <link rel="prev" title="Ch 9: Running dpgen" href="../ch09/running-dpgen.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch10/monitoring.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch10/monitoring.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch10/monitoring.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 10: Monitoring & Troubleshooting</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-model-devi-out-your-dashboard">Reading model_devi.out: Your Dashboard</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-analysis-awk-one-liners">Quick Analysis: awk One-Liners</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-force-deviation-distributions">Plotting Force Deviation Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-3-buckets-in-practice-what-the-distribution-actually-looks-like">The 3 Buckets in Practice: What the Distribution Actually Looks Like</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-0-the-model-is-panicking">Iteration 0: The Model Is Panicking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-2-3-things-start-tightening">Iteration 2-3: Things Start Tightening</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-4-convergence">Iteration 4+: Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-tracking-the-plot-that-tells-you-when-to-stop">Convergence Tracking: The Plot That Tells You When to Stop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-compute-it">How to Compute It</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-curve-should-look-like">What the Curve Should Look Like</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-adjust-trust-levels">When to Adjust Trust Levels</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#too-many-candidates">Too Many Candidates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-or-near-zero-candidates">Zero or Near-Zero Candidates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#too-many-failed-frames">Too Many Failed Frames</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-practical-adjustment-workflow">The Practical Adjustment Workflow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-errors-a-survival-guide">Common Errors: A Survival Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dft-convergence-failures">DFT Convergence Failures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lammps-crashes">LAMMPS Crashes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-divergence-nan-loss">Training Divergence: NaN Loss</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-permission-issues-in-containers">File Permission Issues in Containers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#disk-space-exhaustion">Disk Space Exhaustion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-job-failed-3-times">dpgen “Job Failed 3 Times”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-forces-in-qe-output">Missing Forces in QE Output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-element-ordering-silent-corruption">Wrong Element Ordering (Silent Corruption)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-error-reference-table">The Full Error Reference Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recovery-strategies-editing-record-dpgen">Recovery Strategies: Editing record.dpgen</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-step-numbering">Understanding the Step Numbering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#re-running-a-specific-stage">Re-Running a Specific Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#re-running-training">Re-Running Training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-from-a-specific-iteration">Starting From a Specific Iteration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-restart">The Full Restart</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-monitoring-checklist">A Monitoring Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-good-looks-like-real-numbers">What “Good” Looks Like: Real Numbers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-10-monitoring-troubleshooting">
+<h1>Ch 10: Monitoring &amp; Troubleshooting<a class="headerlink" href="#ch-10-monitoring-troubleshooting" title="Permalink to this heading">#</a></h1>
+<p>You launched dpgen. The terminal says it’s running. You close your laptop, go get coffee, check back in two hours.</p>
+<p>Everything is on fire.</p>
+<p>Training completed. Exploration ran. But 40 out of 50 DFT jobs failed because <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code> was too aggressive for those candidate geometries. The model deviation plot looks like a seismograph. And there’s a cryptic Python traceback in <code class="docutils literal notranslate"><span class="pre">dpgen.log</span></code> that mentions something about a “key error” 200 lines deep.</p>
+<p>That was iteration 1 of <em>my</em> learning curve. This chapter exists so it’s not yours.</p>
+<section id="reading-model-devi-out-your-dashboard">
+<h2>Reading model_devi.out: Your Dashboard<a class="headerlink" href="#reading-model-devi-out-your-dashboard" title="Permalink to this heading">#</a></h2>
+<p>After Stage 2 (exploration) of each iteration, dpgen produces a file called <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> in every LAMMPS task directory. I stared at this file for twenty minutes the first time before I understood what I was looking at. Then it clicked. This file is the single most important diagnostic in your entire dpgen run. If param.json is the brain and machine.json is the body, <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> is the blood test. It tells you if the patient is healthy or dying.</p>
+<p>You’ll find it at paths like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">iter</span><span class="mf">.000000</span><span class="o">/</span><span class="mf">01.</span><span class="n">model_devi</span><span class="o">/</span><span class="n">task</span><span class="mf">.000.000000</span><span class="o">/</span><span class="n">model_devi</span><span class="o">.</span><span class="n">out</span>
+<span class="nb">iter</span><span class="mf">.000000</span><span class="o">/</span><span class="mf">01.</span><span class="n">model_devi</span><span class="o">/</span><span class="n">task</span><span class="mf">.000.000001</span><span class="o">/</span><span class="n">model_devi</span><span class="o">.</span><span class="n">out</span>
+<span class="nb">iter</span><span class="mf">.000000</span><span class="o">/</span><span class="mf">01.</span><span class="n">model_devi</span><span class="o">/</span><span class="n">task</span><span class="mf">.001.000000</span><span class="o">/</span><span class="n">model_devi</span><span class="o">.</span><span class="n">out</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Each file corresponds to one LAMMPS simulation (one system at one temperature). Open that file. I’ll wait.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#       step         max_devi_e         min_devi_e         avg_devi_e         max_devi_f         min_devi_f         avg_devi_f</span>
+         <span class="mi">100</span>     <span class="mf">2.451928e-03</span>     <span class="mf">1.223964e-04</span>     <span class="mf">9.876543e-04</span>     <span class="mf">8.234567e-02</span>     <span class="mf">3.456789e-03</span>     <span class="mf">2.345678e-02</span>
+         <span class="mi">200</span>     <span class="mf">3.567890e-03</span>     <span class="mf">2.345678e-04</span>     <span class="mf">1.234567e-03</span>     <span class="mf">1.567890e-01</span>     <span class="mf">5.678901e-03</span>     <span class="mf">4.567890e-02</span>
+         <span class="mi">300</span>     <span class="mf">1.234567e-03</span>     <span class="mf">8.901234e-05</span>     <span class="mf">5.678901e-04</span>     <span class="mf">3.456789e-02</span>     <span class="mf">1.234567e-03</span>     <span class="mf">1.234567e-02</span>
+</pre></div>
+</div>
+<p>Seven columns. Here’s what each one measures:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Index (0-based)</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>What it measures</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">step</span></code></p></td>
+<td><p>MD timestep number</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">max_devi_e</span></code></p></td>
+<td><p>Maximum energy deviation per atom across model pairs (eV/atom)</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">min_devi_e</span></code></p></td>
+<td><p>Minimum energy deviation per atom across model pairs</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">avg_devi_e</span></code></p></td>
+<td><p>Average energy deviation per atom</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">max_devi_f</span></code></p></td>
+<td><p>Maximum force deviation across all atoms and model pairs (eV/A)</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">min_devi_f</span></code></p></td>
+<td><p>Minimum force deviation</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>6</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">avg_devi_f</span></code></p></td>
+<td><p>Average force deviation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>And I know what you’re thinking. “Which column do I actually care about?”</p>
+<p><mark class="hard-req"><strong>Column 5. <code class="docutils literal notranslate"><span class="pre">max_devi_f</span></code>. Index 4 (0-based).</strong> That one. Just that one.</mark></p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><code class="docutils literal notranslate"><span class="pre">max_devi_f</span></code> is the maximum force deviation among all atoms in the frame, across all pairs of the 4 models. It captures the <em>worst-case</em> disagreement. If even one atom out of 96 has wildly different predicted forces across models, this number is large. One confused atom flags the whole frame. This is conservative by design. And that conservatism is why it works.</p>
+<p>Energy deviations (<code class="docutils literal notranslate"><span class="pre">max_devi_e</span></code>) are per-atom and tend to be much smaller in magnitude. Useful for sanity checks, but the force deviation is what dpgen uses for the three-bucket sorting.</p>
+</div>
+<p>Why forces and not energies? A system with 96 atoms has 1 energy value but 288 force components. Forces carry far more information about the potential energy surface. And the <em>maximum</em> force deviation catches the atom that’s most confused. Even if 95 atoms are completely fine, that one panicking atom tells you the model has a gap in its knowledge. One confused atom is enough. That’s the whole trick.</p>
+<p>That’s the column. <code class="docutils literal notranslate"><span class="pre">$5</span></code> in awk, column index 4 in Python. Memorize it. Everything else in this chapter revolves around it.</p>
+</section>
+<hr class="docutils" />
+<section id="quick-analysis-awk-one-liners">
+<h2>Quick Analysis: awk One-Liners<a class="headerlink" href="#quick-analysis-awk-one-liners" title="Permalink to this heading">#</a></h2>
+<p>You don’t need matplotlib for a first look. You need <code class="docutils literal notranslate"><span class="pre">awk</span></code> and 30 seconds.</p>
+<p>Say your trust levels are <code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">=</span> <span class="pre">0.05</span></code> and <code class="docutils literal notranslate"><span class="pre">trust_hi</span> <span class="pre">=</span> <span class="pre">0.15</span></code> (typical starting values). Here’s how to count frames in each bucket for a single task:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Navigate<span class="w"> </span>to<span class="w"> </span>a<span class="w"> </span>model_devi<span class="w"> </span>output
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>iter.000000/01.model_devi/task.000.000000/
+
+<span class="gp"># </span>Count<span class="w"> </span>ACCURATE<span class="w"> </span>frames<span class="w"> </span><span class="o">(</span>max_devi_f<span class="w"> </span>&lt;<span class="w"> </span>trust_lo<span class="o">)</span>
+<span class="gp">$ </span>awk<span class="w"> </span><span class="s1">&#39;$5 &lt; 0.05 {n++} END {print &quot;Accurate:&quot;, n+0}&#39;</span><span class="w"> </span>model_devi.out
+
+<span class="gp"># </span>Count<span class="w"> </span>CANDIDATE<span class="w"> </span>frames<span class="w"> </span><span class="o">(</span>trust_lo<span class="w"> </span>&lt;<span class="o">=</span><span class="w"> </span>max_devi_f<span class="w"> </span>&lt;<span class="w"> </span>trust_hi<span class="o">)</span>
+<span class="gp">$ </span>awk<span class="w"> </span><span class="s1">&#39;$5 &gt;= 0.05 &amp;&amp; $5 &lt; 0.15 {n++} END {print &quot;Candidate:&quot;, n+0}&#39;</span><span class="w"> </span>model_devi.out
+
+<span class="gp"># </span>Count<span class="w"> </span>FAILED<span class="w"> </span>frames<span class="w"> </span><span class="o">(</span>max_devi_f<span class="w"> </span>&gt;<span class="o">=</span><span class="w"> </span>trust_hi<span class="o">)</span>
+<span class="gp">$ </span>awk<span class="w"> </span><span class="s1">&#39;$5 &gt;= 0.15 {n++} END {print &quot;Failed:&quot;, n+0}&#39;</span><span class="w"> </span>model_devi.out
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">n+0</span></code> trick prints <code class="docutils literal notranslate"><span class="pre">0</span></code> instead of blank if no frames match. Small thing. Saves you from staring at empty output wondering if the command worked.</p>
+<p>Want all three buckets at once? One pass:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span>$ awk &#39;NR&gt;1 {
+    if ($5 &lt; 0.05) a++;
+    else if ($5 &lt; 0.15) c++;
+    else f++;
+}
+END {
+    total = a+c+f;
+    printf &quot;Accurate: %d (%.1f%%)\nCandidate: %d (%.1f%%)\nFailed: %d (%.1f%%)\n&quot;,
+        a+0, (a+0)/total*100,
+        c+0, (c+0)/total*100,
+        f+0, (f+0)/total*100
+}&#39; model_devi.out
+</pre></div>
+</div>
+<p>Run this. Look at the numbers. Three buckets. Accurate, candidate, failed. Only candidates go to DFT. If you remember nothing else from this chapter, remember that.</p>
+<p>And if you want to sweep across <em>all</em> tasks in an iteration:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Summary<span class="w"> </span>across<span class="w"> </span>all<span class="w"> </span>model_devi.out<span class="w"> </span>files<span class="w"> </span><span class="k">in</span><span class="w"> </span>iteration<span class="w"> </span><span class="m">0</span>
+<span class="gp">$ </span><span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span>iter.000000/01.model_devi/task.*/model_devi.out<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="go">    echo &quot;=== $f ===&quot;</span>
+<span class="go">    awk &#39;NR&gt;1 {</span>
+<span class="go">        if ($5 &lt; 0.05) a++;</span>
+<span class="go">        else if ($5 &lt; 0.15) c++;</span>
+<span class="go">        else fail++;</span>
+<span class="go">    }</span>
+<span class="go">    END {</span>
+<span class="go">        total = a+c+fail;</span>
+<span class="go">        if (total &gt; 0)</span>
+<span class="go">            printf &quot;  Accurate: %d (%.1f%%)  Candidate: %d (%.1f%%)  Failed: %d (%.1f%%)\n&quot;,</span>
+<span class="go">                a+0, (a+0)/total*100, c+0, (c+0)/total*100, fail+0, (fail+0)/total*100</span>
+<span class="go">    }&#39; &quot;$f&quot;</span>
+<span class="go">done</span>
+</pre></div>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>On a busy cluster, you might have 30 task directories per iteration (5 systems x 6 temperatures). Running this loop takes seconds. Do it every time a new iteration completes. It takes less time than checking your email and tells you infinitely more about your model’s health.</p>
+</div>
+<p>No Python, no Jupyter, no X11 forwarding. Just ssh and awk. Brutal efficiency.</p>
+</section>
+<hr class="docutils" />
+<section id="plotting-force-deviation-distributions">
+<h2>Plotting Force Deviation Distributions<a class="headerlink" href="#plotting-force-deviation-distributions" title="Permalink to this heading">#</a></h2>
+<p>Quick awk numbers are great for triage. But to really <em>see</em> what’s happening, you want a histogram. The shape of the distribution tells a story that summary statistics miss entirely. This is the part that made it click for me.</p>
+<p>Here’s a Python script you can run on your local machine (copy the <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> files over, or run it in a Jupyter notebook on the cluster if you have one):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Load model_devi.out (skip header line)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;model_devi.out&quot;</span><span class="p">)</span>
+
+<span class="c1"># Column 4 (0-indexed) = max_devi_f</span>
+<span class="n">max_devi_f</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="c1"># Trust levels from your param.json</span>
+<span class="n">trust_lo</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">trust_hi</span> <span class="o">=</span> <span class="mf">0.15</span>
+
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">max_devi_f</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;steelblue&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Trust level lines</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">trust_lo</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trust_lo = </span><span class="si">{</span><span class="n">trust_lo</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">trust_hi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;trust_hi = </span><span class="si">{</span><span class="n">trust_hi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Shade the regions</span>
+<span class="n">ymax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">trust_lo</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">trust_lo</span><span class="p">,</span> <span class="n">trust_hi</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Candidate&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">trust_hi</span><span class="p">,</span> <span class="n">max_devi_f</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1.05</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Failed&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;max_devi_f (eV/A)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Force Deviation Distribution&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_devi_f</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;model_devi_hist.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you want to combine multiple tasks from the same iteration into one plot (which you usually do for the full picture), concatenate:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+
+<span class="n">all_devf</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;iter.000000/01.model_devi/task.*/model_devi.out&quot;</span><span class="p">)):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">all_devf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">])</span>
+
+<span class="n">max_devi_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">all_devf</span><span class="p">)</span>
+<span class="c1"># ... same plotting code as above ...</span>
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>Why <code class="docutils literal notranslate"><span class="pre">density=True</span></code> in the histogram?</strong> Because different iterations have wildly different numbers of frames (iteration 0 might have 4,500; iteration 4 might have 60,000 after adding more exploration tasks). Normalizing to density lets you compare shapes across iterations on the same axes. The absolute counts matter for awk triage. The <em>shape</em> matters for understanding convergence.</p>
+</div>
+<figure class="align-default" id="model-devi-histogram">
+<a class="reference internal image-reference" href="../../_images/model_devi_hist.png"><img alt="../../_images/model_devi_hist.png" src="../../_images/model_devi_hist.png" style="width: 95%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 25 </span><span class="caption-text">Force deviation distributions at three stages of the dpgen loop. Iteration 0 shows a broad distribution with many candidates and failures. By Iteration 4, most structures fall below <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> (accurate), with very few candidates remaining. This is convergence.</span><a class="headerlink" href="#model-devi-histogram" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>That’s your visual diagnostic. Print it. Tape it to your monitor. I’m serious.</p>
+</section>
+<hr class="docutils" />
+<section id="the-3-buckets-in-practice-what-the-distribution-actually-looks-like">
+<h2>The 3 Buckets in Practice: What the Distribution Actually Looks Like<a class="headerlink" href="#the-3-buckets-in-practice-what-the-distribution-actually-looks-like" title="Permalink to this heading">#</a></h2>
+<p>In Ch 6, I described the three buckets abstractly. Now let’s see what they look like in a real run. The histogram shape changes dramatically from iteration 0 to convergence, and reading that progression is how you know whether your run is healthy or slowly dying.</p>
+<section id="iteration-0-the-model-is-panicking">
+<h3>Iteration 0: The Model Is Panicking<a class="headerlink" href="#iteration-0-the-model-is-panicking" title="Permalink to this heading">#</a></h3>
+<p>The model just started. It was trained on your seed data, maybe 200 frames from some AIMD runs. Now you’ve sent it to explore at temperatures and system sizes it has barely seen. The model looks around, sees unfamiliar territory, and freaks out.</p>
+<p>The histogram is a mess. A broad, ugly distribution smeared across all three regions:</p>
+<ul class="simple">
+<li><p><strong>Accurate</strong>: 20-40% of frames. These are configurations close to the training data. The model recognizes them. “I’ve seen this before.”</p></li>
+<li><p><strong>Candidate</strong>: 30-50% of frames. The sweet spot. The model is uncertain but not delusional. “I think I know, but I’m not sure.” These are going to DFT.</p></li>
+<li><p><strong>Failed</strong>: 10-30% of frames. The model went off a cliff. “I have no idea.” Atoms too close, simulation heating up, forces making no physical sense. The high-temperature exploration trajectories are the main culprits.</p></li>
+</ul>
+<p>The peak of the distribution might sit right around <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code>, with a fat tail stretching past <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code>. That’s normal. That’s <em>expected</em>. The model barely knows anything yet.</p>
+<p>But here’s what nobody tells you. If your iteration 0 histogram shows 90% accurate, something is wrong. Either your trust bounds are way too loose, or your exploration isn’t pushing the model hard enough. A complacent model at iteration 0 is a model that isn’t learning. You should be nervous when iteration 0 looks <em>too good</em>.</p>
+</section>
+<section id="iteration-2-3-things-start-tightening">
+<h3>Iteration 2-3: Things Start Tightening<a class="headerlink" href="#iteration-2-3-things-start-tightening" title="Permalink to this heading">#</a></h3>
+<p>After a couple of rounds of DFT labeling and retraining, the distribution shifts left. The peak moves solidly into the accurate zone. The tail gets shorter:</p>
+<ul class="simple">
+<li><p><strong>Accurate</strong>: 70-85%</p></li>
+<li><p><strong>Candidate</strong>: 10-25%</p></li>
+<li><p><strong>Failed</strong>: 2-5%</p></li>
+</ul>
+<p>The high-temperature simulations still produce some candidates, but the low-temperature ones are almost entirely accurate. The model has learned the easy stuff and is now working on the hard cases. It’s not panicking anymore. It’s studying.</p>
+</section>
+<section id="iteration-4-convergence">
+<h3>Iteration 4+: Convergence<a class="headerlink" href="#iteration-4-convergence" title="Permalink to this heading">#</a></h3>
+<p>The histogram is now a tight spike near zero, with almost everything in the accurate zone. The tail is a wisp:</p>
+<ul class="simple">
+<li><p><strong>Accurate</strong>: 95-99%</p></li>
+<li><p><strong>Candidate</strong>: 1-5%</p></li>
+<li><p><strong>Failed</strong>: &lt;1%</p></li>
+</ul>
+<p>Look at that convergence curve. When you see this, the model has covered the configuration space defined by your exploration schedule. There’s almost nothing left for it to learn from these conditions. The student has mastered the material. Freeze and deploy.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>The <em>shape</em> of the histogram tells you more than the percentages. A bimodal distribution (one peak in accurate, another peak in failed, almost nothing in candidate) means the model either knows something perfectly or is completely lost. No middle ground. This usually happens when exploration pushes into a genuinely new regime (you added a new temperature or system type). It’s not a problem. It just means the model needs a few more iterations to bridge the gap.</p>
+<p>A smooth, single-peaked distribution shifting left over iterations is the sign of a healthy run.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="convergence-tracking-the-plot-that-tells-you-when-to-stop">
+<h2>Convergence Tracking: The Plot That Tells You When to Stop<a class="headerlink" href="#convergence-tracking-the-plot-that-tells-you-when-to-stop" title="Permalink to this heading">#</a></h2>
+<p>Bucket percentages per iteration are useful. But the plot you <em>really</em> want is the <strong>accurate fraction vs. iteration number</strong>. This is the convergence curve. One line. One number per iteration. The single best summary of your entire dpgen run.</p>
+<section id="how-to-compute-it">
+<h3>How to Compute It<a class="headerlink" href="#how-to-compute-it" title="Permalink to this heading">#</a></h3>
+<p>For each iteration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">accurate_fraction</span> <span class="o">=</span> <span class="p">(</span><span class="n">number</span> <span class="n">of</span> <span class="n">frames</span> <span class="k">with</span> <span class="n">max_devi_f</span> <span class="o">&lt;</span> <span class="n">trust_lo</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">total</span> <span class="n">frames</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>across all tasks. Here’s a bash script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># convergence.sh: compute accurate fraction per iteration</span>
+<span class="nv">TRUST_LO</span><span class="o">=</span><span class="m">0</span>.05
+
+<span class="k">for</span><span class="w"> </span>iter_dir<span class="w"> </span><span class="k">in</span><span class="w"> </span>iter.*/<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">iter_num</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$iter_dir</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[0-9]\+&#39;</span><span class="k">)</span>
+<span class="w">    </span><span class="nv">total</span><span class="o">=</span><span class="m">0</span>
+<span class="w">    </span><span class="nv">accurate</span><span class="o">=</span><span class="m">0</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">iter_dir</span><span class="si">}</span><span class="s2">01.model_devi/task.*/model_devi.out&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nv">counts</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">tlo</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$TRUST_LO</span><span class="s2">&quot;</span><span class="w"> </span><span class="s1">&#39;NR&gt;1 {</span>
+<span class="s1">                total++;</span>
+<span class="s1">                if ($5 &lt; tlo) acc++;</span>
+<span class="s1">            } END {print acc+0, total}&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">            </span><span class="nv">accurate</span><span class="o">=</span><span class="k">$((</span><span class="nv">accurate</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$counts</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="k">)))</span>
+<span class="w">            </span><span class="nv">total</span><span class="o">=</span><span class="k">$((</span><span class="nv">total</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$counts</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)))</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">done</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$total</span><span class="s2">&quot;</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">frac</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span><span class="s2">&quot;BEGIN {printf \&quot;%.4f\&quot;, </span><span class="nv">$accurate</span><span class="s2">/</span><span class="nv">$total</span><span class="s2">}&quot;</span><span class="k">)</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Iter </span><span class="nv">$iter_num</span><span class="s2">: </span><span class="nv">$accurate</span><span class="s2"> / </span><span class="nv">$total</span><span class="s2"> = </span><span class="nv">$frac</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>Or the Python version, which also generates the plot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="n">trust_lo</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+<span class="n">iterations</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;iter.*/&quot;</span><span class="p">))</span>
+<span class="n">iter_nums</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">acc_fracs</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">iter_dir</span> <span class="ow">in</span> <span class="n">iterations</span><span class="p">:</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;iter\.(\d+)&#39;</span><span class="p">,</span> <span class="n">iter_dir</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">iter_dir</span><span class="si">}</span><span class="s2">01.model_devi/task.*/model_devi.out&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="n">all_devf</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">all_devf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_devf</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="n">devf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">all_devf</span><span class="p">)</span>
+    <span class="n">frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">devf</span> <span class="o">&lt;</span> <span class="n">trust_lo</span><span class="p">)</span>
+    <span class="n">iter_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+    <span class="n">acc_fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iter </span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">devf</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">trust_lo</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devf</span><span class="p">)</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">frac</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iter_nums</span><span class="p">,</span> <span class="n">acc_fracs</span><span class="p">,</span> <span class="s1">&#39;o-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;steelblue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="s2">&quot;fp_accurate_threshold (0.98)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="s2">&quot;fp_accurate_soft_threshold (0.90)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Iteration&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Accurate Fraction&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;dpgen Convergence&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;convergence.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="convergence-plot">
+<a class="reference internal image-reference" href="../../_images/convergence.png"><img alt="../../_images/convergence.png" src="../../_images/convergence.png" style="width: 80%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 26 </span><span class="caption-text">The accurate fraction grows with each dpgen iteration. When it crosses <code class="docutils literal notranslate"><span class="pre">fp_accurate_threshold</span></code> (0.98), the model is considered converged. The <code class="docutils literal notranslate"><span class="pre">fp_accurate_soft_threshold</span></code> (0.90) is a softer criterion that some workflows use for early stopping.</span><a class="headerlink" href="#convergence-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="what-the-curve-should-look-like">
+<h3>What the Curve Should Look Like<a class="headerlink" href="#what-the-curve-should-look-like" title="Permalink to this heading">#</a></h3>
+<p>A healthy convergence curve looks like a saturating exponential: fast improvement early, diminishing returns later.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Iter 0: 0.30   ███░░░░░░░
+Iter 1: 0.55   █████░░░░░
+Iter 2: 0.75   ███████░░░
+Iter 3: 0.90   █████████░
+Iter 4: 0.97   █████████▉
+Iter 5: 0.99   ██████████
+</pre></div>
+</div>
+<p>Four iterations. From 30% accurate to 97%. That’s the good case. The model learns fast, then plateaus near 1.0.</p>
+<p>But what if it doesn’t look like that?</p>
+<p><strong>Curve plateaus well below threshold</strong> (stuck at 0.85 for 3 iterations): Something is wrong. Possible causes:</p>
+<ol class="arabic simple">
+<li><p><strong>Descriptor too small.</strong> The model genuinely can’t represent the interactions you’re asking it to learn. <code class="docutils literal notranslate"><span class="pre">rcut</span></code> too short, <code class="docutils literal notranslate"><span class="pre">sel</span></code> too low, fitting network too shallow.</p></li>
+<li><p><strong>Inconsistent DFT data.</strong> Different functionals, convergence thresholds, or pseudopotentials crept in across iterations. The model is being fed contradictory labels.</p></li>
+<li><p><strong>Trust bounds poorly calibrated.</strong> You’re only labeling frames that are too similar to each other. The model keeps learning the same thing.</p></li>
+<li><p><strong>Energy scale problem.</strong> Your training set mixes incompatible systems. More on this below.</p></li>
+</ol>
+<p><strong>Curve oscillates</strong> (up-down-up-down): The model is being confused by contradictory data. Check for element ordering issues, inconsistent DFT settings, or energy scale mismatches. Oscillation means the model learned something in iteration N, then unlearned it in iteration N+1 because the new data conflicted. That’s not learning. That’s confusion.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>dpgen’s <code class="docutils literal notranslate"><span class="pre">fp_accurate_threshold</span></code> (default 0.98) and <code class="docutils literal notranslate"><span class="pre">fp_accurate_soft_threshold</span></code> (default 0.90) are the two horizontal lines on this convergence plot. When the curve crosses 0.90, dpgen starts throttling the number of candidates. When it crosses 0.98, dpgen essentially stops labeling. But these are automatic behaviors based on model deviation alone. You should still visually inspect the curve. A model that crosses 0.98 on iteration 3 but was only tested at 3 temperatures might not actually be converged for your needs. Passing the internal check is necessary but not sufficient.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="when-to-adjust-trust-levels">
+<h2>When to Adjust Trust Levels<a class="headerlink" href="#when-to-adjust-trust-levels" title="Permalink to this heading">#</a></h2>
+<p>Trust levels aren’t set-and-forget. They’re dials. And sometimes you need to turn them.</p>
+<p>The decision logic is simpler than you think. Let’s trace through it.</p>
+<section id="too-many-candidates">
+<h3>Too Many Candidates<a class="headerlink" href="#too-many-candidates" title="Permalink to this heading">#</a></h3>
+<p><strong>Symptom</strong>: Every iteration sends <code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code> (50) structures to DFT, and the accurate fraction barely budges.</p>
+<p><strong>What’s happening</strong>: <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> is too low. You’re being too picky, flagging tons of structures as “uncertain” when most of them are fine. The DFT queue is flooded with structures that don’t teach the model much new.</p>
+<p><strong>Fix</strong>: Raise <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code>. If it’s at 0.05, try 0.08 or 0.10. The candidate pool shrinks. The structures that <em>do</em> go to DFT are the truly uncertain ones. Quality over quantity.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Don’t raise <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> in response to iteration 0 having lots of candidates. Of course iteration 0 has lots of candidates. The model is brand new. Everything is uncertain. The “too many candidates” problem is when you’re at iteration 3+ and still saturating <code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code> every iteration with no improvement in accurate fraction. That’s when you turn the dial. Not before.</p>
+</div>
+</section>
+<section id="zero-or-near-zero-candidates">
+<h3>Zero or Near-Zero Candidates<a class="headerlink" href="#zero-or-near-zero-candidates" title="Permalink to this heading">#</a></h3>
+<p><strong>Symptom</strong>: The accurate fraction is 99%+ but the model still doesn’t perform well on validation tests (bad RDF, unstable long MD, wrong diffusion coefficient).</p>
+<p><strong>What’s happening</strong>: <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> is too high. Everything looks “accurate” according to model deviation, but the model is quietly wrong in ways that all 4 models happen to agree on. Here’s what nobody tells you: agreement does NOT mean correctness. Four models can all be wrong in the same way if they were all trained on the same biased data.</p>
+<p><strong>Fix</strong>: Lower <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code>. If it’s at 0.05, try 0.03. This forces dpgen to label more structures, improving coverage in subtle regions where the model is overconfident.</p>
+</section>
+<section id="too-many-failed-frames">
+<h3>Too Many Failed Frames<a class="headerlink" href="#too-many-failed-frames" title="Permalink to this heading">#</a></h3>
+<p><strong>Symptom</strong>: 30%+ of frames are “failed” after several iterations. The exploration simulations keep blowing up.</p>
+<p><strong>What’s happening</strong>: Either <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code> is too low (you’re labeling perfectly fine uncertainty as “failure”), or your exploration schedule is too aggressive (temperatures too high, timesteps too large for the current model quality).</p>
+<p><strong>Fix</strong>: Try both:</p>
+<ol class="arabic simple">
+<li><p>Raise <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code> (e.g., from 0.15 to 0.25). Some of those “failed” frames might actually be learnable.</p></li>
+<li><p>Tone down the exploration. Lower temperatures, shorter runs, smaller timestep for the early iterations. Let the model build confidence before throwing it into the deep end.</p></li>
+</ol>
+</section>
+<section id="the-practical-adjustment-workflow">
+<h3>The Practical Adjustment Workflow<a class="headerlink" href="#the-practical-adjustment-workflow" title="Permalink to this heading">#</a></h3>
+<p>Here’s what I actually do. Not what the docs suggest. What I do.</p>
+<ol class="arabic simple">
+<li><p>Run iterations 0-2 with the default trust levels (<code class="docutils literal notranslate"><span class="pre">trust_lo</span> <span class="pre">=</span> <span class="pre">0.05</span></code>, <code class="docutils literal notranslate"><span class="pre">trust_hi</span> <span class="pre">=</span> <span class="pre">0.15</span></code>).</p></li>
+<li><p>After iteration 2, plot the histograms and check the bucket fractions.</p></li>
+<li><p>If the candidate fraction is healthy (5-30%) and the accurate fraction is climbing: change nothing. Don’t fix what isn’t broken.</p></li>
+<li><p>If it’s not, adjust trust levels in <code class="docutils literal notranslate"><span class="pre">param.json</span></code> and restart. dpgen reads <code class="docutils literal notranslate"><span class="pre">param.json</span></code> fresh every iteration, so mid-run changes take effect immediately.</p></li>
+</ol>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>You <strong>can</strong> change <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> and <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code> in <code class="docutils literal notranslate"><span class="pre">param.json</span></code> between iterations without restarting from scratch. dpgen re-reads the config at the start of each iteration. This is one of the few mid-run adjustments that’s safe and expected. But do NOT change <code class="docutils literal notranslate"><span class="pre">type_map</span></code>, <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code>, or <code class="docutils literal notranslate"><span class="pre">default_training_param.model</span></code> mid-run. Those require starting over. The trust levels are dials. The type_map is the foundation. You can’t rotate the foundation. This is not a preference.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-errors-a-survival-guide">
+<h2>Common Errors: A Survival Guide<a class="headerlink" href="#common-errors-a-survival-guide" title="Permalink to this heading">#</a></h2>
+<p>When dpgen fails, the error messages range from “somewhat helpful” to “actively misleading.” What follows are real errors I’ve hit, what they actually mean (because the message won’t tell you), and how to fix them. I learned every one of these the expensive way.</p>
+<section id="dft-convergence-failures">
+<h3>DFT Convergence Failures<a class="headerlink" href="#dft-convergence-failures" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: QE output has <code class="docutils literal notranslate"><span class="pre">convergence</span> <span class="pre">NOT</span> <span class="pre">achieved</span></code> or dpgen reports failed fp tasks.</p>
+<p><strong>What’s happening</strong>: The SCF cycle didn’t converge within <code class="docutils literal notranslate"><span class="pre">electron_maxstep</span></code> iterations. This happens when dpgen sends a candidate structure to DFT that has atoms in an unusual configuration. Close contacts, distorted bond angles, configurations the DFT mixing scheme struggles with.</p>
+<p><strong>Fixes</strong> (try in order):</p>
+<ol class="arabic simple">
+<li><p><strong>Lower <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code></strong>: In <code class="docutils literal notranslate"><span class="pre">user_fp_params.electrons</span></code>, change <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code> from 0.3 to 0.1 or 0.15. Slower convergence but much more stable. This is fix #1 for 80% of QE convergence failures. Trust me on this one. Try this first.</p></li>
+<li><p><strong>Increase <code class="docutils literal notranslate"><span class="pre">electron_maxstep</span></code></strong>: Bump from 200 to 500. Some structures just need more SCF iterations to settle down.</p></li>
+<li><p><strong>Check your candidate structures</strong>: If the same task index keeps failing, look at the actual atomic positions. Is the structure physical? Two atoms at 0.3 Angstroms? That’s not a DFT problem. That’s a LAMMPS exploration problem. Your <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code> is too high or your timestep is too large.</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Check<span class="w"> </span>the<span class="w"> </span>failing<span class="w"> </span>structure
+<span class="gp">$ </span>cat<span class="w"> </span>iter.000002/02.fp/task.000.000003/input.pwi
+<span class="gp"># </span>Look<span class="w"> </span>at<span class="w"> </span>ATOMIC_POSITIONS<span class="w"> </span>-<span class="w"> </span>any<span class="w"> </span>atoms<span class="w"> </span>suspiciously<span class="w"> </span>close?
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>If using vdW-DF functionals</strong>: Make sure <code class="docutils literal notranslate"><span class="pre">input_dft</span></code> uses the correct label for your QE version. QE 7.3.1 wants <code class="docutils literal notranslate"><span class="pre">'vdw-df2-b86r'</span></code> not <code class="docutils literal notranslate"><span class="pre">'rev-vdw-df2'</span></code>. The obsolete label may cause silent fallback or outright crash.</p></li>
+</ol>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>A few failed DFT tasks per iteration is <strong>normal</strong>. dpgen handles this gracefully. It skips those frames and moves on. The problem is when &gt;50% of fp tasks fail. That’s when you investigate. A few failures is expected turbulence. Majority failure is a crash landing.</p>
+</div>
+</section>
+<section id="lammps-crashes">
+<h3>LAMMPS Crashes<a class="headerlink" href="#lammps-crashes" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: <code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">Lost</span> <span class="pre">atoms</span></code> or <code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">Neighbor</span> <span class="pre">list</span> <span class="pre">overflow</span></code> or the simulation just dies silently.</p>
+<p><strong>Cause 1: atoms too close.</strong> The model predicts garbage forces on a close-contact pair, sending atoms flying. One atom gets launched at Mach 4, hits the box boundary, and LAMMPS says “I lost an atom.” It didn’t lose it. The atom left. Common in early iterations when the model hasn’t seen many configurations.</p>
+<p><strong>Fix</strong>: Lower <code class="docutils literal notranslate"><span class="pre">model_devi_dt</span></code> (the timestep) for early iterations. 0.5 fs is conservative for hydrogen-containing systems. If LAMMPS still crashes, try 0.25 fs. Start there. Adjust later.</p>
+<p><strong>Cause 2: timestep too large.</strong> Even 0.5 fs can be too much if you have very light atoms (lone H atoms) and the model predicts unreasonable forces. The atom moves too far in one step, lands in an insane position, forces get worse, repeat. Positive feedback loop. The simulation spirals into chaos in microseconds.</p>
+<p><strong>Fix</strong>: Reduce <code class="docutils literal notranslate"><span class="pre">model_devi_dt</span></code>. You can also add <code class="docutils literal notranslate"><span class="pre">model_devi_skip</span></code> to throw away early frames from the simulation heating up.</p>
+<p><strong>Cause 3: model genuinely blew up.</strong> The trained model is so bad at certain configurations that it creates a feedback loop. Bad forces cause bad positions, worse forces follow, atoms fly to infinity.</p>
+<p><strong>Fix</strong>: This usually means your training data has a hole. Check <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code> from training. If the force RMSE is above 0.5 eV/A, the model isn’t ready for exploration. You may need better seed data. Go back to Ch 3 (dpdata) and curate your initial training set more carefully.</p>
+</section>
+<section id="training-divergence-nan-loss">
+<h3>Training Divergence: NaN Loss<a class="headerlink" href="#training-divergence-nan-loss" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code> shows <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for loss values after some number of training steps. Or the training script exits with a numerical error.</p>
+<p><strong>What’s happening</strong>: The training data contains garbage. Specifically, there’s probably a frame with insane energies or forces. Maybe a DFT calculation that “converged” to a wrong electronic state. Maybe forces that are 10 orders of magnitude off. The model sees this frame, tries to learn from it, and the gradients explode. NaN. Three days of compute. Gone. Because of one bad frame.</p>
+<p><strong>Fix</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Find the bad data</strong>: Check the most recently added DFT data for outliers.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dpdata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load the latest fp data</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">dpdata</span><span class="o">.</span><span class="n">LabeledSystem</span><span class="p">(</span><span class="s2">&quot;iter.000002/02.fp/data.002/&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;deepmd/npy&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check for force outliers</span>
+<span class="n">forces</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;forces&quot;</span><span class="p">]</span>
+<span class="n">max_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">forces</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max force per frame:&quot;</span><span class="p">,</span> <span class="n">max_f</span><span class="p">)</span>
+<span class="c1"># Any frame with max force &gt; 50 eV/A is suspicious</span>
+<span class="n">bad_frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">max_f</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bad frames:&quot;</span><span class="p">,</span> <span class="n">bad_frames</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Remove the offending frames</strong> and retrain.</p></li>
+<li><p><strong>Check for energy scale mismatches</strong>: If your training set mixes isolated molecules with slab systems at very different per-atom energies, the model cannot fit both simultaneously. This isn’t a bad frame. It’s a fundamental problem with your training set composition. See the practical chapter on <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">energy scales</span></a>.</p></li>
+</ol>
+<div class="danger admonition">
+<p class="admonition-title">Warning: Energy Scale</p>
+<p>If your training set includes both isolated molecules and periodic slabs with very different per-atom energies (e.g., gas-phase H₂ at ~-16 eV/atom vs graphene slab at ~-278 eV/atom), you’ll get NaN losses or a model that fits one regime and completely botches the other. This is like grading kindergarten and PhD exams on the same curve. Our tutorial examples avoid this: Ar is single-element, water is single-phase. But real research systems (like graphene + H₂ adsorption) hit this wall hard. The solution is either separate models or carefully constructed energy shifts.</p>
+</div>
+</section>
+<section id="file-permission-issues-in-containers">
+<h3>File Permission Issues in Containers<a class="headerlink" href="#file-permission-issues-in-containers" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: <code class="docutils literal notranslate"><span class="pre">Permission</span> <span class="pre">denied</span></code> errors when dpgen tries to write to output directories, or mysterious failures where the command runs fine interactively but fails inside Apptainer.</p>
+<p><strong>What’s happening</strong>: Containers bind-mount host directories with restricted permissions. The user ID inside the container might not match the host user.</p>
+<p><strong>Fixes</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Check bind mounts</strong>: Make sure your container command includes the correct bind paths:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apptainer</span> <span class="n">exec</span> <span class="o">--</span><span class="n">bind</span> <span class="o">/</span><span class="n">scratch</span><span class="p">:</span><span class="o">/</span><span class="n">scratch</span> <span class="n">container</span><span class="o">.</span><span class="n">sif</span> <span class="o">...</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Run <code class="docutils literal notranslate"><span class="pre">id</span></code> inside the container</strong> to verify your UID matches:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>container.sif<span class="w"> </span>id
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Don’t put the working directory on a read-only filesystem.</strong> <code class="docutils literal notranslate"><span class="pre">/home</span></code> on some HPCs has weird permission inheritance. Use <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> or <code class="docutils literal notranslate"><span class="pre">$WORK</span></code>.</p></li>
+<li><p><strong>Pre-create output directories</strong>: dpgen sometimes fails to create directories if the parent has restrictive permissions:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>iter.000000/<span class="o">{</span><span class="m">00</span>.train,01.model_devi,02.fp<span class="o">}</span>
+</pre></div>
+</div>
+<p>dpgen should handle this. If it doesn’t, it’s almost certainly a container bind-mount issue, not a dpgen bug.</p>
+</section>
+<section id="disk-space-exhaustion">
+<h3>Disk Space Exhaustion<a class="headerlink" href="#disk-space-exhaustion" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: Jobs fail with <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">space</span> <span class="pre">left</span> <span class="pre">on</span> <span class="pre">device</span></code> or LAMMPS dumps truncated files or QE silently writes incomplete output.</p>
+<p><strong>What’s happening</strong>: LAMMPS trajectories are enormous. Each model_devi task writes a trajectory dump plus <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code>. With 30 tasks per iteration, 2000 frames each, and a 96-atom system, you’re looking at hundreds of MB per iteration. Add DFT outputs and training checkpoints over 10 iterations and you’re in GB territory fast.</p>
+<p><strong>Fixes</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Use <code class="docutils literal notranslate"><span class="pre">model_devi_clean_traj</span></code></strong>: Set this in <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. Value of 3 means dpgen keeps trajectories from the last 3 iterations and deletes older ones:</p></li>
+</ol>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi_clean_traj&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Increase <code class="docutils literal notranslate"><span class="pre">trj_freq</span></code> for long runs</strong>: Writing every 100th frame of a 2-million-step simulation gives you 20,000 frames. Most are redundant (consecutive MD frames are highly correlated). Use <code class="docutils literal notranslate"><span class="pre">trj_freq:</span> <span class="pre">1000</span></code> to get 2,000 frames instead. 10x less disk for almost the same information.</p></li>
+<li><p><strong>Monitor disk usage between iterations</strong>:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>du<span class="w"> </span>-sh<span class="w"> </span>iter.*/
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>Move completed iterations to archival storage</strong> if your cluster has a tiered filesystem.</p></li>
+</ol>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>On shared clusters, filling up <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> gets you an angry email from the sysadmin and potentially your jobs killed. I’ve seen dpgen runs fill 500 GB in a week. Nobody noticed until the sysadmin noticed. Set <code class="docutils literal notranslate"><span class="pre">model_devi_clean_traj</span></code>, use reasonable <code class="docutils literal notranslate"><span class="pre">trj_freq</span></code> values, and check <code class="docutils literal notranslate"><span class="pre">du</span> <span class="pre">-sh</span></code> regularly. Disk space is the most boring reason for a run to fail, and the most preventable.</p>
+</div>
+</section>
+<section id="dpgen-job-failed-3-times">
+<h3>dpgen “Job Failed 3 Times”<a class="headerlink" href="#dpgen-job-failed-3-times" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: dpgen exits with <code class="docutils literal notranslate"><span class="pre">job</span> <span class="pre">failed</span> <span class="pre">3</span> <span class="pre">times</span></code> or <code class="docutils literal notranslate"><span class="pre">task</span> <span class="pre">xxx</span> <span class="pre">failed</span></code> in <code class="docutils literal notranslate"><span class="pre">dpgen.log</span></code>.</p>
+<p><strong>What’s happening</strong>: dpdispatcher tried to submit or run a job 3 times and it failed every time. Could be a PBS/Slurm issue, a container issue, a path issue, or an actual compute failure.</p>
+<p><strong>Debugging steps</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Check <code class="docutils literal notranslate"><span class="pre">dpgen.log</span></code></strong> for which task failed:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;fail&quot;</span><span class="w"> </span>dpgen.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Go to the failed task directory</strong> and look at stdout/stderr:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ls<span class="w"> </span>iter.000001/02.fp/task.000.000005/
+<span class="gp"># </span>Look<span class="w"> </span><span class="k">for</span><span class="w"> </span>*.out,<span class="w"> </span>*.err,<span class="w"> </span>*.log<span class="w"> </span>files
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Check PBS/Slurm output</strong>: Look for <code class="docutils literal notranslate"><span class="pre">*.o&lt;jobid&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">*.e&lt;jobid&gt;</span></code> files. Common culprits:</p>
+<ul class="simple">
+<li><p>Walltime exceeded (increase <code class="docutils literal notranslate"><span class="pre">wall_time</span></code> in machine.json)</p></li>
+<li><p>Module not loaded (check <code class="docutils literal notranslate"><span class="pre">module_list</span></code> or container setup)</p></li>
+<li><p>Path not found (check <code class="docutils literal notranslate"><span class="pre">sys_configs</span></code> paths, <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code>)</p></li>
+<li><p>Queue full (just wait and restart dpgen; it resumes from <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>)</p></li>
+</ul>
+</li>
+<li><p><strong>The nuclear option</strong>: If the job truly failed for a transient reason (cluster hiccup, network glitch), edit <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>. Remove the last line (the failed step) and restart dpgen. It’ll retry.</p></li>
+</ol>
+</section>
+<section id="missing-forces-in-qe-output">
+<h3>Missing Forces in QE Output<a class="headerlink" href="#missing-forces-in-qe-output" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: dpdata reads QE output and finds zero forces, or dpgen reports fp data with missing forces. Training data quality degrades silently.</p>
+<p><strong>What’s happening</strong>: <code class="docutils literal notranslate"><span class="pre">tprnfor</span> <span class="pre">=</span> <span class="pre">.true.</span></code> was NOT set in the QE input. Without it, QE doesn’t print forces in the output file. <mark class="silent-fail">dpdata sees no forces, fills them with zeros</mark>, and your training data now includes frames where every force is 0.0 eV/A. The model learns to predict zero forces everywhere. Converges beautifully. Produces complete garbage.</p>
+<p>I cannot stress this enough. Nothing crashes. dpgen doesn’t warn you. The training loss might even look reasonable (predicting zero forces is easy to fit!). But the resulting model is worthless.</p>
+<p><strong>Fix</strong>: Set <code class="docutils literal notranslate"><span class="pre">tprnfor:</span> <span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">user_fp_params.control</span></code>. Non-negotiable. Not optional. Not a suggestion.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&quot;control&quot;: {
+    &quot;tprnfor&quot;: true,
+    ...
+}
+</pre></div>
+</div>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>This is a silent killer. If your model produces suspiciously small forces on everything, go back and check: did QE actually <em>print</em> forces for every frame?</p>
+<p>One diagnostic:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>grep<span class="w"> </span><span class="s2">&quot;Forces acting&quot;</span><span class="w"> </span>iter.000000/02.fp/task.000.000000/output
+</pre></div>
+</div>
+<p>If that grep finds nothing, your forces are missing. Fix <code class="docutils literal notranslate"><span class="pre">tprnfor</span></code> and re-run the fp stage. I forgot to set <code class="docutils literal notranslate"><span class="pre">tprnfor</span> <span class="pre">=</span> <span class="pre">.true.</span></code> on one of my early runs. dpdata happily converted the output. The forces were all zeros. I trained a model on zero forces. It took me two days to figure out why the model was predicting everything as a flat energy surface. Don’t be me.</p>
+</div>
+</section>
+<section id="wrong-element-ordering-silent-corruption">
+<h3>Wrong Element Ordering (Silent Corruption)<a class="headerlink" href="#wrong-element-ordering-silent-corruption" title="Permalink to this heading">#</a></h3>
+<p><strong>What you see</strong>: Nothing. That’s the problem.</p>
+<p>Everything runs. The loss converges. The model seems fine. But validation shows garbage. Wrong lattice constant, wrong binding energy, wrong everything.</p>
+<p><strong>What’s happening</strong>: Your <code class="docutils literal notranslate"><span class="pre">type_map</span></code> says one ordering, but somewhere in the pipeline, the mapping got flipped. Maybe <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> has the wrong ordering. Maybe <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> lists elements in a different order. Maybe the POSCAR has atoms arranged differently than <code class="docutils literal notranslate"><span class="pre">type_map</span></code> expects.</p>
+<p>The model trains happily. It learns to associate one element’s pseudopotential forces with another element’s descriptor. The loss converges because neural networks are flexible enough to fit almost anything. But <mark class="silent-fail">the physics is completely, irreversibly wrong</mark>. Three days of compute. Wasted. Ask me how I know.</p>
+<p><strong>Fixes</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Verify <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> in every init_data_sys directory</strong>:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span><span class="w"> </span>d<span class="w"> </span><span class="k">in</span><span class="w"> </span>init_data/set_*/<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="go">    echo &quot;=== $d ===&quot; &amp;&amp; cat &quot;${d}type.raw&quot; &amp;&amp; cat &quot;${d}type_map.raw&quot;</span>
+<span class="go">done</span>
+</pre></div>
+</div>
+<p>For water: O atoms should be <code class="docutils literal notranslate"><span class="pre">0</span></code>, H atoms should be <code class="docutils literal notranslate"><span class="pre">1</span></code> (matching <code class="docutils literal notranslate"><span class="pre">type_map:</span> <span class="pre">[&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>). For Ar: all <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Verify <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> order matches <code class="docutils literal notranslate"><span class="pre">type_map</span></code></strong>:</p></li>
+</ol>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;O.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Same order. Both lists. Always. This is not a suggestion.</p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Spot-check a generated QE input file</strong>:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>head<span class="w"> </span>-50<span class="w"> </span>iter.000000/02.fp/task.000.000000/input.pwi
+</pre></div>
+</div>
+<p>Make sure <code class="docutils literal notranslate"><span class="pre">ATOMIC_SPECIES</span></code> has the right pseudopotential assigned to the right element, and <code class="docutils literal notranslate"><span class="pre">ATOMIC_POSITIONS</span></code> has atoms in the expected order.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>Element ordering is the most insidious bug in the dpgen workflow. It never crashes. It never warns. It just silently trains a model that has learned the wrong physics. Triple-check your <code class="docutils literal notranslate"><span class="pre">type_map</span></code> against every other file in the pipeline. Yes, I’m repeating myself from Ch 3. No, I will not apologize. I’ve seen this destroy weeks of compute time on more than one occasion.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-full-error-reference-table">
+<h2>The Full Error Reference Table<a class="headerlink" href="#the-full-error-reference-table" title="Permalink to this heading">#</a></h2>
+<p>Every common error in one place. Pin this next to your cluster terminal.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Error</p></th>
+<th class="head"><p>Symptom</p></th>
+<th class="head"><p>Likely Cause</p></th>
+<th class="head"><p>Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>QE <code class="docutils literal notranslate"><span class="pre">convergence</span> <span class="pre">NOT</span> <span class="pre">achieved</span></code></p></td>
+<td><p>fp tasks fail</p></td>
+<td><p>Hard structure + aggressive mixing</p></td>
+<td><p>Lower <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code> to 0.1-0.15; raise <code class="docutils literal notranslate"><span class="pre">electron_maxstep</span></code> to 500</p></td>
+</tr>
+<tr class="row-odd"><td><p>QE wrong vdW functional</p></td>
+<td><p>Energies inconsistent across iterations</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">input_dft</span> <span class="pre">=</span> <span class="pre">'rev-vdw-df2'</span></code> on QE 7.3.1</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">'vdw-df2-b86r'</span></code> (the old label is obsolete)</p></td>
+</tr>
+<tr class="row-even"><td><p>LAMMPS <code class="docutils literal notranslate"><span class="pre">Lost</span> <span class="pre">atoms</span></code></p></td>
+<td><p>Exploration crashes</p></td>
+<td><p>Atoms flying off; bad forces from untrained model</p></td>
+<td><p>Lower <code class="docutils literal notranslate"><span class="pre">model_devi_dt</span></code>; improve seed data</p></td>
+</tr>
+<tr class="row-odd"><td><p>LAMMPS <code class="docutils literal notranslate"><span class="pre">Neighbor</span> <span class="pre">list</span> <span class="pre">overflow</span></code></p></td>
+<td><p>Exploration crashes</p></td>
+<td><p>Too many atoms within cutoff (compressed structure)</p></td>
+<td><p>Increase LAMMPS neighbor skin or fix the structure</p></td>
+</tr>
+<tr class="row-even"><td><p>NaN in <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code></p></td>
+<td><p>Training fails</p></td>
+<td><p>Bad frame in training data (insane forces/energies)</p></td>
+<td><p>Find and remove the outlier; check energy scale mixing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Permission</span> <span class="pre">denied</span></code></p></td>
+<td><p>Jobs fail in container</p></td>
+<td><p>Bind mount paths wrong</p></td>
+<td><p>Check <code class="docutils literal notranslate"><span class="pre">--bind</span></code> flags in container command; use <code class="docutils literal notranslate"><span class="pre">/scratch</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">space</span> <span class="pre">left</span> <span class="pre">on</span> <span class="pre">device</span></code></p></td>
+<td><p>Random failures, truncated output</p></td>
+<td><p>Trajectories filling disk</p></td>
+<td><p>Set <code class="docutils literal notranslate"><span class="pre">model_devi_clean_traj</span></code>; increase <code class="docutils literal notranslate"><span class="pre">trj_freq</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">job</span> <span class="pre">failed</span> <span class="pre">3</span> <span class="pre">times</span></code></p></td>
+<td><p>dpgen exits</p></td>
+<td><p>Transient HPC failure or config error</p></td>
+<td><p>Check PBS/Slurm stderr; fix config; edit <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> to retry</p></td>
+</tr>
+<tr class="row-even"><td><p>Zero forces in training</p></td>
+<td><p>Model predicts near-zero forces everywhere</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tprnfor</span></code> not set in QE</p></td>
+<td><p>Add <code class="docutils literal notranslate"><span class="pre">tprnfor:</span> <span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">user_fp_params.control</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Wrong validation results</p></td>
+<td><p>Model looks trained but physics is wrong</p></td>
+<td><p>Element ordering mismatch</p></td>
+<td><p>Verify <code class="docutils literal notranslate"><span class="pre">type_map</span></code> vs <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> vs <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> in every directory</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">KeyError</span></code> in dpgen</p></td>
+<td><p>dpgen crashes at startup</p></td>
+<td><p>Missing field in <code class="docutils literal notranslate"><span class="pre">param.json</span></code></p></td>
+<td><p>Check dpgen version; compare against a working config</p></td>
+</tr>
+<tr class="row-odd"><td><p>Model deviation stuck high</p></td>
+<td><p>Accurate fraction plateaus</p></td>
+<td><p>Descriptor too small or inconsistent DFT data</p></td>
+<td><p>Check <code class="docutils literal notranslate"><span class="pre">rcut</span></code>, <code class="docutils literal notranslate"><span class="pre">sel</span></code>; verify DFT settings are identical across all iterations</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="recovery-strategies-editing-record-dpgen">
+<h2>Recovery Strategies: Editing record.dpgen<a class="headerlink" href="#recovery-strategies-editing-record-dpgen" title="Permalink to this heading">#</a></h2>
+<p>Things went wrong. A stage failed. You fixed the underlying problem (adjusted <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code>, freed up disk space, fixed a path). Now you need to tell dpgen to retry that specific stage without starting from scratch.</p>
+<p>The key is <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>. It’s your time machine.</p>
+<section id="understanding-the-step-numbering">
+<h3>Understanding the Step Numbering<a class="headerlink" href="#understanding-the-step-numbering" title="Permalink to this heading">#</a></h3>
+<p>Every line in <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> is a completed step. Format: <code class="docutils literal notranslate"><span class="pre">iteration</span>&#160; <span class="pre">sub-step</span></code>.</p>
+<p>Each iteration has 6 internal sub-steps:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Sub-step</p></th>
+<th class="head"><p>Stage</p></th>
+<th class="head"><p>What it does</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">00.train</span></code></p></td>
+<td><p>Prepare training input</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">00.train</span></code></p></td>
+<td><p>Run training, freeze models</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">01.model_devi</span></code></p></td>
+<td><p>Prepare LAMMPS input</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">01.model_devi</span></code></p></td>
+<td><p>Run LAMMPS, collect model_devi.out</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">02.fp</span></code></p></td>
+<td><p>Prepare DFT input from candidates</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">02.fp</span></code></p></td>
+<td><p>Run DFT, collect results</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A complete iteration 0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span>
+<span class="mi">0</span> <span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">2</span>
+<span class="mi">0</span> <span class="mi">3</span>
+<span class="mi">0</span> <span class="mi">4</span>
+<span class="mi">0</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Then iteration 1 begins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span> <span class="mi">0</span>
+<span class="mi">1</span> <span class="mi">1</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="re-running-a-specific-stage">
+<h3>Re-Running a Specific Stage<a class="headerlink" href="#re-running-a-specific-stage" title="Permalink to this heading">#</a></h3>
+<p>Say the DFT stage of iteration 2 failed (QE jobs ran out of walltime). You’ve increased walltime in <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>. Now you want to re-run just that stage.</p>
+<ol class="arabic simple">
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>.</p></li>
+<li><p>Find and delete the line <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">5</span></code> (iteration 2, sub-step 5, the DFT execution step).</p></li>
+<li><p>If the preparation also needs redoing, delete <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">4</span></code> as well.</p></li>
+<li><p>Save the file.</p></li>
+<li><p>Restart dpgen: <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span> <span class="pre">param.json</span> <span class="pre">machine.json</span></code></p></li>
+</ol>
+<p>dpgen reads <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>, sees that step <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">4</span></code> or <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">5</span></code> is missing, and resumes from there. Clean.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong>Example</strong>: At iteration 3, you realize <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code> was too aggressive and 40 out of 50 DFT jobs failed. You lower <code class="docutils literal notranslate"><span class="pre">mixing_beta</span></code> in <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. Your <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> currently ends with:</p>
+</div>
+<p>…
+3 0
+3 1
+3 2
+3 3
+3 4
+3 5</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+Delete the last two lines (`3 4` and `3 5`):
+
+</pre></div>
+</div>
+<p>…
+3 0
+3 1
+3 2
+3 3</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+Restart dpgen. It re-prepares and re-runs the DFT stage of iteration 3 with the new `mixing_beta`. The exploration data is still there. The candidate selection happens again. Only the DFT execution is repeated.
+</pre></div>
+</div>
+</section>
+<section id="re-running-training">
+<h3>Re-Running Training<a class="headerlink" href="#re-running-training" title="Permalink to this heading">#</a></h3>
+<p>Less common, but sometimes you need to retrain a specific iteration. Maybe you realized a training parameter was wrong, or you want to use transfer learning from a different starting point.</p>
+<p>Delete lines <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">1</span></code> from <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> for that iteration. dpgen re-prepares and re-runs training.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Never delete lines from the middle of <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> and leave later lines intact.</strong> If you delete <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">3</span></code> but leave <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">4</span></code> and <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">5</span></code>, dpgen gets confused. It thinks model_devi didn’t run but fp did, which makes no sense. Always delete from your target step to the end of the file, or at minimum to the end of that iteration.</p>
+<p>Safe pattern: delete from the step you want to re-run through the end of that iteration. Remove subsequent iterations too if they depend on the results. Read that again. Seriously.</p>
+</div>
+</section>
+<section id="starting-from-a-specific-iteration">
+<h3>Starting From a Specific Iteration<a class="headerlink" href="#starting-from-a-specific-iteration" title="Permalink to this heading">#</a></h3>
+<p>Want to jump ahead? Say you’ve manually added training data and want dpgen to start fresh from iteration 5.</p>
+<ol class="arabic simple">
+<li><p>Make sure iterations 0-4 have all their data in place (the <code class="docutils literal notranslate"><span class="pre">iter.00000X/</span></code> directories).</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> to end after iteration 4:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span>
+<span class="mi">0</span> <span class="mi">1</span>
+<span class="o">...</span>
+<span class="mi">4</span> <span class="mi">4</span>
+<span class="mi">4</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Restart dpgen. It picks up at iteration 5.</p></li>
+</ol>
+</section>
+<section id="the-full-restart">
+<h3>The Full Restart<a class="headerlink" href="#the-full-restart" title="Permalink to this heading">#</a></h3>
+<p>Sometimes the cleanest option is to wipe and start over. But you don’t have to lose your accumulated DFT data. Here’s the trick.</p>
+<ol class="arabic simple">
+<li><p>Back up:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cp<span class="w"> </span>record.dpgen<span class="w"> </span>record.dpgen.bak
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>If you want to keep all the DFT data from previous iterations but retrain from scratch, include previous iteration data in <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code>:</p></li>
+</ol>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;init_data_sys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;set_original_data&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;iter.000000/02.fp/data.000&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;iter.000001/02.fp/data.001&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;iter.000002/02.fp/data.002&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Clear <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> (or delete it; dpgen creates a new one).</p></li>
+<li><p>Restart. dpgen begins from iteration 0 but with all your accumulated data as the seed. The DFT compute wasn’t wasted. It just becomes part of the foundation.</p></li>
+</ol>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Before any manual editing of <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>, <strong>always</strong> make a backup. And never edit it while dpgen is running. Kill the dpgen process first (<code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> or find the PID), make your edits, then restart. Concurrent edits to <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> will corrupt your run state. One second for <code class="docutils literal notranslate"><span class="pre">cp</span> <span class="pre">record.dpgen</span> <span class="pre">record.dpgen.bak</span></code>. Cheap insurance.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="a-monitoring-checklist">
+<h2>A Monitoring Checklist<a class="headerlink" href="#a-monitoring-checklist" title="Permalink to this heading">#</a></h2>
+<p>Here’s my actual routine. Not what I tell people to do. What I actually do. After each iteration completes, I spend 10 minutes on this:</p>
+<ol class="arabic simple">
+<li><p><strong>Check <code class="docutils literal notranslate"><span class="pre">dpgen.log</span></code></strong> for errors:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tail<span class="w"> </span>-50<span class="w"> </span>dpgen.log
+<span class="gp">$ </span>grep<span class="w"> </span>-ci<span class="w"> </span><span class="s2">&quot;fail\|error\|warn&quot;</span><span class="w"> </span>dpgen.log
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Run the awk bucket counter</strong> across all tasks in the latest iteration. Are the numbers moving in the right direction?</p></li>
+<li><p><strong>Update the convergence plot</strong> (accurate fraction vs. iteration). Is it climbing?</p></li>
+<li><p><strong>Check disk usage</strong>:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>du<span class="w"> </span>-sh<span class="w"> </span>iter.*/
+<span class="gp">$ </span>df<span class="w"> </span>-h<span class="w"> </span>/scratch
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p><strong>Spot-check one DFT output</strong> from the latest iteration:</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>grep<span class="w"> </span><span class="s2">&quot;!&quot;</span><span class="w"> </span>iter.XXXXXX/02.fp/task.000.000000/output<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1
+<span class="gp">$ </span>grep<span class="w"> </span><span class="s2">&quot;Forces acting&quot;</span><span class="w"> </span>iter.XXXXXX/02.fp/task.000.000000/output
+</pre></div>
+</div>
+<p>Are the energies reasonable? Are forces present?</p>
+<ol class="arabic simple" start="6">
+<li><p><strong>Check <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code></strong> from training. Is the loss decreasing smoothly?</p></li>
+</ol>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tail<span class="w"> </span>-5<span class="w"> </span>iter.XXXXXX/00.train/000/lcurve.out
+</pre></div>
+</div>
+<p>Ten minutes. That’s all it takes to catch 95% of problems before they cascade into the next iteration. The other 5%? Those are the creative failures that no checklist can predict. But this gets you most of the way there.</p>
+</section>
+<hr class="docutils" />
+<section id="what-good-looks-like-real-numbers">
+<h2>What “Good” Looks Like: Real Numbers<a class="headerlink" href="#what-good-looks-like-real-numbers" title="Permalink to this heading">#</a></h2>
+<p>Here’s what our tutorial models achieved after training. These are the benchmarks you’re aiming for.</p>
+<figure class="align-default" id="model-comparison-monitoring">
+<a class="reference internal image-reference" href="../../_images/model_comparison.png"><img alt="../../_images/model_comparison.png" src="../../_images/model_comparison.png" style="width: 85%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 27 </span><span class="caption-text">Accuracy comparison between our Ar (single element, 200 frames, virial trained) and water (multi-element, 320 frames, no virial) models. Ar achieves sub-meV/atom energy and ~4 meV/Angstrom force accuracy. Water is ~10x less accurate in forces, which is expected for a multi-element hydrogen-bonding system. Both are well within “excellent” territory for their respective system complexities.</span><a class="headerlink" href="#model-comparison-monitoring" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<hr class="docutils" />
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p>You now know how to read the model’s vital signs, spot problems before they metastasize, fix them, and get a stalled run moving again. This is the part the docs skip. Most tutorials skip it. Most people waste a week learning it the hard way.</p>
+<p>In Ch 11, we talk about what happens <em>after</em> dpgen converges: validation, production runs, and how to know if your model is actually good enough for the science you want to do. Because passing dpgen’s internal convergence check is necessary but not sufficient. The model says it’s ready. Your job is to verify that.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch10"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch09/running-dpgen.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 9: Running dpgen</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch11/validation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 11: Validation &amp; Production</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-model-devi-out-your-dashboard">Reading model_devi.out: Your Dashboard</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-analysis-awk-one-liners">Quick Analysis: awk One-Liners</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-force-deviation-distributions">Plotting Force Deviation Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-3-buckets-in-practice-what-the-distribution-actually-looks-like">The 3 Buckets in Practice: What the Distribution Actually Looks Like</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-0-the-model-is-panicking">Iteration 0: The Model Is Panicking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-2-3-things-start-tightening">Iteration 2-3: Things Start Tightening</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-4-convergence">Iteration 4+: Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-tracking-the-plot-that-tells-you-when-to-stop">Convergence Tracking: The Plot That Tells You When to Stop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-compute-it">How to Compute It</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-curve-should-look-like">What the Curve Should Look Like</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-adjust-trust-levels">When to Adjust Trust Levels</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#too-many-candidates">Too Many Candidates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-or-near-zero-candidates">Zero or Near-Zero Candidates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#too-many-failed-frames">Too Many Failed Frames</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-practical-adjustment-workflow">The Practical Adjustment Workflow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-errors-a-survival-guide">Common Errors: A Survival Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dft-convergence-failures">DFT Convergence Failures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lammps-crashes">LAMMPS Crashes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-divergence-nan-loss">Training Divergence: NaN Loss</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-permission-issues-in-containers">File Permission Issues in Containers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#disk-space-exhaustion">Disk Space Exhaustion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-job-failed-3-times">dpgen “Job Failed 3 Times”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-forces-in-qe-output">Missing Forces in QE Output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-element-ordering-silent-corruption">Wrong Element Ordering (Silent Corruption)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-error-reference-table">The Full Error Reference Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recovery-strategies-editing-record-dpgen">Recovery Strategies: Editing record.dpgen</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-step-numbering">Understanding the Step Numbering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#re-running-a-specific-stage">Re-Running a Specific Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#re-running-training">Re-Running Training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-from-a-specific-iteration">Starting From a Specific Iteration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-restart">The Full Restart</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-monitoring-checklist">A Monitoring Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-good-looks-like-real-numbers">What “Good” Looks Like: Real Numbers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

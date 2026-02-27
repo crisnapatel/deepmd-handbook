@@ -1,0 +1,1062 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 4: Your First DeePMD Model &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch04/first-model';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 5: LAMMPS with Deep Potential" href="../ch05/lammps-deepmd.html" />
+    <link rel="prev" title="Ch 3: Data Preparation with dpdata" href="../ch03/dpdata.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch04/first-model.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch04/first-model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch04/first-model.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 4: Your First DeePMD Model</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-training-input">The Training Input</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-loss-function-your-grading-rubric">The Loss Function: Your Grading Rubric</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-dp-train">Running dp train</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-lcurve-out">Reading lcurve.out</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#freezing-the-model">Freezing the Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-the-model">Testing the Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-good-enough">What’s “Good Enough”?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-problems">Common Problems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-up-water-multi-element">Scaling Up: Water (Multi-Element)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-4-your-first-deepmd-model">
+<h1>Ch 4: Your First DeePMD Model<a class="headerlink" href="#ch-4-your-first-deepmd-model" title="Permalink to this heading">#</a></h1>
+<p>Enough reading. You’re training a neural network today.</p>
+<p>By the end of this chapter, you’ll have a frozen DeePMD model. You’ll have tested it against held-out DFT data. And you’ll know exactly how to tell whether it actually learned something or whether it’s lying to you with a pretty loss curve. We’re using argon. 32 atoms. 200 training frames. Single element. Trains in about 30 minutes on a GPU.</p>
+<p>This is the “hello world” of ML potentials. One element, no chemistry to worry about, just the interatomic potential. Perfect for seeing the entire pipeline end-to-end before you scale up to multi-element systems like water.</p>
+<section id="the-training-input">
+<h2>The Training Input<a class="headerlink" href="#the-training-input" title="Permalink to this heading">#</a></h2>
+<p>DeePMD-kit needs one JSON file. One. It specifies everything: model architecture, training data paths, loss function, learning rate schedule. You already know what all of these pieces mean from Ch 2. Now you’re going to use them for real.</p>
+<p>Here’s the actual <code class="docutils literal notranslate"><span class="pre">input.json</span></code> we used for our Ar model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ar&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">9.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;rcut_smth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">80</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">40</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;learning_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;exp&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;stop_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5e-8</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;decay_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ener&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;training_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;../00_data/training/ar_fcc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;../00_data/training/ar_liquid&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;validation_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;../00_data/validation/ar_fcc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;../00_data/validation/ar_liquid&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disp_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lcurve.out&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disp_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;save_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A few things to notice. <code class="docutils literal notranslate"><span class="pre">type_map:</span> <span class="pre">[&quot;Ar&quot;]</span></code>. One element. One entry in <code class="docutils literal notranslate"><span class="pre">sel:</span> <span class="pre">[80]</span></code>. That 80 means: within <code class="docutils literal notranslate"><span class="pre">rcut</span> <span class="pre">=</span> <span class="pre">9.0</span></code> Angstroms, the descriptor tracks up to 80 Ar neighbors. For a dense FCC crystal at 32 atoms in a ~10.5 Angstrom box, most atoms see all 31 neighbors. 80 is generous padding, and that’s fine.</p>
+<p><code class="docutils literal notranslate"><span class="pre">neuron:</span> <span class="pre">[10,</span> <span class="pre">20,</span> <span class="pre">40]</span></code> for the descriptor. Small. <code class="docutils literal notranslate"><span class="pre">neuron:</span> <span class="pre">[60,</span> <span class="pre">60,</span> <span class="pre">60]</span></code> for the fitting net. Moderate. For 200 frames, this is plenty of capacity. A bigger network just memorizes the training data and fails on everything else. That’s overfitting. The neural network equivalent of a student who memorized the answer key instead of understanding the material.</p>
+<p>And notice <code class="docutils literal notranslate"><span class="pre">start_pref_v:</span> <span class="pre">0.02,</span> <span class="pre">limit_pref_v:</span> <span class="pre">1.0</span></code>. We’re training with virial because our QE AIMD gave us stress tensors (<code class="docutils literal notranslate"><span class="pre">tstress</span> <span class="pre">=</span> <span class="pre">.true.</span></code>). This means the model can predict pressure. NPT simulations will work. More on why this matters later.</p>
+<p>Start small. Start here. Adjust later.</p>
+<div class="note admonition">
+<p class="admonition-title">How the Config Scales: Ar → Methane → Water</p>
+<p>Compare our Ar config with the <a class="reference external" href="https://tutorials.deepmodeling.com/">official methane tutorial</a> and our water model:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head text-center"><p>Ar (1 type, 32 atoms)</p></th>
+<th class="head text-center"><p>Methane (2 types, 5 atoms)</p></th>
+<th class="head text-center"><p>Water (2 types, 192 atoms)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type_map</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[&quot;Ar&quot;]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[&quot;H&quot;,</span> <span class="pre">&quot;C&quot;]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sel</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[80]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[4,</span> <span class="pre">1]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[46,</span> <span class="pre">92]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rcut</span></code></p></td>
+<td class="text-center"><p>9.0</p></td>
+<td class="text-center"><p>6.0</p></td>
+<td class="text-center"><p>6.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Descriptor <code class="docutils literal notranslate"><span class="pre">neuron</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[10,20,40]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[10,20,40]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[25,50,100]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Fitting <code class="docutils literal notranslate"><span class="pre">neuron</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[60,60,60]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[100,100,100]</span></code></p></td>
+<td class="text-center"><p><code class="docutils literal notranslate"><span class="pre">[240,240,240]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">numb_steps</span></code></p></td>
+<td class="text-center"><p>400k</p></td>
+<td class="text-center"><p>1M</p></td>
+<td class="text-center"><p>500k</p></td>
+</tr>
+<tr class="row-even"><td><p>Virial</p></td>
+<td class="text-center"><p>Yes</p></td>
+<td class="text-center"><p>No</p></td>
+<td class="text-center"><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Notice the pattern. <code class="docutils literal notranslate"><span class="pre">sel</span></code> has one entry per element type. Methane only sees 4 H and 1 C within <code class="docutils literal notranslate"><span class="pre">rcut</span></code> (isolated molecule). Ar sees up to 80 neighbors (dense bulk). Water sees 46 O + 92 H (liquid). The descriptor and fitting networks scale with system complexity, not system size. Methane and Ar use the same small descriptor (<code class="docutils literal notranslate"><span class="pre">[10,20,40]</span></code>), while water needs a bigger one (<code class="docutils literal notranslate"><span class="pre">[25,50,100]</span></code>) because it has more complex multi-element interactions.</p>
+<p>You can download the methane dataset yourself:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>wget<span class="w"> </span>https://dp-public.oss-cn-beijing.aliyuncs.com/community/CH4.tar
+<span class="gp">$ </span>tar<span class="w"> </span>xf<span class="w"> </span>CH4.tar
+<span class="gp">$ </span>ls<span class="w"> </span>CH4/
+<span class="go">00.data  01.train  02.lmp</span>
+</pre></div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>Split your data into training and validation.</strong> The <code class="docutils literal notranslate"><span class="pre">validation_data</span></code> block points to a separate dataset (10 to 20% of your total frames). During training, the loss is computed on both sets, but only the training data drives gradient updates. If the training loss keeps dropping but the validation loss plateaus or rises, you’re overfitting. The model is memorizing, not learning. This distinction is everything.</p>
+</div>
+</section>
+<section id="the-loss-function-your-grading-rubric">
+<h2>The Loss Function: Your Grading Rubric<a class="headerlink" href="#the-loss-function-your-grading-rubric" title="Permalink to this heading">#</a></h2>
+<p>Before you hit train, look at the <code class="docutils literal notranslate"><span class="pre">loss</span></code> block one more time. Those <code class="docutils literal notranslate"><span class="pre">start_pref</span></code> and <code class="docutils literal notranslate"><span class="pre">limit_pref</span></code> values aren’t arbitrary. They’re a grading rubric, and the rubric shifts over the course of training.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Preference</p></th>
+<th class="head text-center"><p>Start</p></th>
+<th class="head text-center"><p>End</p></th>
+<th class="head"><p>What it means</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pref_f</span></code> (forces)</p></td>
+<td class="text-center"><p>1000</p></td>
+<td class="text-center"><p>1.0</p></td>
+<td><p>Forces dominate early training</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pref_e</span></code> (energy)</p></td>
+<td class="text-center"><p>0.02</p></td>
+<td class="text-center"><p>2.0</p></td>
+<td><p>Energy matters more at the end</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pref_v</span></code> (virial)</p></td>
+<td class="text-center"><p>0.02</p></td>
+<td class="text-center"><p>1.0</p></td>
+<td><p>Virial included (Ar has stress data)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Here’s what’s happening. Early in training, the model doesn’t know anything. The energy predictions are off by electron-volts. The force predictions are off by tens of eV/Angstrom. If you weighted energy and forces equally, the massive energy errors would dominate the gradient, and the model would spend all its effort getting the overall energy vaguely right while completely ignoring the force landscape.</p>
+<p>So you start with <code class="docutils literal notranslate"><span class="pre">pref_f</span> <span class="pre">=</span> <span class="pre">1000</span></code>. Forces first. Learn where atoms push and pull. Get the local structure right. Then, as the force errors shrink, the energy weight ramps up from 0.02 to 2.0, and the model refines the global energy surface.</p>
+<p>This is the part that made it click for me. The model learns forces first because forces are local. Each atom’s force depends mostly on its immediate neighbors. Energy is global; it’s the sum over the whole system. You teach the local picture first, then refine the global one. Curriculum design for a neural network.</p>
+</section>
+<section id="running-dp-train">
+<h2>Running dp train<a class="headerlink" href="#running-dp-train" title="Permalink to this heading">#</a></h2>
+<p>Grab your terminal. First, put your <code class="docutils literal notranslate"><span class="pre">input.json</span></code> (the file shown above) in the training directory and <code class="docutils literal notranslate"><span class="pre">cd</span></code> into it:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/01_train/
+<span class="gp">$ </span>ls
+<span class="go">input.json</span>
+</pre></div>
+</div>
+<p>Now train:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>dp<span class="w"> </span>train<span class="w"> </span>input.json
+</pre></div>
+</div>
+<p>Or if you have DeePMD-kit installed natively:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dp<span class="w"> </span>train<span class="w"> </span>input.json
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--nv</span></code> flag passes your GPU through to the container. Without it, you’re training on CPU. Maybe on purpose. Probably not.</p>
+<p>Hit enter. Watch what happens:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="o">---------------</span> <span class="n">TRAINING</span> <span class="o">----------------</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">training</span> <span class="n">data</span> <span class="k">with</span> <span class="mi">180</span> <span class="n">frames</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">validation</span> <span class="n">data</span> <span class="k">with</span> <span class="mi">20</span> <span class="n">frames</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">batch_size</span> <span class="p">:</span> <span class="n">auto</span><span class="p">:</span><span class="mi">8</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="o">---------------</span> <span class="n">LEARNING</span> <span class="n">RATE</span> <span class="o">----------------</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">start_lr</span><span class="p">:</span>  <span class="mf">1.000e-03</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">stop_lr</span><span class="p">:</span>   <span class="mf">5.000e-08</span>
+<span class="o">...</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">step</span><span class="o">=</span><span class="mi">0</span>    <span class="n">rmse_val</span><span class="o">=</span><span class="mf">1.26e+00</span> <span class="n">rmse_e_val</span><span class="o">=</span><span class="mf">1.15e+00</span> <span class="n">rmse_f_val</span><span class="o">=</span><span class="mf">2.74e-02</span> <span class="n">rmse_v_val</span><span class="o">=</span><span class="mf">5.94e-02</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">step</span><span class="o">=</span><span class="mi">100</span>  <span class="n">rmse_val</span><span class="o">=</span><span class="mf">1.76e+00</span> <span class="n">rmse_e_val</span><span class="o">=</span><span class="mf">1.08e-02</span> <span class="n">rmse_f_val</span><span class="o">=</span><span class="mf">5.52e-02</span> <span class="n">rmse_v_val</span><span class="o">=</span><span class="mf">2.90e-01</span>
+<span class="n">DEEPMD</span> <span class="n">INFO</span>    <span class="n">step</span><span class="o">=</span><span class="mi">200</span>  <span class="n">rmse_val</span><span class="o">=</span><span class="mf">1.58e-01</span> <span class="n">rmse_e_val</span><span class="o">=</span><span class="mf">4.49e-02</span> <span class="n">rmse_f_val</span><span class="o">=</span><span class="mf">4.77e-03</span> <span class="n">rmse_v_val</span><span class="o">=</span><span class="mf">3.61e-02</span>
+</pre></div>
+</div>
+<p>Those are real numbers from our Ar training run. Watch <code class="docutils literal notranslate"><span class="pre">rmse_f_val</span></code> (force RMSE on validation data). Step 0: 0.027 eV/Angstrom. By step 200: 0.005 eV/Angstrom. The model is learning. Fast. Are you seeing this? The descriptor is doing its job; the fitting network is locking onto the force landscape.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">rmse_f</span></code> drops rapidly in the first few thousand steps, you’re in good shape. If it stays flat, something is wrong with your data, not your config. Go back to Ch 3 and check your forces.</p>
+<p>If it goes to NaN, something is seriously broken. But we’ll get to that.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p><strong>Training speed</strong>: On a modern GPU (V100, A100), 400k steps for Ar (32 atoms, 200 frames) takes about 30 minutes. On CPU, 2 to 3 hours. If you’re training on CPU and didn’t intend to, check that <code class="docutils literal notranslate"><span class="pre">--nv</span></code> is in your Apptainer command and that <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span></code> actually shows your GPU. <mark class="silent-fail">If the container can’t see the GPU, training silently falls back to CPU.</mark> The job runs. It’s just painfully slow. No error message. No warning. Just silence and a clock ticking.</p>
+</div>
+</section>
+<section id="reading-lcurve-out">
+<h2>Reading lcurve.out<a class="headerlink" href="#reading-lcurve-out" title="Permalink to this heading">#</a></h2>
+<p>This file is the story of your model’s education. One row per <code class="docutils literal notranslate"><span class="pre">disp_freq</span></code> steps. For our Ar model with <code class="docutils literal notranslate"><span class="pre">disp_freq:</span> <span class="pre">100</span></code>, that’s 4001 rows across 400k steps. The columns are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># step  rmse_val  rmse_trn  rmse_e_val  rmse_e_trn  rmse_f_val  rmse_f_trn  rmse_v_val  rmse_v_trn  lr</span>
+</pre></div>
+</div>
+<p>Ten columns for Ar (because we have virial). For a model without virial (like our water model), you get eight columns (no <code class="docutils literal notranslate"><span class="pre">rmse_v_*</span></code>). Every number matters. Here’s how to read the four scenarios you’ll actually encounter:</p>
+<p><strong>Both training and validation losses decrease smoothly together.</strong> The model is learning and generalizing. This is what you want. This is the good outcome. Breathe.</p>
+<p><strong>Training loss drops, validation loss plateaus or rises.</strong> Overfitting. The model memorized the training data. It’ll ace the practice exam and bomb the real one. Fix: more data, smaller network, fewer training steps. More data is almost always the right answer.</p>
+<p><strong>Both losses plateau early and just sit there.</strong> Underfitting. The network is too small to capture the complexity. It’s trying to learn calculus with a brain the size of a walnut. Fix: increase <code class="docutils literal notranslate"><span class="pre">neuron</span></code> sizes, increase <code class="docutils literal notranslate"><span class="pre">numb_steps</span></code>, or (more likely) your data has issues.</p>
+<p><strong>Loss goes to NaN.</strong> Something is seriously wrong. Check your training data for corrupted frames (zero forces, infinite energies, missing atoms). If the data looks fine, halve <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to <code class="docutils literal notranslate"><span class="pre">0.0005</span></code>. I’m serious. That one change has fixed NaN for me every single time. The model was taking gradient steps too large and overshooting the minimum into numerical oblivion.</p>
+<figure class="align-default" id="ar-lcurve-plot">
+<a class="reference internal image-reference" href="../../_images/ar_lcurve.png"><img alt="../../_images/ar_lcurve.png" src="../../_images/ar_lcurve.png" style="width: 95%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 12 </span><span class="caption-text">Real learning curve from our Ar model: 400k steps. <strong>Top left:</strong> Energy RMSE drops from ~1 eV to sub-meV. <strong>Top right:</strong> Force RMSE converges to ~3-5 meV/Angstrom. <strong>Bottom left:</strong> Virial RMSE (because we trained with stress data). <strong>Bottom right:</strong> Learning rate decay from 1e-3 to 5e-8. Train and validation curves track each other closely. No overfitting.</span><a class="headerlink" href="#ar-lcurve-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="seealso admonition">
+<p class="admonition-title">Simulation</p>
+<p><strong>Plot your learning curve:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;lcurve.out&#39;</span><span class="p">)</span>
+<span class="c1"># Columns: step rmse_val rmse_trn rmse_e_val rmse_e_trn rmse_f_val rmse_f_trn [rmse_v_val rmse_v_trn] lr</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Train&#39;</span><span class="p">)</span>  <span class="c1"># rmse_e_trn</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation&#39;</span><span class="p">)</span>  <span class="c1"># rmse_e_val</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Training Step&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Energy RMSE (eV)&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Train&#39;</span><span class="p">)</span>  <span class="c1"># rmse_f_trn</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation&#39;</span><span class="p">)</span>  <span class="c1"># rmse_f_val</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Training Step&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Force RMSE (eV/Å)&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;learning_curve.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Run this. Look at the plot. If both curves trend down together, smooth and parallel, you’re golden. If the validation curve peels away from the training curve and starts climbing while training keeps dropping? That’s the gap. That’s overfitting staring you in the face. But you’ll see it. That’s the point. The learning curve doesn’t lie.</p>
+</section>
+<section id="freezing-the-model">
+<h2>Freezing the Model<a class="headerlink" href="#freezing-the-model" title="Permalink to this heading">#</a></h2>
+<p>Training is done. The model weights exist as checkpoint files (<code class="docutils literal notranslate"><span class="pre">model.ckpt.*</span></code>). These are internal TensorFlow/PyTorch format. LAMMPS can’t read them. Nobody can read them except the training code itself.</p>
+<p>You need to <strong>freeze</strong> the model:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dp<span class="w"> </span>freeze<span class="w"> </span>-o<span class="w"> </span>frozen_model.pb
+<span class="gp">$ </span>ls<span class="w"> </span>-lh<span class="w"> </span>frozen_model.pb
+<span class="go">-rw-r--r-- 1 krishna krishna 292K Feb 27 12:00 frozen_model.pb</span>
+</pre></div>
+</div>
+<p>One command. Out comes <code class="docutils literal notranslate"><span class="pre">frozen_model.pb</span></code>, a frozen model that LAMMPS loads with <code class="docutils literal notranslate"><span class="pre">pair_style</span> <span class="pre">deepmd</span></code>. Typically 5 to 50 MB depending on network size (ours is small because Ar is a simple system).</p>
+<p>Think of it as graduation. The model stops being a student and starts being an employee. It can’t learn new things anymore. It takes in coordinates, spits out energies and forces. That’s its job now. If you discover later that it’s wrong about something, you go back to the checkpoint, add new training data, retrain, and freeze again. You don’t patch a frozen model. You re-educate and re-graduate.</p>
+<p>That’s your model. Frozen and ready.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>In the dpgen context, you never run <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">freeze</span></code> manually. dpgen does it automatically at the end of each training stage. The frozen models appear as <code class="docutils literal notranslate"><span class="pre">iter.XXXXXX/00.train/graph.000.pb</span></code> through <code class="docutils literal notranslate"><span class="pre">graph.003.pb</span></code> (four models, because dpgen trains four for model deviation). You’ll see this in Ch 6.</p>
+</div>
+</section>
+<section id="testing-the-model">
+<h2>Testing the Model<a class="headerlink" href="#testing-the-model" title="Permalink to this heading">#</a></h2>
+<p>You have a frozen model. Before you use it for anything real, you test it. Against held-out DFT data. The validation set you split off back in Ch 3. This is the exam.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/02_test/
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_fcc/<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-d<span class="w"> </span>test_fcc
+<span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_liquid/<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-d<span class="w"> </span>test_liquid
+<span class="gp">$ </span>ls
+<span class="go">test_fcc.e.out  test_fcc.e_peratom.out  test_fcc.f.out  test_fcc.v.out  test_fcc.v_peratom.out</span>
+<span class="go">test_liquid.e.out  test_liquid.e_peratom.out  test_liquid.f.out  test_liquid.v.out  test_liquid.v_peratom.out</span>
+</pre></div>
+</div>
+<p>Our Ar model results:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head text-center"><p>FCC (50 K)</p></th>
+<th class="head text-center"><p>Liquid (150 K)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy RMSE/atom</p></td>
+<td class="text-center"><p>0.3 meV</p></td>
+<td class="text-center"><p>0.3 meV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force RMSE</p></td>
+<td class="text-center"><p>2.9 meV/Angstrom</p></td>
+<td class="text-center"><p>5.0 meV/Angstrom</p></td>
+</tr>
+<tr class="row-even"><td><p>Virial RMSE/atom</p></td>
+<td class="text-center"><p>0.17 meV</p></td>
+<td class="text-center"><p>0.27 meV</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Check the numbers. Force RMSE under 5 meV/Angstrom on both phases. Energy under 1 meV/atom. That’s excellent for 200 frames of training data on a single element.</p>
+<figure class="align-default" id="ar-parity-plot">
+<a class="reference internal image-reference" href="../../_images/ar_parity.png"><img alt="../../_images/ar_parity.png" src="../../_images/ar_parity.png" style="width: 95%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 13 </span><span class="caption-text">Ar model parity plots: DFT vs DeePMD predictions on held-out validation data. <strong>Left:</strong> Energy per atom. <strong>Center:</strong> Force components. <strong>Right:</strong> Virial per atom. Points cluster tightly around the y=x diagonal. FCC (blue) and liquid (orange) both fit well.</span><a class="headerlink" href="#ar-parity-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="what-s-good-enough">
+<h3>What’s “Good Enough”?<a class="headerlink" href="#what-s-good-enough" title="Permalink to this heading">#</a></h3>
+<p>Depends on what you’re doing. Here are rough guidelines that have held up across most systems I’ve worked with:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head text-center"><p>Excellent</p></th>
+<th class="head text-center"><p>Acceptable</p></th>
+<th class="head text-center"><p>Concerning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Energy RMSE/atom</p></td>
+<td class="text-center"><p>&lt; 1 meV</p></td>
+<td class="text-center"><p>1-5 meV</p></td>
+<td class="text-center"><p>&gt; 5 meV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Force RMSE</p></td>
+<td class="text-center"><p>&lt; 50 meV/Å</p></td>
+<td class="text-center"><p>50-100 meV/Å</p></td>
+<td class="text-center"><p>&gt; 100 meV/Å</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For Ar with 200 training frames, you should get under 1 meV/atom energy and under 10 meV/Angstrom forces. It’s a single element with relatively simple pairwise-like interactions. If you can’t hit those numbers with this config, the problem is in your data, not in your architecture.</p>
+<p>For complex systems (interfaces, reactive chemistry, multi-element slabs), 2 to 5 meV/atom and 50 to 100 meV/Angstrom is typical and often sufficient for production MD. Don’t chase sub-meV accuracy on a complex system with 100 training frames. Get more data first. I’ve seen people spend weeks tweaking network sizes when the actual fix was 50 more DFT frames.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>Energy RMSE/atom is more informative than total energy RMSE.</strong> A 10 meV error on a 5-atom system is 2 meV/atom. The same 10 meV error on a 500-atom system is 0.02 meV/atom. Always report per-atom. Always compare per-atom. If someone tells you their model has “10 meV energy error” without specifying per-atom or total, that number is meaningless. You need the system size.</p>
+<p><strong>Force RMSE is often more important than energy RMSE</strong> for MD simulations. Forces drive the dynamics. They determine where atoms go next. <mark class="silent-fail">A model with 1 meV/atom energy accuracy but 200 meV/Angstrom force accuracy will produce terrible trajectories. The energy looks right. The dynamics are wrong.</mark> This is exactly why the loss function starts with <code class="docutils literal notranslate"><span class="pre">start_pref_f</span> <span class="pre">=</span> <span class="pre">1000</span></code>. Forces first. Always forces first.</p>
+</div>
+</section>
+</section>
+<section id="common-problems">
+<h2>Common Problems<a class="headerlink" href="#common-problems" title="Permalink to this heading">#</a></h2>
+<p>Here’s where people actually get stuck. Not the theory. The practice. I’ve seen every one of these, most of them on my own runs.</p>
+<p><strong>The loss doesn’t decrease at all:</strong></p>
+<ul class="simple">
+<li><p>Check that your training data has non-zero forces (<code class="docutils literal notranslate"><span class="pre">tprnfor</span> <span class="pre">=</span> <span class="pre">.true.</span></code> in QE). Yes, I’m repeating myself from Ch 3. No, I will not apologize.</p></li>
+<li><p>Check that your <code class="docutils literal notranslate"><span class="pre">type_map</span></code> matches <code class="docutils literal notranslate"><span class="pre">type.raw</span></code>. Print both. Compare them character by character. Don’t eyeball it. Actually compare.</p></li>
+<li><p>Verify energy and force units are correct (eV and eV/Angstrom). If you bypassed dpdata and hand-assembled your training data, this is almost certainly the problem.</p></li>
+</ul>
+<p><strong>The loss goes to NaN after a few thousand steps:</strong></p>
+<ul class="simple">
+<li><p>Try <code class="docutils literal notranslate"><span class="pre">start_lr</span> <span class="pre">=</span> <span class="pre">0.0005</span></code> instead of <code class="docutils literal notranslate"><span class="pre">0.001</span></code>. Start there. Adjust later. Halving the learning rate is the simplest fix.</p></li>
+<li><p>Check for corrupted frames (energies of 0.0 or absurdly large values). One bad frame can poison the whole training run. One frame. Out of hundreds.</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> if you’re running out of GPU memory. Memory errors sometimes manifest as NaN rather than a clean crash. Helpful.</p></li>
+</ul>
+<p><strong>Validation loss diverges from training loss:</strong></p>
+<ul class="simple">
+<li><p>Overfitting. With 50 frames, even a small network will overfit. You need at least 100 to 200 diverse frames for a decent model. More data fixes this. A bigger network makes it worse. I’ve seen this go wrong too many times to be polite about it: if your validation loss is climbing, adding neurons is the wrong instinct. Adding data is the right one.</p></li>
+</ul>
+<p><strong>Training is extremely slow (over 1 hour for Ar):</strong></p>
+<ul class="simple">
+<li><p>You’re training on CPU. Run <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span></code> inside your container. If it doesn’t show a GPU, the <code class="docutils literal notranslate"><span class="pre">--nv</span></code> flag isn’t working, or your job didn’t land on a GPU node. Fix the submission script before wasting hours.</p></li>
+<li><p>Or your <code class="docutils literal notranslate"><span class="pre">sel</span></code> values are absurdly large. <code class="docutils literal notranslate"><span class="pre">sel</span> <span class="pre">=</span> <span class="pre">[300]</span></code> for a 32-atom Ar system means the model is allocating memory for hundreds of phantom neighbors that don’t exist. Padding. Pure waste. Match <code class="docutils literal notranslate"><span class="pre">sel</span></code> to the actual number of neighbors within <code class="docutils literal notranslate"><span class="pre">rcut</span></code>.</p></li>
+</ul>
+</section>
+<section id="scaling-up-water-multi-element">
+<h2>Scaling Up: Water (Multi-Element)<a class="headerlink" href="#scaling-up-water-multi-element" title="Permalink to this heading">#</a></h2>
+<p>Ar is the hello world. A useful hello world. It proved the pipeline works, showed you what a healthy loss curve looks like, taught you how to freeze and test. But it’s one element.</p>
+<p>Now let’s jump to water. 192 atoms (64 H₂O molecules). Two elements (<code class="docutils literal notranslate"><span class="pre">type_map:</span> <span class="pre">[&quot;O&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>). 320 training frames from the <a class="reference external" href="https://github.com/cesaremalosso/tutorial_ictp2024/tree/main/water">ICTP 2024 tutorial</a> (credit: Cesare Malosso). Here’s the <code class="docutils literal notranslate"><span class="pre">input.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">46</span><span class="p">,</span><span class="w"> </span><span class="mi">92</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;rcut_smth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.50</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.00</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ener&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">500000</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Notice the differences. <code class="docutils literal notranslate"><span class="pre">sel:</span> <span class="pre">[46,</span> <span class="pre">92]</span></code>. Two numbers now, one per element type. Within <code class="docutils literal notranslate"><span class="pre">rcut</span> <span class="pre">=</span> <span class="pre">6.0</span></code> Angstroms, each atom can see up to 46 oxygen neighbors and 92 hydrogen neighbors. The network is bigger: <code class="docutils literal notranslate"><span class="pre">neuron:</span> <span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">100]</span></code> for the descriptor, <code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code> for the fitting net. More atoms, more complexity, bigger brain needed.</p>
+<p>And notice <code class="docutils literal notranslate"><span class="pre">start_pref_v:</span> <span class="pre">0,</span> <span class="pre">limit_pref_v:</span> <span class="pre">0</span></code>. No virial training. The ICTP pre-computed data doesn’t include stress tensors. This means the model cannot predict pressure reliably. NPT simulations will show density drift. We’ll see this in Ch 5.</p>
+<figure class="align-default" id="water-lcurve-plot">
+<a class="reference internal image-reference" href="../../_images/water_lcurve.png"><img alt="../../_images/water_lcurve.png" src="../../_images/water_lcurve.png" style="width: 95%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 14 </span><span class="caption-text">Water model learning curve: 500k steps. Energy and force RMSE converge smoothly. No virial panel (virial weight is zero). The force RMSE is much larger than Ar because water has hydrogen atoms with fast intramolecular vibrations and large force magnitudes.</span><a class="headerlink" href="#water-lcurve-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="water-parity-plot">
+<a class="reference internal image-reference" href="../../_images/water_parity.png"><img alt="../../_images/water_parity.png" src="../../_images/water_parity.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 15 </span><span class="caption-text">Water model parity plots. Energy RMSE: 0.43 meV/atom. Force RMSE: 38.5 meV/Angstrom. The force error is ~10x larger than Ar. That’s not a problem. Water is a harder system. Hydrogen bonding. Fast dynamics. Multiple elements. 38.5 meV/Angstrom is good for water. The <a class="reference external" href="https://github.com/cesaremalosso/tutorial_ictp2024">ICTP reference</a> reports similar numbers.</span><a class="headerlink" href="#water-parity-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="soap-pca-plot">
+<a class="reference internal image-reference" href="../../_images/soap_pca.png"><img alt="../../_images/soap_pca.png" src="../../_images/soap_pca.png" style="width: 95%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 16 </span><span class="caption-text">SOAP descriptor PCA showing configuration space coverage. <strong>Left:</strong> Ar FCC (blue) and liquid (orange) form distinct clusters, confirming the model sees two genuinely different phases. <strong>Right:</strong> Water datasets overlap extensively, suggesting the training data covers similar liquid-water conditions.</span><a class="headerlink" href="#soap-pca-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="model-comparison-plot">
+<a class="reference internal image-reference" href="../../_images/model_comparison.png"><img alt="../../_images/model_comparison.png" src="../../_images/model_comparison.png" style="width: 85%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 17 </span><span class="caption-text">Side-by-side accuracy comparison. Ar is ~10x more accurate in both energy and force. Single element, simpler interactions, virial training. Water is harder but still well within “acceptable” for condensed-phase MD.</span><a class="headerlink" href="#model-comparison-plot" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The jump from Ar to water is the jump from “I can train a model” to “I can train a model on a real system.” Water has chemistry. Hydrogen bonding. Multiple element types. The fact that it works this well with 320 frames is genuinely impressive.</p>
+<div class="note admonition">
+<p class="admonition-title">The Learning Progression</p>
+<p>The official <a class="reference external" href="https://tutorials.deepmodeling.com/en/latest/Tutorials/DeePMD-kit/learnDoc/Handson-Tutorial(v2.0.3).html">DeePMD-kit hands-on tutorial</a> uses a single methane molecule (CH₄) as their hello world: 5 atoms (1 C + 4 H), 200 AIMD frames from VASP, trains in 15 minutes. It’s a great starting point if you want to practice before tackling bulk systems. Our progression builds on that logic:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>System</p></th>
+<th class="head text-center"><p>Elements</p></th>
+<th class="head text-center"><p>Atoms</p></th>
+<th class="head text-center"><p>Frames</p></th>
+<th class="head"><p>What it teaches</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Methane</strong> (<a class="reference external" href="https://tutorials.deepmodeling.com/">official tutorial</a>)</p></td>
+<td class="text-center"><p>C, H</p></td>
+<td class="text-center"><p>5 (1 CH₄)</p></td>
+<td class="text-center"><p>200</p></td>
+<td><p>Multi-element type_map, basic training, isolated molecule</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Ar</strong> (this tutorial)</p></td>
+<td class="text-center"><p>Ar</p></td>
+<td class="text-center"><p>32</p></td>
+<td class="text-center"><p>200</p></td>
+<td><p>Periodic boundary conditions, virial, two phases</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Water</strong> (this tutorial)</p></td>
+<td class="text-center"><p>O, H</p></td>
+<td class="text-center"><p>192 (64 H₂O)</p></td>
+<td class="text-center"><p>400</p></td>
+<td><p>Condensed phase, hydrogen bonding, larger network</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Methane, Ar, and water teach different things. Methane is the simplest multi-element case. Ar is the simplest periodic bulk system. Water combines multi-element with condensed-phase complexity.</p>
+</div>
+</section>
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p>Your workspace should now look like this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tree<span class="w"> </span>ar/<span class="w"> </span>-L<span class="w"> </span><span class="m">2</span>
+<span class="go">ar/</span>
+<span class="go">├── 00_data</span>
+<span class="go">│   ├── training</span>
+<span class="go">│   └── validation</span>
+<span class="go">├── 01_train</span>
+<span class="go">│   ├── input.json</span>
+<span class="go">│   ├── lcurve.out</span>
+<span class="go">│   ├── frozen_model.pb</span>
+<span class="go">│   └── model.ckpt.*</span>
+<span class="go">├── 02_test</span>
+<span class="go">│   ├── test_fcc.*.out</span>
+<span class="go">│   └── test_liquid.*.out</span>
+<span class="go">└── 03_lammps</span>
+</pre></div>
+</div>
+<p>You have a frozen model. It passed <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">test</span></code> with reasonable accuracy. The learning curves look healthy. The forces are physical. The validation loss tracked the training loss.</p>
+<p>Time to give it a real job: running molecular dynamics in LAMMPS.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch04"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch03/dpdata.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 3: Data Preparation with dpdata</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch05/lammps-deepmd.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 5: LAMMPS with Deep Potential</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-training-input">The Training Input</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-loss-function-your-grading-rubric">The Loss Function: Your Grading Rubric</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-dp-train">Running dp train</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-lcurve-out">Reading lcurve.out</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#freezing-the-model">Freezing the Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-the-model">Testing the Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-good-enough">What’s “Good Enough”?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-problems">Common Problems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-up-water-multi-element">Scaling Up: Water (Multi-Element)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

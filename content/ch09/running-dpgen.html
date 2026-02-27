@@ -1,0 +1,1259 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 9: Running dpgen &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch09/running-dpgen';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 10: Monitoring &amp; Troubleshooting" href="../ch10/monitoring.html" />
+    <link rel="prev" title="Ch 8: Writing machine.json" href="../ch08/machine-json.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch07/param-json.html">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch09/running-dpgen.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch09/running-dpgen.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch09/running-dpgen.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 9: Running dpgen</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-command">The Command</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-inside-apptainer">Running Inside Apptainer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-in-screen-or-tmux-don-t-lose-your-process">Running in screen or tmux: Don’t Lose Your Process</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-screen-simpler">Using screen (simpler)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-tmux-more-features">Using tmux (more features)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-directory-structure">Iteration Directory Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#train-the-training-stage">00.train/ – The Training Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-devi-the-exploration-stage">01.model_devi/ – The Exploration Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fp-the-labeling-stage">02.fp/ – The Labeling Stage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#record-dpgen-the-tiny-file-that-controls-everything">record.dpgen: The Tiny File That Controls Everything</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-6-internal-stages">The 6 Internal Stages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resuming-after-a-crash">Resuming After a Crash</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#re-running-a-stage">Re-running a Stage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-log-what-to-look-for">dpgen.log: What to Look For</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#healthy-log-messages">Healthy Log Messages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warning-signs">Warning Signs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#red-flags">Red Flags</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#disk-space-management">Disk Space Management</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-devi-clean-traj-setting">The model_devi_clean_traj Setting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-disk-space-lessons">Other Disk Space Lessons</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-startup-failures">Common Startup Failures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-paths">1. Wrong Paths</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-pseudopotentials">2. Missing Pseudopotentials</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-can-t-see-host-paths">3. Container Can’t See Host Paths</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pbs-slurm-commands-not-found">4. PBS/Slurm Commands Not Found</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-not-visible">5. GPU Not Visible</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#source-list-scripts-missing-or-wrong">6. source_list Scripts Missing or Wrong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sys-configs-poscar-not-found">7. sys_configs POSCAR Not Found</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-flight-checklist">A Pre-Flight Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-9-running-dpgen">
+<h1>Ch 9: Running dpgen<a class="headerlink" href="#ch-9-running-dpgen" title="Permalink to this heading">#</a></h1>
+<p>You’ve written <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. You’ve written <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>. You’ve checked the type_map ordering three times. The pseudopotentials are in the right directory. The container is built. The GPU node is booked.</p>
+<p>Now you actually have to press Enter.</p>
+<p>I stared at that blinking cursor for probably 30 seconds before I hit it the first time. Because a shocking number of dpgen runs die in the first 30 seconds. Not after iteration 3. Not during DFT. In the first half-minute. And every one of those deaths is a configuration error that you could have caught before launching.</p>
+<p>So let’s walk through the launch, the directory structure, the state file that controls everything, and every way the first minute can go wrong. Then you’ll be ready.</p>
+<hr class="docutils" />
+<section id="the-command">
+<h2>The Command<a class="headerlink" href="#the-command" title="Permalink to this heading">#</a></h2>
+<p>One command. Two arguments.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dpgen<span class="w"> </span>run<span class="w"> </span>param.json<span class="w"> </span>machine.json
+</pre></div>
+</div>
+<p>That’s it. That’s the entire active learning signal. dpgen reads both files, validates them (loosely, I’ll be honest), and starts the iteration loop from Ch 6: Train, Explore, Label, repeat.</p>
+<p>Hit enter. Watch what happens.</p>
+<ol class="arabic simple">
+<li><p>Parses <code class="docutils literal notranslate"><span class="pre">param.json</span></code> and <code class="docutils literal notranslate"><span class="pre">machine.json</span></code></p></li>
+<li><p>Reads <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> (if it exists) to figure out where it left off</p></li>
+<li><p>Loads the initial training data from <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code></p></li>
+<li><p>Creates <code class="docutils literal notranslate"><span class="pre">iter.000000/00.train/</span></code> and starts training 4 models</p></li>
+</ol>
+<p>If everything is configured correctly, you’ll see log output scrolling by within a few seconds. If something is wrong, you’ll see a Python traceback. There is very little middle ground. dpgen either starts running or falls over immediately. No gentle warnings. No “are you sure?” No confirmation dialog. Just success or a stack trace.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>dpgen is a <strong>blocking, long-running process</strong>. It doesn’t submit itself to a queue and exit. It sits in your terminal, orchestrating everything: submitting training jobs, waiting for them to finish, submitting LAMMPS jobs, waiting again, submitting DFT jobs, waiting again. dpgen is the conductor. The orchestra plays on the cluster, but the conductor needs to stay alive for the entire concert.</p>
+<p>This has a major implication: if your terminal dies, dpgen dies. The training jobs on the GPU might keep running to completion, but nobody is there to collect the results and kick off the next stage. We’ll deal with this in a moment.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="running-inside-apptainer">
+<h2>Running Inside Apptainer<a class="headerlink" href="#running-inside-apptainer" title="Permalink to this heading">#</a></h2>
+<p>On most HPCs, you’re not running dpgen natively. You’re running it inside a container. If you followed the Apptainer setup (Practical: Apptainer), here’s what the actual launch command looks like:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--writable-tmpfs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/home:/home<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/opt/pbs:/opt/pbs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>~/deepmd-dpgen.sif<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;export PATH=/opt/pbs/default/bin:$PATH &amp;&amp; cd /scratch/your_username/project/dpgen &amp;&amp; dpgen run param.json machine.json&#39;</span>
+</pre></div>
+</div>
+<p>Yeah. That’s a mouthful. Let me rip it apart so you know what every piece does and what breaks if you remove it.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span></code></strong>: Run a command inside the container image. The container has dpgen, DeePMD-kit, and LAMMPS pre-installed. The host doesn’t.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--nv</span></code></strong>: GPU passthrough. Exposes the host’s NVIDIA drivers to the container. Without this, DeePMD training and LAMMPS exploration can’t see the GPU. Training falls back to CPU and takes 10-50x longer. You’ll know you forgot this when <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code> runs but suspiciously slowly, like it’s thinking really hard about each step. I learned this the expensive way.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--writable-tmpfs</span></code></strong>: The container image (<code class="docutils literal notranslate"><span class="pre">.sif</span></code>) is read-only by default. Some tools need to write temp files (lock files, caches, <code class="docutils literal notranslate"><span class="pre">.pyc</span></code> bytecode). This flag creates a writable overlay in memory. Without it, you get random “Read-only file system” errors from Python packages that want to write cache directories.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/home:/home</span></code></strong>: Mount the host’s <code class="docutils literal notranslate"><span class="pre">/home</span></code> filesystem into the container at the same path. <code class="docutils literal notranslate"><span class="pre">/home/your_username/</span></code> inside the container points to the same files as outside.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/scratch:/scratch</span></code></strong>: Same for <code class="docutils literal notranslate"><span class="pre">/scratch</span></code>. Your training data, POSCARs, pseudopotentials all live on scratch. Without this bind, the container can’t see any of it. dpgen crashes immediately with “No such file or directory” on your <code class="docutils literal notranslate"><span class="pre">init_data_prefix</span></code> path.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/opt/pbs:/opt/pbs</span></code></strong>: This is the one everyone forgets. PBS/Torque scheduler commands (<code class="docutils literal notranslate"><span class="pre">qsub</span></code>, <code class="docutils literal notranslate"><span class="pre">qstat</span></code>, <code class="docutils literal notranslate"><span class="pre">qdel</span></code>) live in <code class="docutils literal notranslate"><span class="pre">/opt/pbs/</span></code>. When dpgen submits DFT jobs via the <code class="docutils literal notranslate"><span class="pre">Torque</span></code> batch_type in machine.json, it calls <code class="docutils literal notranslate"><span class="pre">qsub</span></code> from inside the container. If <code class="docutils literal notranslate"><span class="pre">/opt/pbs</span></code> isn’t mounted, <code class="docutils literal notranslate"><span class="pre">qsub</span></code> doesn’t exist. Every fp job submission fails. dpgen says “command not found” and you stare at it wondering what command.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">PATH=/opt/pbs/default/bin:$PATH</span></code></strong>: Even with the bind mount, the container’s PATH doesn’t include the PBS binaries. This adds them. The bind mount makes the files visible. The PATH makes them findable. Two separate problems.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">...</span> <span class="pre">&amp;&amp;</span> <span class="pre">dpgen</span> <span class="pre">run</span> <span class="pre">param.json</span> <span class="pre">machine.json</span></code></strong>: Navigate to the working directory and launch. The <code class="docutils literal notranslate"><span class="pre">cd</span></code> is inside the <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">-c</span></code> because the container might start you in a different working directory than you expect.</p></li>
+</ul>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>The bind mounts you need depend on your HPC. The example above is for an IIT-D style HPC with PBS/Torque and paths at <code class="docutils literal notranslate"><span class="pre">/home</span></code>, <code class="docutils literal notranslate"><span class="pre">/scratch</span></code>, and <code class="docutils literal notranslate"><span class="pre">/opt/pbs</span></code>. Your cluster might use:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/var/spool/pbs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">/opt/pbs</span></code> (Slurm uses a completely different path)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/work</span></code> or <code class="docutils literal notranslate"><span class="pre">/data</span></code> instead of <code class="docutils literal notranslate"><span class="pre">/scratch</span></code></p></li>
+<li><p>A shared software directory like <code class="docutils literal notranslate"><span class="pre">/apps</span></code> or <code class="docutils literal notranslate"><span class="pre">/opt/software</span></code></p></li>
+</ul>
+<p>The debugging process is always the same: if dpgen can’t find a file or command, check whether that path is bind-mounted into the container. <code class="docutils literal notranslate"><span class="pre">apptainer</span> <span class="pre">exec</span> <span class="pre">--nv</span> <span class="pre">--writable-tmpfs</span> <span class="pre">--bind</span> <span class="pre">/your/path</span> <span class="pre">~/container.sif</span> <span class="pre">ls</span> <span class="pre">/your/path</span></code> is your diagnostic tool.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="running-in-screen-or-tmux-don-t-lose-your-process">
+<h2>Running in screen or tmux: Don’t Lose Your Process<a class="headerlink" href="#running-in-screen-or-tmux-don-t-lose-your-process" title="Permalink to this heading">#</a></h2>
+<p>Here’s the scenario. You SSH into the HPC. You launch dpgen. Iteration 0 starts training. You go to lunch. You come back. Your SSH session timed out. dpgen is dead. Training jobs might still be running on the GPU node somewhere, but dpgen isn’t there to collect the results and move to the next stage. You have to figure out what finished, clean up, and restart.</p>
+<p>This happens to everyone exactly once. Then you learn about terminal multiplexers. Don’t be me. Learn before the first time.</p>
+<p><strong>screen</strong> and <strong>tmux</strong> create persistent terminal sessions that survive SSH disconnects. Your dpgen process runs inside the multiplexer. SSH dies? The multiplexer keeps running. You reconnect, reattach, and dpgen is still going. Like nothing happened.</p>
+<section id="using-screen-simpler">
+<h3>Using screen (simpler)<a class="headerlink" href="#using-screen-simpler" title="Permalink to this heading">#</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span># Start a new named session
+$ screen -S dpgen_run
+
+# You&#39;re now inside the screen session. Launch dpgen:
+$ apptainer exec --nv --writable-tmpfs \
+    --bind /home:/home --bind /scratch:/scratch --bind /opt/pbs:/opt/pbs \
+    ~/deepmd-dpgen.sif \
+    bash -c &#39;export PATH=/opt/pbs/default/bin:$PATH &amp;&amp; cd /path/to/dpgen &amp;&amp; dpgen run param.json machine.json&#39;
+
+# Detach: press Ctrl+A, then D
+# (dpgen keeps running in the background)
+
+# Reattach later:
+$ screen -r dpgen_run
+</pre></div>
+</div>
+</section>
+<section id="using-tmux-more-features">
+<h3>Using tmux (more features)<a class="headerlink" href="#using-tmux-more-features" title="Permalink to this heading">#</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Start<span class="w"> </span>a<span class="w"> </span>new<span class="w"> </span>named<span class="w"> </span>session
+<span class="gp">$ </span>tmux<span class="w"> </span>new<span class="w"> </span>-s<span class="w"> </span>dpgen_run
+
+<span class="gp"># </span>Launch<span class="w"> </span>dpgen<span class="w"> </span><span class="o">(</span>same<span class="w"> </span><span class="nb">command</span><span class="w"> </span>as<span class="w"> </span>above<span class="o">)</span>
+
+<span class="gp"># </span>Detach:<span class="w"> </span>press<span class="w"> </span>Ctrl+B,<span class="w"> </span><span class="k">then</span><span class="w"> </span>D
+
+<span class="gp"># </span>Reattach<span class="w"> </span>later:
+<span class="gp">$ </span>tmux<span class="w"> </span>attach<span class="w"> </span>-t<span class="w"> </span>dpgen_run
+
+<span class="gp"># </span>List<span class="w"> </span>running<span class="w"> </span>sessions:
+<span class="gp">$ </span>tmux<span class="w"> </span>ls
+</pre></div>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p><strong>Where do you run the screen/tmux session?</strong> This depends on your setup. Two common scenarios:</p>
+<ol class="arabic">
+<li><p><strong>On a login node</strong>: dpgen runs on the login node and submits GPU/CPU jobs to the queue. This works if your machine.json uses <code class="docutils literal notranslate"><span class="pre">Torque</span></code> or <code class="docutils literal notranslate"><span class="pre">Slurm</span></code> batch types for all three stages. The login node just orchestrates. It doesn’t do heavy compute. Most HPC admins tolerate this because dpgen itself consumes negligible resources (it’s mostly sleeping and polling <code class="docutils literal notranslate"><span class="pre">qstat</span></code>).</p></li>
+<li><p><strong>On a GPU node (interactive session)</strong>: If your machine.json uses <code class="docutils literal notranslate"><span class="pre">Shell</span></code> batch type for training and model_devi (like our mixed-mode config), dpgen needs to be running <em>on the machine with the GPU</em>. You need an interactive job first:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>PBS/Torque
+<span class="gp">$ </span>qsub<span class="w"> </span>-I<span class="w"> </span>-l<span class="w"> </span><span class="k">select</span><span class="o">=</span><span class="m">1</span>:ncpus<span class="o">=</span><span class="m">8</span>:ngpus<span class="o">=</span><span class="m">2</span><span class="w"> </span>-l<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">72</span>:00:00<span class="w"> </span>-q<span class="w"> </span>gpu_queue
+
+<span class="gp"># </span>Then<span class="w"> </span>start<span class="w"> </span>screen/tmux<span class="w"> </span>INSIDE<span class="w"> </span>the<span class="w"> </span>interactive<span class="w"> </span>session
+<span class="gp"># </span><span class="o">(</span>yes,<span class="w"> </span>screen/tmux<span class="w"> </span>inside<span class="w"> </span>an<span class="w"> </span>interactive<span class="w"> </span>PBS<span class="w"> </span>job<span class="w"> </span>works<span class="o">)</span>
+</pre></div>
+</div>
+<p>The catch: interactive jobs have wall-time limits. If your dpgen run takes 5 days and your interactive allocation is 72 hours, you’ll need to restart. This is where <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> saves you (covered below).</p>
+</li>
+</ol>
+</div>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Starting screen/tmux AFTER entering the interactive job</strong>: Some people start screen on the login node, get an interactive allocation inside it, then detach. When they reattach, they’re back on the login node. The interactive job is in a different session entirely. Start the interactive job first, THEN start screen/tmux from within it. Or better yet, use a persistent GPU allocation that you can reattach to. This one will bite you if you get the order wrong.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="iteration-directory-structure">
+<h2>Iteration Directory Structure<a class="headerlink" href="#iteration-directory-structure" title="Permalink to this heading">#</a></h2>
+<p>Once dpgen starts running, it creates a directory structure that mirrors the three-stage loop. Here’s what it looks like after iteration 0 completes. Open that file. I’ll wait.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>dpgen_workdir/
+├── param.json
+├── machine.json
+├── record.dpgen
+├── dpgen.log
+├── pseudo/
+│   ├── C.pbe-n-kjpaw_psl.1.0.0.UPF
+│   └── H.pbe-rrkjus_psl.1.0.0.UPF
+│
+├── iter.000000/
+│   ├── 00.train/
+│   │   ├── 000/          # Model 0
+│   │   │   ├── input.json
+│   │   │   ├── lcurve.out
+│   │   │   ├── frozen_model.pb
+│   │   │   └── ...
+│   │   ├── 001/          # Model 1
+│   │   ├── 002/          # Model 2
+│   │   ├── 003/          # Model 3
+│   │   └── graph.000.pb  # Symlinks to frozen models
+│   │   └── graph.001.pb
+│   │   └── graph.002.pb
+│   │   └── graph.003.pb
+│   │
+│   ├── 01.model_devi/
+│   │   ├── task.000.000000/   # sys_idx=0, temp=77K
+│   │   │   ├── input.lammps
+│   │   │   ├── model_devi.out
+│   │   │   ├── traj/
+│   │   │   └── ...
+│   │   ├── task.000.000001/   # sys_idx=0, temp=150K
+│   │   ├── task.000.000002/   # sys_idx=0, temp=300K
+│   │   ├── task.001.000000/   # sys_idx=1, temp=77K
+│   │   ├── task.001.000001/   # sys_idx=1, temp=300K
+│   │   └── ...               # One dir per (system, temperature) combo
+│   │
+│   └── 02.fp/
+│       ├── task.000.000000/   # Candidate structure 1
+│       │   ├── input          # QE input file
+│       │   ├── output         # QE output file
+│       │   └── ...
+│       ├── task.000.000001/   # Candidate structure 2
+│       └── ...                # Up to fp_task_max dirs
+│
+├── iter.000001/
+│   ├── 00.train/
+│   ├── 01.model_devi/
+│   └── 02.fp/
+│
+└── iter.000002/
+    └── ...
+</pre></div>
+</div>
+<figure class="align-default" id="directory-structure-diagram">
+<a class="reference internal image-reference" href="../../_images/directory_structure.svg"><img alt="../../_images/directory_structure.svg" src="../../_images/directory_structure.svg" width="90%" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 24 </span><span class="caption-text">The dpgen iteration directory tree. Each iteration creates three subdirectories: <code class="docutils literal notranslate"><span class="pre">00.train/</span></code> (4 model training runs), <code class="docutils literal notranslate"><span class="pre">01.model_devi/</span></code> (LAMMPS exploration tasks), and <code class="docutils literal notranslate"><span class="pre">02.fp/</span></code> (DFT calculations on candidate structures). The <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> file at the root tracks which stages have completed.</span><a class="headerlink" href="#directory-structure-diagram" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Let me walk through each piece so you know exactly where to look when something goes wrong. Because something will go wrong. That’s not pessimism. That’s experience.</p>
+<section id="train-the-training-stage">
+<h3>00.train/ – The Training Stage<a class="headerlink" href="#train-the-training-stage" title="Permalink to this heading">#</a></h3>
+<p>Four subdirectories: <code class="docutils literal notranslate"><span class="pre">000/</span></code>, <code class="docutils literal notranslate"><span class="pre">001/</span></code>, <code class="docutils literal notranslate"><span class="pre">002/</span></code>, <code class="docutils literal notranslate"><span class="pre">003/</span></code>. One per model. Each contains:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">input.json</span></code></strong>: The DeePMD-kit training input. dpgen generates this from your <code class="docutils literal notranslate"><span class="pre">default_training_param</span></code>, but with different random seeds for each model, and with <code class="docutils literal notranslate"><span class="pre">training_data.systems</span></code> automatically filled in to include all training data accumulated so far.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code></strong>: The learning curve. Loss values at every <code class="docutils literal notranslate"><span class="pre">disp_freq</span></code> steps. This is where you look when you suspect training went sideways.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">frozen_model.pb</span></code></strong>: The trained and frozen model. This is what LAMMPS uses in the next stage. That’s your model. Frozen and ready.</p></li>
+</ul>
+<p>At the top level of <code class="docutils literal notranslate"><span class="pre">00.train/</span></code>, dpgen creates symlinks: <code class="docutils literal notranslate"><span class="pre">graph.000.pb</span> <span class="pre">-&gt;</span> <span class="pre">000/frozen_model.pb</span></code>, and so on. The LAMMPS exploration stage references these symlinks.</p>
+</section>
+<section id="model-devi-the-exploration-stage">
+<h3>01.model_devi/ – The Exploration Stage<a class="headerlink" href="#model-devi-the-exploration-stage" title="Permalink to this heading">#</a></h3>
+<p>One subdirectory per LAMMPS simulation. The naming convention is <code class="docutils literal notranslate"><span class="pre">task.{sys_idx:03d}.{combo_idx:06d}</span></code>. So <code class="docutils literal notranslate"><span class="pre">task.000.000000</span></code> is system 0 at the first temperature, <code class="docutils literal notranslate"><span class="pre">task.000.000001</span></code> is system 0 at the second temperature. The pattern repeats for each system.</p>
+<p>For our iteration 0 with <code class="docutils literal notranslate"><span class="pre">sys_idx</span> <span class="pre">=</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">4]</span></code> and <code class="docutils literal notranslate"><span class="pre">temps</span> <span class="pre">=</span> <span class="pre">[77,</span> <span class="pre">150,</span> <span class="pre">300]</span></code>, that’s 3 x 3 = 9 task directories. Nine field trips. Nine chances for the model to discover what it doesn’t know.</p>
+<p>Each task directory contains:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">input.lammps</span></code></strong>: The LAMMPS input script. dpgen writes this automatically. It sets up the NVT simulation at the specified temperature, loads all 4 models, and writes <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code></strong>: The key output. Columns: step, max_devi_e, min_devi_e, avg_devi_e, max_devi_f, min_devi_f, avg_devi_f. Column 5 (max_devi_f, 0-indexed column 4) is the one dpgen uses for sorting frames into buckets. This file is your diagnostic lifeline. We’ll spend a lot of time with it in Ch 10.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">traj/</span></code></strong>: LAMMPS dump files for the trajectory. These can be large.</p></li>
+</ul>
+</section>
+<section id="fp-the-labeling-stage">
+<h3>02.fp/ – The Labeling Stage<a class="headerlink" href="#fp-the-labeling-stage" title="Permalink to this heading">#</a></h3>
+<p>One subdirectory per candidate structure selected for DFT. Same <code class="docutils literal notranslate"><span class="pre">task.{sys_idx}.{task_idx}</span></code> naming convention.</p>
+<p>Each task directory contains:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">input</span></code></strong>: The QE input file (or INCAR/POSCAR for VASP). dpgen generates this from <code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code> plus the atomic coordinates extracted from the LAMMPS trajectory frame.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">output</span></code></strong>: The QE output after the calculation completes. dpgen parses this with dpdata to extract energy and forces.</p></li>
+<li><p><strong>The pseudopotential files</strong>: Copied from <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code>. Yes, they get copied into every single task directory. One more reason disk space adds up.</p></li>
+</ul>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>The iteration directories are <strong>cumulative for training data</strong>. When dpgen trains in <code class="docutils literal notranslate"><span class="pre">iter.000001/00.train/</span></code>, the <code class="docutils literal notranslate"><span class="pre">input.json</span></code> references training data from <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> PLUS the DFT results from <code class="docutils literal notranslate"><span class="pre">iter.000000/02.fp/</span></code>. By iteration 3, the training data includes everything from init_data plus all three previous iterations’ DFT outputs. The dataset grows monotonically. The model never forgets what it learned. Each iteration is a semester building on the last.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="record-dpgen-the-tiny-file-that-controls-everything">
+<h2>record.dpgen: The Tiny File That Controls Everything<a class="headerlink" href="#record-dpgen-the-tiny-file-that-controls-everything" title="Permalink to this heading">#</a></h2>
+<p>This is the part that made it click for me. I want you to understand this file deeply because it will save you when things go wrong. It’s tiny. Plain text. And it controls dpgen’s entire execution flow.</p>
+<p>Pull up your <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> after a few stages have completed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span>
+<span class="mi">0</span> <span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">2</span>
+<span class="mi">0</span> <span class="mi">3</span>
+<span class="mi">0</span> <span class="mi">4</span>
+<span class="mi">0</span> <span class="mi">5</span>
+<span class="mi">1</span> <span class="mi">0</span>
+<span class="mi">1</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Each line is a completed step. The format is <code class="docutils literal notranslate"><span class="pre">iteration_index</span> <span class="pre">stage_number</span></code>. Two numbers, space-separated, one per line. <mark class="key-insight">That’s the entire state machine of your multi-day dpgen run, stored in a file you could write by hand in 10 seconds.</mark></p>
+<p>Read that again. Seriously. Your entire multi-day run, all the orchestration, all the scheduling, all the job management, boils down to a text file with pairs of integers. And you can edit it with <code class="docutils literal notranslate"><span class="pre">vim</span></code> to control exactly what dpgen does next.</p>
+<section id="the-6-internal-stages">
+<h3>The 6 Internal Stages<a class="headerlink" href="#the-6-internal-stages" title="Permalink to this heading">#</a></h3>
+<p>You might be thinking: “Wait. Three stages per iteration (Train, Explore, Label). Why 6 numbers (0-5)?”</p>
+<p>Because each of the 3 conceptual stages has a <strong>make</strong> step and a <strong>run</strong> step:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Stage</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>What Happens</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">make_train</span></code></p></td>
+<td><p>Generate training input files, create directories, set up the 4 model training jobs</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">run_train</span></code></p></td>
+<td><p>Actually run <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code>, wait for completion, freeze models</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">make_model_devi</span></code></p></td>
+<td><p>Generate LAMMPS input scripts, copy frozen models, set up exploration tasks</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">run_model_devi</span></code></p></td>
+<td><p>Run LAMMPS simulations, wait for completion, collect <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> files</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">make_fp</span></code></p></td>
+<td><p>Analyze model deviations, sort into buckets, select candidates, generate DFT input files</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">run_fp</span></code></p></td>
+<td><p>Submit DFT jobs, wait for completion, parse results, add to training dataset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>So <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span></code> means “iteration 0, make_train completed.” <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span></code> means “iteration 0, run_train completed.” All the way to <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">5</span></code> meaning “iteration 0 is fully done.”</p>
+<p>Then <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">0</span></code> starts iteration 1. The cycle continues.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">make</span></code> stages (0, 2, 4) are fast. They just generate files and directories. Seconds, maybe a minute. The <code class="docutils literal notranslate"><span class="pre">run</span></code> stages (1, 3, 5) are where the actual compute happens: training on GPUs, LAMMPS on GPUs, DFT on CPU nodes. If dpgen crashes, it almost always crashes during a <code class="docutils literal notranslate"><span class="pre">run</span></code> stage.</p>
+</div>
+</section>
+<section id="resuming-after-a-crash">
+<h3>Resuming After a Crash<a class="headerlink" href="#resuming-after-a-crash" title="Permalink to this heading">#</a></h3>
+<p>This is where <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> becomes your best friend. Say dpgen dies halfway through the DFT labeling of iteration 2. Your SSH session dropped. The login node rebooted. Whatever. The last lines in <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="mi">2</span> <span class="mi">0</span>
+<span class="mi">2</span> <span class="mi">1</span>
+<span class="mi">2</span> <span class="mi">2</span>
+<span class="mi">2</span> <span class="mi">3</span>
+<span class="mi">2</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>Stage <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">5</span></code> (run_fp for iteration 2) never completed. When you restart dpgen with the same command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>dpgen<span class="w"> </span>run<span class="w"> </span>param.json<span class="w"> </span>machine.json
+</pre></div>
+</div>
+<p>It reads <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>, sees that <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">4</span></code> was the last completed step, and picks up at <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">5</span></code>. It resubmits the DFT jobs (or checks which ones already finished) and continues from there.</p>
+<p><mark class="key-insight">No special flags. No resume commands. Just run the same command again.</mark> dpgen figures out where it stopped. That’s the whole trick. That’s the recovery strategy.</p>
+</section>
+<section id="re-running-a-stage">
+<h3>Re-running a Stage<a class="headerlink" href="#re-running-a-stage" title="Permalink to this heading">#</a></h3>
+<p>Sometimes you need to re-run a specific stage. Maybe the DFT jobs had the wrong walltime and all failed. Maybe you changed a parameter and want to redo the exploration. Here’s what nobody tells you:</p>
+<p><strong>Delete the corresponding line (and all lines after it) from <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code>.</strong></p>
+<p>Example: you want to redo the model deviation stage of iteration 1. The file currently looks like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span>
+<span class="mi">0</span> <span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">2</span>
+<span class="mi">0</span> <span class="mi">3</span>
+<span class="mi">0</span> <span class="mi">4</span>
+<span class="mi">0</span> <span class="mi">5</span>
+<span class="mi">1</span> <span class="mi">0</span>
+<span class="mi">1</span> <span class="mi">1</span>
+<span class="mi">1</span> <span class="mi">2</span>
+<span class="mi">1</span> <span class="mi">3</span>
+<span class="mi">1</span> <span class="mi">4</span>
+<span class="mi">1</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Delete everything from <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">2</span></code> onward:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span>
+<span class="mi">0</span> <span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">2</span>
+<span class="mi">0</span> <span class="mi">3</span>
+<span class="mi">0</span> <span class="mi">4</span>
+<span class="mi">0</span> <span class="mi">5</span>
+<span class="mi">1</span> <span class="mi">0</span>
+<span class="mi">1</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Restart dpgen. It reruns <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">2</span></code> (make_model_devi), <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">3</span></code> (run_model_devi), <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">4</span></code> (make_fp), and <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">5</span></code> (run_fp) for iteration 1. It picked up right where you told it to. Clean.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>Only delete from a line onward. Never delete a line in the middle and leave later lines intact.</strong> dpgen reads the file sequentially. If you delete <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">2</span></code> but leave <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">3</span></code>, dpgen sees “1 1 completed, next is 1 2” and reruns it. But the directories from the original <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">3</span></code> run still exist and conflict. Always delete the target line AND everything after it. This is not a preference. This is how the file works.</p>
+<p>Also: <strong>back up <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> before editing.</strong> One wrong delete and you could be rerunning days of compute. <code class="docutils literal notranslate"><span class="pre">cp</span> <span class="pre">record.dpgen</span> <span class="pre">record.dpgen.bak</span></code> takes one second and could save you a week.</p>
+</div>
+<div class="seealso admonition">
+<p class="admonition-title">Simulation</p>
+<p><strong>Try this</strong>: After your first iteration completes, open <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> and read it. It should have exactly 6 lines (stages 0-5 for iteration 0). Verify that the iteration directories match: <code class="docutils literal notranslate"><span class="pre">iter.000000/00.train/</span></code>, <code class="docutils literal notranslate"><span class="pre">01.model_devi/</span></code>, and <code class="docutils literal notranslate"><span class="pre">02.fp/</span></code> should all be populated. This builds intuition for how the state file maps to the filesystem. The file is simple. Understanding it deeply saves you when things go wrong.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="dpgen-log-what-to-look-for">
+<h2>dpgen.log: What to Look For<a class="headerlink" href="#dpgen-log-what-to-look-for" title="Permalink to this heading">#</a></h2>
+<p>dpgen writes a log file called <code class="docutils literal notranslate"><span class="pre">dpgen.log</span></code> in the working directory. It’s verbose. On a multi-iteration run, it grows to thousands of lines. You don’t need to read every line. But you need to know which lines matter.</p>
+<section id="healthy-log-messages">
+<h3>Healthy Log Messages<a class="headerlink" href="#healthy-log-messages" title="Permalink to this heading">#</a></h3>
+<p>These are the lines that tell you things are working:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span> <span class="nb">iter</span><span class="mf">.000000</span>  <span class="n">stage</span> <span class="mi">0</span><span class="p">:</span> <span class="n">make_train</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="nb">iter</span><span class="mf">.000000</span>  <span class="n">stage</span> <span class="mi">1</span><span class="p">:</span> <span class="n">run_train</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="n">system</span> <span class="mi">000</span> <span class="n">accurate_ratio</span><span class="p">:</span> <span class="mf">0.7200</span>  <span class="n">candidate_ratio</span><span class="p">:</span> <span class="mf">0.2100</span>  <span class="n">failed_ratio</span><span class="p">:</span> <span class="mf">0.0700</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="n">system</span> <span class="mi">001</span> <span class="n">accurate_ratio</span><span class="p">:</span> <span class="mf">0.6500</span>  <span class="n">candidate_ratio</span><span class="p">:</span> <span class="mf">0.2800</span>  <span class="n">failed_ratio</span><span class="p">:</span> <span class="mf">0.0700</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="nb">iter</span><span class="mf">.000000</span>  <span class="n">stage</span> <span class="mi">4</span><span class="p">:</span> <span class="n">make_fp</span> <span class="o">--</span> <span class="n">number</span> <span class="n">of</span> <span class="n">fp</span> <span class="n">tasks</span><span class="p">:</span> <span class="mi">38</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="nb">iter</span><span class="mf">.000000</span>  <span class="n">stage</span> <span class="mi">5</span><span class="p">:</span> <span class="n">run_fp</span>
+</pre></div>
+</div>
+<p>The <strong>accurate_ratio / candidate_ratio / failed_ratio</strong> lines are gold. They tell you exactly how the model is performing on each system. You want to see accurate_ratio climbing across iterations. That’s convergence happening in real time. Are you seeing this? That’s the model getting smarter, iteration by iteration, right there in the log.</p>
+</section>
+<section id="warning-signs">
+<h3>Warning Signs<a class="headerlink" href="#warning-signs" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WARNING</span><span class="p">:</span> <span class="nb">all</span> <span class="n">fps</span> <span class="n">of</span> <span class="n">system</span> <span class="mi">002</span> <span class="n">are</span> <span class="n">accurate</span><span class="p">,</span> <span class="n">skip</span>
+</pre></div>
+</div>
+<p>System 2 has converged. 100% of explored frames are accurate. Good if it’s iteration 5. Suspicious if it’s iteration 0 (your trust_lo might be too loose, or the system is genuinely easy).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WARNING</span><span class="p">:</span> <span class="n">no</span> <span class="n">candidate</span> <span class="n">fps</span> <span class="n">found</span><span class="p">,</span> <span class="n">skip</span> <span class="n">fp</span>
+</pre></div>
+</div>
+<p>No structures fell in the candidate range across any system. Either the model is already excellent (unlikely early on) or your trust bounds are miscalibrated. Go look at the actual <code class="docutils literal notranslate"><span class="pre">model_devi.out</span></code> files. The numbers don’t lie.</p>
+</section>
+<section id="red-flags">
+<h3>Red Flags<a class="headerlink" href="#red-flags" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">RuntimeError</span><span class="p">:</span> <span class="n">job</span> <span class="mi">000</span> <span class="n">failed</span> <span class="n">after</span> <span class="mi">3</span> <span class="n">retries</span>
+</pre></div>
+</div>
+<p>A training or LAMMPS or DFT job failed three times in a row. dpgen gave up. The most common causes:</p>
+<ul class="simple">
+<li><p><strong>Training</strong>: Out of GPU memory (reduce <code class="docutils literal notranslate"><span class="pre">sel</span></code> or batch size)</p></li>
+<li><p><strong>LAMMPS</strong>: Simulation blew up (atoms too close, bad initial structure, timestep too large)</p></li>
+<li><p><strong>DFT</strong>: SCF didn’t converge, walltime exceeded, or missing pseudopotentials</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">2</span><span class="p">]</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
+</pre></div>
+</div>
+<p>A path in <code class="docutils literal notranslate"><span class="pre">param.json</span></code> or <code class="docutils literal notranslate"><span class="pre">machine.json</span></code> is wrong. The usual suspects: <code class="docutils literal notranslate"><span class="pre">init_data_prefix</span></code>, <code class="docutils literal notranslate"><span class="pre">sys_configs_prefix</span></code>, <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code>, or the <code class="docutils literal notranslate"><span class="pre">source_list</span></code> scripts in machine.json.</p>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>dpgen.log is written from the perspective of the <strong>dpgen process</strong>, not the individual jobs. If a DFT calculation fails because QE can’t find a pseudopotential, dpgen.log just says “job failed.” The actual QE error is in <code class="docutils literal notranslate"><span class="pre">iter.XXXXXX/02.fp/task.XXX.XXXXXX/output</span></code>. You almost always need to dig into the individual task directories to find the real error message. dpgen is the messenger. The real story is in the task directories.</p>
+<p>Get comfortable with this pattern:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Find<span class="w"> </span>which<span class="w"> </span>fp<span class="w"> </span>tasks<span class="w"> </span>failed
+<span class="gp">$ </span>grep<span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;convergence NOT achieved&quot;</span><span class="w"> </span>iter.000000/02.fp/task.*/output
+
+<span class="gp"># </span>Check<span class="w"> </span>a<span class="w"> </span>specific<span class="w"> </span>failed<span class="w"> </span>task
+<span class="gp">$ </span>tail<span class="w"> </span>-50<span class="w"> </span>iter.000000/02.fp/task.000.000012/output
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="disk-space-management">
+<h2>Disk Space Management<a class="headerlink" href="#disk-space-management" title="Permalink to this heading">#</a></h2>
+<p>Let me tell you about the time I ran out of disk space mid-iteration and dpgen crashed with a cryptic Python IOError buried in 40 lines of traceback. No clear message. Just… IOError. Deep in some numpy save function. I spent 45 minutes debugging before I ran <code class="docutils literal notranslate"><span class="pre">df</span> <span class="pre">-h</span></code> and saw 0% free. I cannot stress this enough: dpgen eats disk.</p>
+<p>Here’s where it goes:</p>
+<ol class="arabic simple">
+<li><p><strong>LAMMPS trajectories</strong> (<code class="docutils literal notranslate"><span class="pre">01.model_devi/task.*/traj/</span></code>): Each trajectory dumps atomic positions at every <code class="docutils literal notranslate"><span class="pre">trj_freq</span></code> steps. A 2M-step trajectory with <code class="docutils literal notranslate"><span class="pre">trj_freq=1000</span></code> produces 2000 frames. For a 96-atom system, each frame is 2-4 KB. That’s 4-8 MB per trajectory. With 30 trajectories per iteration, roughly 120-240 MB. Sounds small. It’s not small across 10+ iterations.</p></li>
+<li><p><strong>Training checkpoints</strong> (<code class="docutils literal notranslate"><span class="pre">00.train/*/</span></code>): DeePMD saves checkpoints every <code class="docutils literal notranslate"><span class="pre">save_freq</span></code> steps. With 1M training steps and <code class="docutils literal notranslate"><span class="pre">save_freq=10000</span></code>, that’s 100 checkpoints per model, times 4 models. Each checkpoint: 10-50 MB depending on model size. That’s 4-20 GB per iteration.</p></li>
+<li><p><strong>DFT output files</strong> (<code class="docutils literal notranslate"><span class="pre">02.fp/task.*/</span></code>): QE output files are modest (a few MB each), but the pseudopotentials get copied into every single task directory. 50 tasks = 50 copies of your UPF files.</p></li>
+<li><p><strong>Work directories</strong> (<code class="docutils literal notranslate"><span class="pre">work/</span></code>, <code class="docutils literal notranslate"><span class="pre">fp_work/</span></code>): dpdispatcher’s staging area. Contains copies of input files and job scripts. Accumulates silently. Nobody warns you about this one.</p></li>
+</ol>
+<section id="the-model-devi-clean-traj-setting">
+<h3>The model_devi_clean_traj Setting<a class="headerlink" href="#the-model-devi-clean-traj-setting" title="Permalink to this heading">#</a></h3>
+<p>Your first line of defense. From our param.json:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi_clean_traj&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>This tells dpgen: <strong>keep trajectories from only the last 3 iterations. Delete older ones.</strong></p>
+<p>When iteration 4 starts, iteration 0’s trajectories get deleted. When iteration 5 starts, iteration 1’s go. The model_devi.out files (which are small) stay. Just the bulky trajectory dumps get cleaned.</p>
+<p>Why keep any? Because if something goes wrong and you need to rerun the fp stage, dpgen needs the trajectory files to extract candidate structures. Keeping the last 3 iterations gives you a buffer. Start there. Adjust later.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p>Values for <code class="docutils literal notranslate"><span class="pre">model_devi_clean_traj</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Behavior</p></th>
+<th class="head"><p>When to use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Clean ALL previous iteration trajectories after current fp finishes</p></td>
+<td><p>Tight on disk. Accept that reruns require redoing exploration</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>Never clean. Keep everything</p></td>
+<td><p>Plenty of disk. Paranoid about reruns</p></td>
+</tr>
+<tr class="row-even"><td><p>Integer (e.g., <code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></td>
+<td><p>Keep last N iterations of trajectories</p></td>
+<td><p>The sweet spot. <code class="docutils literal notranslate"><span class="pre">3</span></code> is a good default</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="other-disk-space-lessons">
+<h3>Other Disk Space Lessons<a class="headerlink" href="#other-disk-space-lessons" title="Permalink to this heading">#</a></h3>
+<p>Things I’ve learned the hard way so you don’t have to:</p>
+<ul class="simple">
+<li><p><strong>Monitor regularly</strong>: <code class="docutils literal notranslate"><span class="pre">du</span> <span class="pre">-sh</span> <span class="pre">iter.*/</span></code> after each iteration. Know your trajectory.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">disk_io:</span> <span class="pre">&quot;none&quot;</span></code> in QE settings</strong>: We already have this in our param.json. It prevents QE from writing wavefunction files, which can be hundreds of MB per calculation. If you forget this, 50 fp tasks can suddenly eat 50 GB. Gone.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">save_freq</span></code> in training</strong>: Don’t set this too low. <code class="docutils literal notranslate"><span class="pre">save_freq=1000</span></code> with <code class="docutils literal notranslate"><span class="pre">numb_steps=1000000</span></code> means 1000 checkpoints per model. That’s 4000 checkpoints across 4 models. Excessive. <code class="docutils literal notranslate"><span class="pre">10000</span></code> is fine.</p></li>
+<li><p><strong>Clean up <code class="docutils literal notranslate"><span class="pre">work/</span></code> directories</strong>: dpdispatcher’s work directories can accumulate, but dpgen usually handles this. Check anyway.</p></li>
+</ul>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>On shared HPC filesystems, disk quotas are real. Check yours with <code class="docutils literal notranslate"><span class="pre">quota</span> <span class="pre">-s</span></code> or <code class="docutils literal notranslate"><span class="pre">lfs</span> <span class="pre">quota</span></code> (Lustre) before launching a multi-iteration run. A full graphene + H2 dpgen run with 5 iterations, 4 models each, can easily consume 50-100 GB. If you hit quota mid-run, dpgen won’t tell you “disk full.” It’ll crash with an IOError somewhere deep in a Python stack trace that tells you nothing useful. Plan ahead. Clean as you go. Set <code class="docutils literal notranslate"><span class="pre">model_devi_clean_traj</span></code>. Not optional. Not a suggestion.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-startup-failures">
+<h2>Common Startup Failures<a class="headerlink" href="#common-startup-failures" title="Permalink to this heading">#</a></h2>
+<p>I’ve catalogued the most common ways dpgen dies in the first 60 seconds. These are almost always configuration errors, not dpgen bugs. Here’s the hall of shame.</p>
+<section id="wrong-paths">
+<h3>1. Wrong Paths<a class="headerlink" href="#wrong-paths" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">2</span><span class="p">]</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span><span class="p">:</span> <span class="s1">&#39;../init_data/set_2atoms/set.000/energy.npy&#39;</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: <code class="docutils literal notranslate"><span class="pre">init_data_prefix</span></code> or <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> paths don’t resolve to actual DeePMD-format data directories. <mark class="hard-req">These paths are relative to where you run <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code>, not relative to where <code class="docutils literal notranslate"><span class="pre">param.json</span></code> is stored.</mark></p>
+<p><strong>The fix</strong>: Before launching, verify every path manually:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>From<span class="w"> </span>your<span class="w"> </span>dpgen<span class="w"> </span>working<span class="w"> </span>directory<span class="w"> </span><span class="o">(</span>where<span class="w"> </span>param.json<span class="w"> </span>lives<span class="o">)</span>:
+<span class="gp">$ </span>ls<span class="w"> </span>../init_data/set_2atoms/set.000/
+<span class="gp"># </span>Should<span class="w"> </span>show:<span class="w"> </span>box.npy<span class="w">  </span>coord.npy<span class="w">  </span>energy.npy<span class="w">  </span>force.npy<span class="w">  </span>type.raw<span class="w">  </span>...
+</pre></div>
+</div>
+<p>Do this for every entry in <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code>. All of them. It takes two minutes and saves you two hours. There is no good reason to skip this step.</p>
+</section>
+<section id="missing-pseudopotentials">
+<h3>2. Missing Pseudopotentials<a class="headerlink" href="#missing-pseudopotentials" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="n">pseudo</span><span class="o">/</span><span class="n">C</span><span class="o">.</span><span class="n">pbe</span><span class="o">-</span><span class="n">n</span><span class="o">-</span><span class="n">kjpaw_psl</span><span class="mf">.1.0.0</span><span class="o">.</span><span class="n">UPF</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code> doesn’t contain the files listed in <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code>.</p>
+<p><strong>The fix</strong>: The obvious check:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ls<span class="w"> </span>pseudo/
+<span class="gp"># </span>Should<span class="w"> </span>list<span class="w"> </span>exactly<span class="w"> </span>the<span class="w"> </span>files<span class="w"> </span><span class="k">in</span><span class="w"> </span>fp_pp_files
+</pre></div>
+</div>
+<p>Common variant: filenames with slightly different capitalization or version numbers. <code class="docutils literal notranslate"><span class="pre">C.pbe-n-kjpaw_psl.1.0.0.UPF</span></code> vs <code class="docutils literal notranslate"><span class="pre">C.pbe-n-kjpaw_psl.1.0.0.upf</span></code>. Linux cares about case. Linux always cares about case.</p>
+</section>
+<section id="container-can-t-see-host-paths">
+<h3>3. Container Can’t See Host Paths<a class="headerlink" href="#container-can-t-see-host-paths" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">username</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">init_data</span><span class="o">/</span><span class="n">set_2atoms</span><span class="o">/</span><span class="nb">set</span><span class="mf">.000</span><span class="o">/</span><span class="n">energy</span><span class="o">.</span><span class="n">npy</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: You bind-mounted <code class="docutils literal notranslate"><span class="pre">/home:/home</span></code> but your data lives on <code class="docutils literal notranslate"><span class="pre">/scratch</span></code> and you forgot <code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/scratch:/scratch</span></code>. The container looks at the path, sees nothing. It’s like looking through a window that isn’t there.</p>
+<p><strong>The fix</strong>: Every host path that appears anywhere in param.json or machine.json must be accessible inside the container. List all unique path prefixes in your configs and make sure each one has a bind mount.</p>
+</section>
+<section id="pbs-slurm-commands-not-found">
+<h3>4. PBS/Slurm Commands Not Found<a class="headerlink" href="#pbs-slurm-commands-not-found" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">2</span><span class="p">]</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span><span class="p">:</span> <span class="s1">&#39;qsub&#39;</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: machine.json specifies <code class="docutils literal notranslate"><span class="pre">&quot;batch_type&quot;:</span> <span class="pre">&quot;Torque&quot;</span></code> for fp, but <code class="docutils literal notranslate"><span class="pre">qsub</span></code> isn’t in the container’s PATH.</p>
+<p><strong>The fix</strong>: Bind-mount the PBS/Slurm installation directory and add it to PATH. For PBS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>--bind /opt/pbs:/opt/pbs
+# and inside bash -c:
+export PATH=/opt/pbs/default/bin:$PATH
+</pre></div>
+</div>
+<p>For Slurm, it’s usually <code class="docutils literal notranslate"><span class="pre">--bind</span> <span class="pre">/usr/bin/sbatch</span></code> or wherever your scheduler lives. Check with <code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">qsub</span></code> or <code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">sbatch</span></code> on the host.</p>
+</section>
+<section id="gpu-not-visible">
+<h3>5. GPU Not Visible<a class="headerlink" href="#gpu-not-visible" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tensorflow</span><span class="o">.</span><span class="n">python</span><span class="o">.</span><span class="n">framework</span><span class="o">.</span><span class="n">errors_impl</span><span class="o">.</span><span class="n">InternalError</span><span class="p">:</span> <span class="n">CUDA</span> <span class="n">error</span><span class="p">:</span> <span class="n">no</span> <span class="n">CUDA</span><span class="o">-</span><span class="n">capable</span> <span class="n">device</span> <span class="ow">is</span> <span class="n">detected</span>
+</pre></div>
+</div>
+<p>Or for PyTorch/DeePMD v3:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">RuntimeError</span><span class="p">:</span> <span class="n">No</span> <span class="n">CUDA</span> <span class="n">GPUs</span> <span class="n">are</span> <span class="n">available</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: You forgot <code class="docutils literal notranslate"><span class="pre">--nv</span></code> in the Apptainer command. Or you’re running on a login node that doesn’t have a GPU. Or the GPU is allocated to someone else’s job.</p>
+<p><strong>The fix</strong>: Always use <code class="docutils literal notranslate"><span class="pre">--nv</span></code>. Make sure you’re on a node with an actual GPU. Verify:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>nvidia-smi
+<span class="gp"># </span>Should<span class="w"> </span>show<span class="w"> </span>your<span class="w"> </span>GPU<span class="o">(</span>s<span class="o">)</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span></code> shows nothing or errors out, the problem is at the host/driver level. dpgen can’t fix what the hardware doesn’t have.</p>
+</section>
+<section id="source-list-scripts-missing-or-wrong">
+<h3>6. source_list Scripts Missing or Wrong<a class="headerlink" href="#source-list-scripts-missing-or-wrong" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bash</span><span class="p">:</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">deepmd_container</span><span class="o">.</span><span class="n">sh</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: The <code class="docutils literal notranslate"><span class="pre">source_list</span></code> paths in machine.json point to environment setup scripts that don’t exist or aren’t executable.</p>
+<p><strong>The fix</strong>: Check every path in <code class="docutils literal notranslate"><span class="pre">source_list</span></code> for all three sections (train, model_devi, fp). These scripts need to exist AND be readable from inside the container.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Verify<span class="w"> </span>from<span class="w"> </span>inside<span class="w"> </span>the<span class="w"> </span>container
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--bind<span class="w"> </span>/home:/home<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>cat<span class="w"> </span>/home/user/scripts/deepmd_container.sh
+</pre></div>
+</div>
+</section>
+<section id="sys-configs-poscar-not-found">
+<h3>7. sys_configs POSCAR Not Found<a class="headerlink" href="#sys-configs-poscar-not-found" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="o">../</span><span class="n">sys_configs</span><span class="o">/</span><span class="n">sys_bare</span><span class="o">/</span><span class="n">POSCAR</span>
+</pre></div>
+</div>
+<p><strong>The cause</strong>: <code class="docutils literal notranslate"><span class="pre">sys_configs_prefix</span></code> combined with the entries in <code class="docutils literal notranslate"><span class="pre">sys_configs</span></code> doesn’t resolve to real files.</p>
+<p><strong>The fix</strong>: Same as path debugging above. From the dpgen working directory:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ls<span class="w"> </span>../sys_configs/sys_bare/POSCAR
+<span class="gp">$ </span>ls<span class="w"> </span>../sys_configs/sys_4h2/POSCAR
+<span class="gp"># </span>etc.
+</pre></div>
+</div>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong>The path resolution trap</strong>: <code class="docutils literal notranslate"><span class="pre">init_data_prefix</span></code>, <code class="docutils literal notranslate"><span class="pre">sys_configs_prefix</span></code>, and <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code> are all resolved relative to the <strong>working directory where you run <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code></strong>, not relative to where param.json is stored. If you launch dpgen from <code class="docutils literal notranslate"><span class="pre">/scratch/user/project/dpgen/</span></code> and your param.json says <code class="docutils literal notranslate"><span class="pre">&quot;init_data_prefix&quot;:</span> <span class="pre">&quot;../init_data&quot;</span></code>, dpgen looks for <code class="docutils literal notranslate"><span class="pre">/scratch/user/project/init_data/</span></code>.</p>
+<p>This seems obvious until you’re debugging at midnight and you realize you <code class="docutils literal notranslate"><span class="pre">cd</span></code>’d into the wrong directory before launching.</p>
+<p>My recommendation: always <code class="docutils literal notranslate"><span class="pre">cd</span></code> to the directory containing param.json before running <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code>. And use <code class="docutils literal notranslate"><span class="pre">pwd</span></code> to verify. Every single time. I’m serious.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="a-pre-flight-checklist">
+<h2>A Pre-Flight Checklist<a class="headerlink" href="#a-pre-flight-checklist" title="Permalink to this heading">#</a></h2>
+<p>Before you press Enter, run through this. Every item takes seconds. The whole list takes under two minutes. Skipping it can cost you hours. I’ve seen this go wrong too many times to not put this here.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span><span class="m">1</span>.<span class="w"> </span>Am<span class="w"> </span>I<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>right<span class="w"> </span>directory?
+<span class="gp">$ </span><span class="nb">pwd</span>
+<span class="gp">$ </span>ls<span class="w"> </span>param.json<span class="w"> </span>machine.json
+
+<span class="gp"># </span><span class="m">2</span>.<span class="w"> </span>Can<span class="w"> </span>I<span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span>initial<span class="w"> </span>data?
+<span class="gp">$ </span>ls<span class="w"> </span>../init_data/set_2atoms/set.000/energy.npy
+
+<span class="gp"># </span><span class="m">3</span>.<span class="w"> </span>Can<span class="w"> </span>I<span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span>system<span class="w"> </span>configs?
+<span class="gp">$ </span>ls<span class="w"> </span>../sys_configs/sys_bare/POSCAR
+
+<span class="gp"># </span><span class="m">4</span>.<span class="w"> </span>Can<span class="w"> </span>I<span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span>pseudopotentials?
+<span class="gp">$ </span>ls<span class="w"> </span>pseudo/C.pbe-n-kjpaw_psl.1.0.0.UPF<span class="w"> </span>pseudo/H.pbe-rrkjus_psl.1.0.0.UPF
+
+<span class="gp"># </span><span class="m">5</span>.<span class="w"> </span>Can<span class="w"> </span>I<span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span>GPUs?<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>using<span class="w"> </span>containers<span class="o">)</span>
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>nvidia-smi
+
+<span class="gp"># </span><span class="m">6</span>.<span class="w"> </span>Can<span class="w"> </span>I<span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span>job<span class="w"> </span>scheduler?<span class="w"> </span><span class="o">(</span><span class="k">if</span><span class="w"> </span>using<span class="w"> </span>PBS/Slurm<span class="w"> </span>batch<span class="w"> </span>types<span class="o">)</span>
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--bind<span class="w"> </span>/opt/pbs:/opt/pbs<span class="w"> </span>~/deepmd-dpgen.sif<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s1">&#39;export PATH=/opt/pbs/default/bin:$PATH &amp;&amp; which qsub&#39;</span>
+
+<span class="gp"># </span><span class="m">7</span>.<span class="w"> </span>Do<span class="w"> </span>the<span class="w"> </span>source_list<span class="w"> </span>scripts<span class="w"> </span>exist?
+<span class="gp">$ </span>cat<span class="w"> </span>/home/user/scripts/deepmd_container.sh
+<span class="gp">$ </span>cat<span class="w"> </span>/home/user/scripts/qe_hpc.sh
+
+<span class="gp"># </span><span class="m">8</span>.<span class="w"> </span>Am<span class="w"> </span>I<span class="w"> </span>inside<span class="w"> </span>screen<span class="w"> </span>or<span class="w"> </span>tmux?
+<span class="gp">$ </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$STY</span><span class="w">    </span><span class="c1"># screen: shows session name if inside</span>
+<span class="gp">$ </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$TMUX</span><span class="w">   </span><span class="c1"># tmux: shows socket path if inside</span>
+</pre></div>
+</div>
+<p>Eight checks. If all 8 pass, you’re ready. Grab your terminal.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>screen<span class="w"> </span>-S<span class="w"> </span>dpgen_run
+<span class="gp">$ </span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--nv<span class="w"> </span>--writable-tmpfs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bind<span class="w"> </span>/home:/home<span class="w"> </span>--bind<span class="w"> </span>/scratch:/scratch<span class="w"> </span>--bind<span class="w"> </span>/opt/pbs:/opt/pbs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>~/deepmd-dpgen.sif<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;export PATH=/opt/pbs/default/bin:$PATH &amp;&amp; cd /scratch/user/project/dpgen &amp;&amp; dpgen run param.json machine.json&#39;</span>
+</pre></div>
+</div>
+<p>Detach with <code class="docutils literal notranslate"><span class="pre">Ctrl+A,</span> <span class="pre">D</span></code>. Go do something else. Come back in an hour. Check <code class="docutils literal notranslate"><span class="pre">record.dpgen</span></code> to see how far it’s gotten. If the file has 6 lines, iteration 0 is done. One iteration down. If it has 2 lines, training just finished and exploration is running. The state file tells the whole story.</p>
+</section>
+<hr class="docutils" />
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p>dpgen is running. Directories are appearing. Jobs are being submitted. But how do you know if it’s actually working <em>well</em>? How do you read the model deviation output? How do you know if your trust levels are right? How do you spot a run that’s going nowhere?</p>
+<p>That’s Ch 10: Monitoring and Troubleshooting. The chapter where you learn to read the patient’s vital signs.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch09"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch08/machine-json.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 8: Writing machine.json</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch10/monitoring.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 10: Monitoring &amp; Troubleshooting</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-command">The Command</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-inside-apptainer">Running Inside Apptainer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-in-screen-or-tmux-don-t-lose-your-process">Running in screen or tmux: Don’t Lose Your Process</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-screen-simpler">Using screen (simpler)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-tmux-more-features">Using tmux (more features)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-directory-structure">Iteration Directory Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#train-the-training-stage">00.train/ – The Training Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-devi-the-exploration-stage">01.model_devi/ – The Exploration Stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fp-the-labeling-stage">02.fp/ – The Labeling Stage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#record-dpgen-the-tiny-file-that-controls-everything">record.dpgen: The Tiny File That Controls Everything</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-6-internal-stages">The 6 Internal Stages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resuming-after-a-crash">Resuming After a Crash</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#re-running-a-stage">Re-running a Stage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpgen-log-what-to-look-for">dpgen.log: What to Look For</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#healthy-log-messages">Healthy Log Messages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warning-signs">Warning Signs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#red-flags">Red Flags</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#disk-space-management">Disk Space Management</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-devi-clean-traj-setting">The model_devi_clean_traj Setting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-disk-space-lessons">Other Disk Space Lessons</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-startup-failures">Common Startup Failures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-paths">1. Wrong Paths</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-pseudopotentials">2. Missing Pseudopotentials</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-can-t-see-host-paths">3. Container Can’t See Host Paths</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pbs-slurm-commands-not-found">4. PBS/Slurm Commands Not Found</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-not-visible">5. GPU Not Visible</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#source-list-scripts-missing-or-wrong">6. source_list Scripts Missing or Wrong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sys-configs-poscar-not-found">7. sys_configs POSCAR Not Found</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-flight-checklist">A Pre-Flight Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

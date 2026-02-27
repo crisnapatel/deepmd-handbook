@@ -1,0 +1,1425 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ch 7: Writing param.json &#8212; DeePMD + dpgen — But Make It Make Sense</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/ch07/param-json';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ch 8: Writing machine.json" href="../ch08/machine-json.html" />
+    <link rel="prev" title="Ch 6: The dpgen Concept" href="../ch06/dpgen-concept.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DeePMD + dpgen — But Make It Make Sense</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    DeePMD + dpgen: But Make It Make Sense
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Part I — Foundations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch01/why-ml-potentials.html">Ch 1: Why Machine-Learned Potentials?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch02/deepmd-architecture.html">Ch 2: The DeePMD Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part II — Your First Model</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch03/dpdata.html">Ch 3: Data Preparation with dpdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch04/first-model.html">Ch 4: Your First DeePMD Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch05/lammps-deepmd.html">Ch 5: LAMMPS with Deep Potential</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part III — The Active Learning Loop</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch06/dpgen-concept.html">Ch 6: The dpgen Concept</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ch 7: Writing param.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch08/machine-json.html">Ch 8: Writing machine.json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch09/running-dpgen.html">Ch 9: Running dpgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ch10/monitoring.html">Ch 10: Monitoring &amp; Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Part IV — Validation &amp; Beyond</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ch11/validation.html">Ch 11: Validation &amp; Production</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Practical Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../practical/gap-filling.html">Gap-Filling: Manual Data Curation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/multi-element.html">Multi-Element Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/energy-scale.html">Energy Scale Traps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/transfer-learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/apptainer.html">Apptainer Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/qe-vs-vasp.html">QE vs VASP for First-Principles Labeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../practical/init-commands.html">init_bulk and init_surf: Generating Initial Training Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reading-order.html">Reading Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch07/param-json.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch07/param-json.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/ch07/param-json.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ch 7: Writing param.json</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference-standalone-training-configs">Quick Reference: Standalone Training Configs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ar-input-json-single-element">Ar input.json (Single Element)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#water-input-json-multi-element">Water input.json (Multi-Element)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-big-picture">The Big Picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-map-and-mass-map">1. Type Map and Mass Map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-training-data">2. Initial Training Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-configurations">3. System Configurations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#number-of-models">4. Number of Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-parameters">5. Training Parameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-the-descriptor">5a. The Descriptor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-the-fitting-network">5b. The Fitting Network</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-learning-rate">5c. Learning Rate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-loss-function">5d. Loss Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-training-settings">5e. Training Settings</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-transfer-learning">6. Training Reuse (Transfer Learning)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-settings">7. Exploration Settings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-the-model-devi-jobs-schedule">7a. The model_devi_jobs Schedule</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-principles-settings">8. First-Principles Settings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pseudopotentials">8a. Pseudopotentials</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-qe-input-parameters">8b. QE Input Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#for-vasp-users">9. For VASP Users</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-complete-param-json">The Complete param.json</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-your-own-a-checklist">Writing Your Own: A Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ch-7-writing-param-json">
+<h1>Ch 7: Writing param.json<a class="headerlink" href="#ch-7-writing-param-json" title="Permalink to this heading">#</a></h1>
+<p>I’m going to walk you through the file that controls everything.</p>
+<p>Not “most things.” Not “the important parts.” Everything. Which elements you’re studying. How the neural network is shaped. What temperatures to explore. When to call DFT. How to grade the results. Every scientific decision in your dpgen run lives inside <code class="docutils literal notranslate"><span class="pre">param.json</span></code>.</p>
+<p>The dpgen docs list every parameter with one-sentence descriptions that explain nothing. You copy them in, change two values, hold your breath, and submit. That’s how I started. It’s also how I burned through three failed dpgen runs before I understood what any of it actually controlled. Three runs. Weeks of HPC allocation. Because I treated <code class="docutils literal notranslate"><span class="pre">param.json</span></code> like a form to fill out instead of a blueprint to understand.</p>
+<p>So here’s what this chapter is. First, I’ll show you the standalone training configs we used for our Ar and water tutorial models. Simple, concrete, no dpgen yet. Then, a real <code class="docutils literal notranslate"><span class="pre">param.json</span></code> from a graphene + H₂ research project (the full dpgen workflow), walked through section by section, field by field. What it does, why it’s set to that value, and what happens when you get it wrong.</p>
+<section id="quick-reference-standalone-training-configs">
+<h2>Quick Reference: Standalone Training Configs<a class="headerlink" href="#quick-reference-standalone-training-configs" title="Permalink to this heading">#</a></h2>
+<p>Before diving into dpgen’s <code class="docutils literal notranslate"><span class="pre">param.json</span></code>, let’s look at the DeePMD <code class="docutils literal notranslate"><span class="pre">input.json</span></code> files we used in Ch 4. These are the configs you use with <code class="docutils literal notranslate"><span class="pre">dp</span> <span class="pre">train</span></code>, not with <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code>. They teach the same concepts.</p>
+<section id="ar-input-json-single-element">
+<h3>Ar input.json (Single Element)<a class="headerlink" href="#ar-input-json-single-element" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ar&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">9.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;rcut_smth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">80</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">40</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;training_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;../01_data/training/ar_fcc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;../01_data/training/ar_liquid&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;validation_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;../01_data/validation/ar_fcc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;../01_data/validation/ar_liquid&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400000</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>One element. One <code class="docutils literal notranslate"><span class="pre">sel</span></code> value. Virial training enabled (we have stress from DFT). 200 frames, 400k steps, ~30 min on GPU. Result: 0.3 meV/atom energy, 3-5 meV/Angstrom forces.</p>
+</section>
+<section id="water-input-json-multi-element">
+<h3>Water input.json (Multi-Element)<a class="headerlink" href="#water-input-json-multi-element" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">46</span><span class="p">,</span><span class="w"> </span><span class="mi">92</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.00</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;training_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;../00_data/training/data_0/&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;../00_data/training/data_1/&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;../00_data/training/data_2/&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;validation_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;../00_data/validation/data_3&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">500000</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Two elements. Two <code class="docutils literal notranslate"><span class="pre">sel</span></code> values: 46 O neighbors, 92 H neighbors (within 6 Angstroms). No virial (ICTP data lacks stress tensors). Bigger network (multi-element needs more capacity). Result: 0.43 meV/atom energy, 38.5 meV/Angstrom forces.</p>
+<p>Notice the pattern: <code class="docutils literal notranslate"><span class="pre">sel</span></code> has one entry per element type, always matching <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order. The descriptor network scales with <code class="docutils literal notranslate"><span class="pre">sel</span></code>. The fitting network scales with system complexity. Virial is on or off based on what your DFT data provides.</p>
+<hr class="docutils" />
+<p>Now let’s look at a full dpgen <code class="docutils literal notranslate"><span class="pre">param.json</span></code>.</p>
+<p>Pull up your param.json.</p>
+</section>
+</section>
+<section id="the-big-picture">
+<h2>The Big Picture<a class="headerlink" href="#the-big-picture" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">param.json</span></code> is the brain of your dpgen run. Not the muscles (that’s <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>). Not the skeleton (that’s your directory structure). The brain. Every decision flows from this file.</p>
+<ul class="simple">
+<li><p><strong>What</strong> you’re training (element types, network architecture, loss function)</p></li>
+<li><p><strong>Where</strong> the initial data lives (the seed dataset)</p></li>
+<li><p><strong>How</strong> to explore (temperatures, pressures, timesteps, which structures)</p></li>
+<li><p><strong>When</strong> to label (trust levels, task limits, convergence thresholds)</p></li>
+<li><p><strong>What DFT engine</strong> to use and with what settings</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">machine.json</span></code> (Ch 8) handles execution logistics: which queue, how many cores, container paths. <code class="docutils literal notranslate"><span class="pre">param.json</span></code> handles the science.</p>
+<p>Think of it this way. <code class="docutils literal notranslate"><span class="pre">param.json</span></code> is the research plan. <code class="docutils literal notranslate"><span class="pre">machine.json</span></code> is the lab booking form. You wouldn’t submit a lab booking form without knowing what experiment you’re running. Same thing here.</p>
+<p>Let’s trace through this.</p>
+<hr class="docutils" />
+<div class="seealso admonition">
+<p class="admonition-title">Real-World Research Example: Graphene + H₂</p>
+<p>The dpgen <code class="docutils literal notranslate"><span class="pre">param.json</span></code> walkthrough below uses a real graphene + H₂ research project. This is a more complex system than our Ar/water tutorial examples. Two elements, multiple system sizes (2 to 448 atoms), energy scale mismatch between isolated H₂ gas and graphene slabs. It shows what a production dpgen run actually looks like, problems and all.</p>
+</div>
+</section>
+<section id="type-map-and-mass-map">
+<h2>1. Type Map and Mass Map<a class="headerlink" href="#type-map-and-mass-map" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="nt">&quot;mass_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">12.011</span><span class="p">,</span><span class="w"> </span><span class="mf">1.008</span><span class="p">],</span>
+</pre></div>
+</div>
+<p>Two fields. Four values. Looks trivial.</p>
+<p>It is not trivial. Not even close. <code class="docutils literal notranslate"><span class="pre">type_map</span></code> is the single most important consistency requirement in your entire pipeline. And I mean <em>entire</em>. Training data conversion. Model architecture. LAMMPS exploration. DFT labeling. Pseudopotential assignment. Everything downstream reads from this ordering. Everything.</p>
+<p>Position 0 = Carbon. Position 1 = Hydrogen. That’s the contract. Once you write it, every other file in the workflow has to honor it.</p>
+<p>Here’s what nobody tells you. Nothing enforces this contract. There is no validator. There is no warning. You can flip the ordering in one file and every other file will happily proceed with the wrong assignment. The loss curve looks fine. The forces look reasonable. The model is garbage.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><code class="docutils literal notranslate"><span class="pre">type_map</span></code> ordering must match <strong>everywhere</strong>:</p>
+<ul class="simple">
+<li><p>Your <code class="docutils literal notranslate"><span class="pre">type.raw</span></code> file (0 = first element, 1 = second, etc.)</p></li>
+<li><p>Your POSCAR/structure files (atoms listed in this order)</p></li>
+<li><p>Your pseudopotential files in <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> (same order)</p></li>
+<li><p>For VASP: your POTCAR concatenation (same order)</p></li>
+<li><p>Your <code class="docutils literal notranslate"><span class="pre">default_training_param.model.type_map</span></code> (same list)</p></li>
+<li><p>Your <code class="docutils literal notranslate"><span class="pre">sel</span></code> list in the descriptor (same order)</p></li>
+</ul>
+<p>Get any one of these wrong and the model trains on nonsense. <mark class="silent-fail">Nothing crashes. Nothing warns you. The loss curve looks fine. The forces look reasonable. The model silently assigns carbon’s pseudopotential to hydrogen and hydrogen’s to carbon. Every energy, every force, wrong.</mark> I’ve seen this waste weeks of compute. Three days on 128 cores. Type_map was backwards. Every force assigned to the wrong element. Nothing crashed. Everything just quietly produced garbage.</p>
+<p>Not optional. Not a suggestion. Check it three times. Then check it again.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">mass_map</span></code> is the atomic mass for each type, used for LAMMPS MD during exploration. Match the order to <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Standard atomic masses. Nothing fancy. Nobody has ever gotten <code class="docutils literal notranslate"><span class="pre">mass_map</span></code> wrong. <code class="docutils literal notranslate"><span class="pre">type_map</span></code>, on the other hand, will get you eventually. It gets everyone eventually.</p>
+<p>That’s the foundation. Two arrays. Get them right or nothing else matters.</p>
+</section>
+<hr class="docutils" />
+<section id="initial-training-data">
+<h2>2. Initial Training Data<a class="headerlink" href="#initial-training-data" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;init_data_prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;../init_data&quot;</span><span class="p">,</span>
+<span class="nt">&quot;init_data_sys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;set_2atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_4atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_8atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_16atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_72atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_74atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_80atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_88atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_96atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_128atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_288atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_2atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_320atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_352atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_384atoms&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;set_gap_448atoms&quot;</span>
+<span class="p">],</span>
+<span class="nt">&quot;init_batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="s2">&quot;auto&quot;</span><span class="p">],</span>
+</pre></div>
+</div>
+<p>This is the seed data. The curriculum the model sees before dpgen even starts its loop. First day of class.</p>
+<p>And the quality of that first day determines whether the next three weeks go smoothly or spiral into chaos. I’ve seen both. With bad initial data, the first few iterations produce models that are basically rolling dice. They explore poorly, generate sky-high deviations, and every “candidate” structure is junk. The DFT labels come back, the model retrains on a mix of garbage and noise, and three iterations later you’ve spent 500 CPU-hours and learned nothing. Three iterations wasted. I learned this the expensive way.</p>
+<p><code class="docutils literal notranslate"><span class="pre">init_data_prefix</span></code> is the path prefix. Each entry in <code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code> is a directory containing DeePMD-format training data: the <code class="docutils literal notranslate"><span class="pre">set.*/</span></code> subdirectories with <code class="docutils literal notranslate"><span class="pre">box.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">coord.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">energy.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">force.npy</span></code>.</p>
+<p>In our case, 16 datasets of varying system sizes. 2 atoms = isolated H₂, up to 448 atoms = large graphene slabs with hydrogen. The <code class="docutils literal notranslate"><span class="pre">set_gap_*</span></code> entries are from gap-filling (covered in Practical Topics), manually curated data to fill holes the dpgen loop couldn’t reach on its own.</p>
+<p>Fair warning: including both isolated H₂ (~-16 eV/atom) and graphene slabs (~-278 eV/atom) in one training set creates an energy scale mismatch. We hit this problem. See <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a> for how we dealt with it using <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> reference corrections.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>How much initial data do you need?</strong> Here’s the honest answer.</p>
+<p>Minimum: 50-100 diverse frames from a short AIMD run or <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">init_bulk/init_surf</span></code>. That gives the models enough to not be completely random on iteration 0. Enough to stumble forward instead of stumble in circles.</p>
+<p>Better: 200+ frames spanning different configurations, temperatures, and system sizes. Now the models have a real foundation. The first exploration produces actual candidates instead of a wall of “failed” frames.</p>
+<p>Our real case has ~1200 frames across 16 datasets because we combined AIMD data with gap-filled data from prior failed attempts. Overkill for a first run? Maybe. But those first models were <em>stable</em>. They explored without blowing up. That’s worth a lot.</p>
+<p>Starting with 10 frames? The first iteration’s models are basically guessing. The exploration produces thousands of “failed” frames. Nothing gets labeled productively. You’re spinning your wheels. I’ve seen this go wrong too many times.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">init_batch_size</span></code> controls how many frames per training batch from each dataset. <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> lets DeePMD figure it out based on dataset size. Leave it. I have never had a reason to change this. Not once.</p>
+</section>
+<hr class="docutils" />
+<section id="system-configurations">
+<h2>3. System Configurations<a class="headerlink" href="#system-configurations" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;sys_configs_prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;..&quot;</span><span class="p">,</span>
+<span class="nt">&quot;sys_configs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_bare/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_4h2/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_8h2/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_12h2/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_h2gas/POSCAR&quot;</span><span class="p">]</span>
+<span class="p">],</span>
+<span class="nt">&quot;sys_batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">],</span>
+</pre></div>
+</div>
+<p>These are the starting structures for LAMMPS exploration in Stage 2. Field trip destinations. Each entry is a different type of structure the model needs to learn about. Different environments, different challenges.</p>
+<p>In our case:</p>
+<ul class="simple">
+<li><p>Index 0: Bare graphene (no hydrogen)</p></li>
+<li><p>Index 1: Graphene + 4 H₂ molecules</p></li>
+<li><p>Index 2: Graphene + 8 H₂ molecules</p></li>
+<li><p>Index 3: Graphene + 12 H₂ molecules</p></li>
+<li><p>Index 4: Isolated H₂ gas (no graphene)</p></li>
+</ul>
+<p>Yes, Index 4 is isolated H₂ gas alongside graphene slabs. And yes, this creates the energy scale problem we flag in section 5d and in <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a>. We include it because the model needs to handle H₂ desorption (molecules leaving the surface into vacuum). If you skip it, the model has never seen free H₂ and will produce garbage forces the moment a molecule desorbs during exploration. The fix isn’t removing it; it’s using <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> reference corrections so the loss function sees comparable residual energies instead of raw -16 vs -278 eV/atom.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sys_idx</span></code> values in <code class="docutils literal notranslate"><span class="pre">model_devi_jobs</span></code> (coming up soon) reference these indices. When dpgen sees <code class="docutils literal notranslate"><span class="pre">&quot;sys_idx&quot;:</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">4]</span></code>, it reads that as “explore bare graphene, graphene + 4 H₂, and H₂ gas this iteration.” Those index numbers are the bridge between your structures and your exploration schedule.</p>
+<p>Pay attention to this next part. This one will bite you.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">sys_configs</span></code> is a 2D list.</strong> Each inner list is one system. Here’s what wrong looks like:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="c1">// WRONG: flat list</span>
+<span class="nt">&quot;sys_configs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sys_bare/POSCAR&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sys_4h2/POSCAR&quot;</span><span class="p">]</span>
+
+<span class="c1">// RIGHT: list of lists</span>
+<span class="nt">&quot;sys_configs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">&quot;sys_bare/POSCAR&quot;</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sys_4h2/POSCAR&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Miss those inner brackets and dpgen treats each <em>character</em> of the path as a separate system. Or it crashes. Or it does something equally unhinged. The error messages won’t point you here. You’ll stare at the traceback for an hour before you spot the missing brackets. I’m serious.</p>
+<p>Each inner list can contain multiple POSCARs for the same system (e.g., different supercell sizes). dpgen picks from the list for that system index. One POSCAR per inner list is the common case.</p>
+</div>
+<p>So that’s three sections down: element identity, seed data, exploration structures. The skeleton of the run. Now we get to the part that actually does the learning.</p>
+</section>
+<hr class="docutils" />
+<section id="number-of-models">
+<h2>4. Number of Models<a class="headerlink" href="#number-of-models" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;numb_models&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>One number. It controls the entire active learning mechanism.</p>
+<p>Four models. Trained on the same data. Same architecture, same loss function, different random seeds. Four students, same textbook, different study habits.</p>
+<p>Why four? Because disagreement is the signal. Throw a new structure at all four models and ask: what’s the force on atom 7? If they all say roughly 0.5 eV/Angstrom, that structure is in familiar territory. The model knows this. But if model 1 says 0.5, model 2 says 0.3, model 3 says 0.8, model 4 says 0.4? They’re arguing. And that argument is the most valuable data you’ll generate in this entire workflow. Those structures, the ones where trained models can’t agree, are exactly where your model needs to learn next.</p>
+<p>That’s the whole trick.</p>
+<p>The DP-GEN paper tested this. Four gives a good balance between reliability of the deviation signal and compute cost. And I know what you’re thinking. “Four models? That’s 4x the GPU time just for training.” Yeah, it is. And it’s worth it. Because without those four models, you have no uncertainty estimate. You’re flying blind. You’re adding DFT data randomly instead of strategically. Four models trained in parallel on one GPU takes maybe 30-60 minutes each. The DFT calculations those models save you? Hundreds of CPU-hours.</p>
+<p>Could you use 3? If GPU time is really tight. I wouldn’t go below 3. With only 2 models, one disagreement could be noise. With 4, the signal is clear.</p>
+</section>
+<hr class="docutils" />
+<section id="training-parameters">
+<h2>5. Training Parameters<a class="headerlink" href="#training-parameters" title="Permalink to this heading">#</a></h2>
+<p>Alright. This is the big one.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">default_training_param</span></code> block is the DeePMD-kit input that gets stamped onto every model in every iteration. If you read <a class="reference internal" href="../ch02/deepmd-architecture.html"><span class="doc std std-doc">Ch 2</span></a>, you already know what each piece does conceptually (descriptor, fitting network, loss function, learning rate). Here we focus on the actual values in param.json and why they’re set the way they are for our graphene + H₂ system.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;default_training_param&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;descriptor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;se_e2_a&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;rcut&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;rcut_smth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;sel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">120</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;axis_neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;learning_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;exp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;stop_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5e-08</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;decay_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ener&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;training_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;disp_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lcurve.out&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;disp_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;save_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;save_ckpt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;model.ckpt&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>That is a wall of JSON. Let me take it apart piece by piece.</p>
+<section id="a-the-descriptor">
+<h3>5a. The Descriptor<a class="headerlink" href="#a-the-descriptor" title="Permalink to this heading">#</a></h3>
+<p>The descriptor is how the model sees its neighborhood. <span class="xref myst">Ch 2</span> covers the full picture (smoothing, invariance properties, embedding network). Here’s what matters for your param.json.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<ul>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">&quot;se_e2_a&quot;</span></code></strong>: The workhorse descriptor. DeePMD v3 has newer options (<code class="docutils literal notranslate"><span class="pre">se_atten</span></code>, <code class="docutils literal notranslate"><span class="pre">dpa2</span></code>) but <code class="docutils literal notranslate"><span class="pre">se_e2_a</span></code> is battle-tested. Start here.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">rcut:</span> <span class="pre">6.0</span></code></strong>: Cutoff radius in Angstroms. For covalent systems (C-C ~1.4 Angstroms, C-H ~1.1 Angstroms), 6 Angstroms captures several neighbor shells. For metals or ionic systems, bump to 8-9. Don’t go past 9 or 10 without a good reason. Neighbor count scales as <span class="math notranslate nohighlight">\(r^3\)</span>, so going from 6 to 9 roughly <em>triples</em> your compute.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">rcut_smth:</span> <span class="pre">2.0</span></code></strong>: Smoothing width. Neighbor contributions taper to zero between 4.0 and 6.0 Angstroms. Leave this at 2.0. I have never had a reason to change it.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">sel:</span> <span class="pre">[60,</span> <span class="pre">120]</span></code></strong>: Maximum neighbors per element type within <code class="docutils literal notranslate"><span class="pre">rcut</span></code>. <code class="docutils literal notranslate"><span class="pre">sel[0]</span> <span class="pre">=</span> <span class="pre">60</span></code> → up to 60 Carbon neighbors. <code class="docutils literal notranslate"><span class="pre">sel[1]</span> <span class="pre">=</span> <span class="pre">120</span></code> → up to 120 Hydrogen neighbors. <mark class="hard-req">Order matches <code class="docutils literal notranslate"><span class="pre">type_map</span></code>. Not optional.</mark> If your densest configuration has 70 carbon neighbors and you set <code class="docutils literal notranslate"><span class="pre">sel[0]</span> <span class="pre">=</span> <span class="pre">60</span></code>, <mark class="silent-fail">DeePMD silently ignores the 10 farthest carbons. No warning. No error. Just subtly wrong descriptors.</mark></p>
+<p>Why 60 and 120? In our densest expected configuration, an atom sees roughly 50 carbons and 80 hydrogens within 6 Angstroms. We pad by ~20%. Memory is cheap. Silent truncation is not.</p>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">neuron:</span> <span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">100]</span></code></strong>: Embedding network layers. Standard size. Smaller systems (CH₄, water) can get away with <code class="docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">20,</span> <span class="pre">40]</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">axis_neuron:</span> <span class="pre">16</span></code></strong>: Angular encoding dimensionality. 16 is the default. Rarely needs changing.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">resnet_dt:</span> <span class="pre">false</span></code></strong>: Standard for <code class="docutils literal notranslate"><span class="pre">se_e2_a</span></code>. Don’t touch this.</p></li>
+</ul>
+</div>
+</section>
+<section id="b-the-fitting-network">
+<h3>5b. The Fitting Network<a class="headerlink" href="#b-the-fitting-network" title="Permalink to this heading">#</a></h3>
+<p>The fitting network takes the descriptor vector and outputs one number: this atom’s energy contribution. See <span class="xref myst">Ch 2</span> for the full explanation. Here’s the sizing decision.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fitting_net&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;neuron&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span><span class="w"> </span><span class="mi">240</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;resnet_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Why <code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code>? Because our system has physisorption wells, surface diffusion barriers, interlayer interactions, and hydrogen-hydrogen repulsion all happening simultaneously. I tried <code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">100,</span> <span class="pre">100]</span></code> first. The forces on the hydrogen atoms never got below 80 meV/Angstrom. Bumped to <code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code>. Dropped to 30.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>System complexity</p></th>
+<th class="head"><p>Typical fitting net</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Simple (single element, bulk metal)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[60,</span> <span class="pre">60,</span> <span class="pre">60]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Medium (small molecules, water)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">100,</span> <span class="pre">100]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Complex (interfaces, multi-element)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[240,</span> <span class="pre">240,</span> <span class="pre">240]</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">resnet_dt:</span> <span class="pre">true</span></code> enables residual connections. Leave it on. Always.</p>
+</section>
+<section id="c-learning-rate">
+<h3>5c. Learning Rate<a class="headerlink" href="#c-learning-rate" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;learning_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;exp&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;stop_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5e-08</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;decay_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Exponential decay over 1M steps, dropping ~4 orders of magnitude. <span class="xref myst">Ch 2</span> explains the math. For param.json purposes: just use these values. The only time I’ve needed to change them is when training diverged (NaN in the loss). If that happens, halve <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to 0.0005. That has fixed it every single time.</p>
+</section>
+<section id="d-loss-function">
+<h3>5d. Loss Function<a class="headerlink" href="#d-loss-function" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ener&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;limit_pref_v&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The loss prefactors shift during training. Forces dominate early (50,000:1 over energy), then energy catches up to roughly 2:1. <span class="xref myst">Ch 2</span> covers <em>why</em> this works (information density in forces, shape-before-elevation). Here’s what you need to decide for your system:</p>
+<ul class="simple">
+<li><p><strong>Force vs energy weighting</strong>: These defaults work for most systems. Don’t change them unless you have a specific reason.</p></li>
+<li><p><strong>Virial prefactors</strong>: Zeroed out here because our QE calculations don’t produce reliable stress tensors for 2D slab systems. For bulk 3D systems where you need accurate pressure, set <code class="docutils literal notranslate"><span class="pre">start_pref_v</span> <span class="pre">=</span> <span class="pre">0.02</span></code>, <code class="docutils literal notranslate"><span class="pre">limit_pref_v</span> <span class="pre">=</span> <span class="pre">1.0</span></code>.</p></li>
+</ul>
+<div class="danger admonition">
+<p class="admonition-title">Warning: Energy Scale</p>
+<p>Our config includes both isolated H₂ (~-16 eV/atom) and graphene slabs (~-278 eV/atom). Without correction, the loss function focuses on reducing error on the slabs because those energies are simply larger numbers. The H₂ forces could be terrible and the total loss barely flinches.</p>
+<p><mark class="hard-req">If you mix systems with very different energy scales, you need <code class="docutils literal notranslate"><span class="pre">atom_ener</span></code> reference corrections.</mark> Without them the model silently sacrifices accuracy on the minority system. See <a class="reference internal" href="../practical/energy-scale.html"><span class="doc std std-doc">Energy Scale Traps</span></a> for the full story and our solution.</p>
+</div>
+</section>
+<section id="e-training-settings">
+<h3>5e. Training Settings<a class="headerlink" href="#e-training-settings" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;training_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;systems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">        </span><span class="nt">&quot;batch_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disp_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lcurve.out&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disp_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;save_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;save_ckpt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;model.ckpt&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Fast section. These are mostly set-and-forget.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">systems:</span> <span class="pre">[]</span></code></strong>: Leave it empty. dpgen fills this automatically with the current training data at each iteration. If you put paths here, dpgen ignores them anyway.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">numb_steps:</span> <span class="pre">1000000</span></code></strong>: One million training steps for fresh models. Takes ~30-60 minutes on a decent GPU. For simple systems, 400k is enough. For complex multi-element systems, 1M is the safe bet.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">seed:</span> <span class="pre">42</span></code></strong>: Doesn’t matter what you put here. dpgen overrides this with different random seeds for each of the 4 models. That’s the whole point: same architecture, same data, different initialization. The value 42 is tradition, not science.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">disp_file:</span> <span class="pre">&quot;lcurve.out&quot;</span></code></strong>: Where the learning curve gets written. This is the file you’ll stare at when something feels off. Columns: step, learning rate, energy RMSE (train), energy RMSE (val), force RMSE (train), force RMSE (val).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">disp_freq:</span> <span class="pre">1000</span></code></strong>: Write to <code class="docutils literal notranslate"><span class="pre">lcurve.out</span></code> every 1000 steps. Fine-grained enough to spot problems, coarse enough to not bloat the file.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">save_freq:</span> <span class="pre">10000</span></code></strong>: Checkpoint every 10k steps. If training crashes at step 990,000, you lose at most 10k steps instead of the whole run. Set this lower if your jobs are unstable. The checkpoints take almost no space.</p></li>
+</ul>
+<p>Alright. That was the entire training block. The model architecture, the learning rate, the loss function, the training loop. All of it lives inside <code class="docutils literal notranslate"><span class="pre">default_training_param</span></code>. dpgen stamps this onto every model in every iteration automatically. You write it once. It runs everywhere.</p>
+<p>Clean.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="training-reuse-transfer-learning">
+<h2>6. Training Reuse (Transfer Learning)<a class="headerlink" href="#training-reuse-transfer-learning" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;training_reuse_iter&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_numb_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400000</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_start_lr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_start_pref_e&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_start_pref_f&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="nt">&quot;training_reuse_old_ratio&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>For the first 5 iterations, dpgen trains every model from scratch. One million steps. Random initialization. Full training.</p>
+<p>Starting from iteration 5, it switches to <strong>transfer learning</strong>: take the model from the previous iteration and fine-tune it with the new data. The model already knows most of what it needs. You’re just teaching it the new stuff. Like a student who’s passed the midterm; you don’t make them retake the intro lectures.</p>
+<p>Why iteration 5 and not 0? Because the first few iterations add a lot of diverse data. The model’s internal representation might need to reorganize significantly. Fine-tuning a bad model on new data locks in bad patterns. After iteration 5, the model is stable enough that building on top of it makes sense. Before that, you’re better off starting fresh.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">training_reuse_numb_steps:</span> <span class="pre">400000</span></code></strong>: Only 400k steps instead of 1M. Fine-tuning converges faster because you’re starting from a good place instead of random weights.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">training_reuse_start_lr:</span> <span class="pre">0.0001</span></code></strong>: Ten times smaller than fresh training. You don’t want to overwrite what the model already knows. Small adjustments, not a renovation.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">training_reuse_start_pref_e/f</span></code></strong>: More balanced loss weights. <code class="docutils literal notranslate"><span class="pre">pref_f</span> <span class="pre">=</span> <span class="pre">100</span></code> instead of 1000. The model’s forces are already decent; you don’t need to hammer them as hard.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">training_reuse_old_ratio:</span> <span class="pre">&quot;auto&quot;</span></code></strong>: How much old vs. new data to use. <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> handles it. Let it.</p></li>
+</ul>
+<p>Over a 15-iteration run, transfer learning cuts training time roughly in half from iteration 5 onward. On 4 models, that adds up fast. Real time saved on real GPUs.</p>
+</section>
+<hr class="docutils" />
+<section id="exploration-settings">
+<h2>7. Exploration Settings<a class="headerlink" href="#exploration-settings" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0005</span><span class="p">,</span>
+<span class="nt">&quot;model_devi_skip&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="nt">&quot;model_devi_f_trust_lo&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span>
+<span class="nt">&quot;model_devi_f_trust_hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.15</span><span class="p">,</span>
+<span class="nt">&quot;model_devi_clean_traj&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>This is where the active learning happens. Five fields. Two of them control the entire intelligence of the dpgen loop. I’m going to slow down here because this is the part the docs skip over too quickly.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi_dt:</span> <span class="pre">0.0005</span></code></strong>: LAMMPS timestep in picoseconds. That’s 0.5 fs. Conservative, and intentionally so. We have hydrogen in the system. Light atoms vibrate fast. A 2 fs timestep would work for bulk copper, but for anything with hydrogen, 0.5 fs keeps the dynamics stable. If your system is all heavy atoms (no H, no Li), 1-2 fs is fine.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi_skip:</span> <span class="pre">0</span></code></strong>: Number of frames to skip at the beginning of each trajectory before analyzing deviations. Zero means analyze everything from the first frame. Set this to 1000 or so if you want to discard the equilibration period and only analyze the production run.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi_f_trust_lo:</span> <span class="pre">0.05</span></code></strong>: The “I’ve got this” threshold. Force deviation below 0.05 eV/Angstrom across all four models means they agree. The structure is well-learned territory. No need to waste DFT compute on it.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi_f_trust_hi:</span> <span class="pre">0.15</span></code></strong>: The “this is nonsense” threshold. Force deviation above 0.15 eV/Angstrom means the models are so confused that the structure is probably unphysical or completely outside the training distribution. Labeling it won’t help. Like a student so lost that answering one more question won’t fix the underlying gap.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi_clean_traj:</span> <span class="pre">3</span></code></strong>: Keep trajectories from the last 3 iterations only. Older ones get deleted. These LAMMPS dump files are huge. A single trajectory can be hundreds of MB. Over 15 iterations with 30 simulations each, you’re looking at terabytes. Clean them up.</p></li>
+</ul>
+</div>
+<p><mark class="key-insight">The magic is in the middle. Structures with force deviations between 0.05 and 0.15 eV/Angstrom are the <strong>candidates</strong>.</mark> The models are uncertain but not completely lost. Hard but learnable. These are the structures that get sent to DFT. And these, specifically these, are what the model actually learns from.</p>
+<p>Two numbers. <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> and <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code>. That’s the entire active learning signal.</p>
+<p>Are you seeing this? The whole elaborate dpgen machinery, the four models, the LAMMPS exploration, the DFT labeling, all of it boils down to sorting structures into three buckets based on two thresholds.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bucket</p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Accurate</p></td>
+<td><p>deviation &lt; <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code></p></td>
+<td><p>Skip. Model knows this.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Candidate</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> ≤ deviation ≤ <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code></p></td>
+<td><p>Send to DFT. Model needs this.</p></td>
+</tr>
+<tr class="row-even"><td><p>Failed</p></td>
+<td><p>deviation &gt; <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code></p></td>
+<td><p>Skip. Model is too confused.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Simple. Effective. And very easy to get wrong.</p>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p>I set <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> to 0.25 on my first run. Do you know what happened? Every single structure was classified “accurate.” The model stopped getting new training data. For three iterations, it trained on the same dataset, explored the same territory, found zero candidates, and I sat there wondering why it wasn’t converging.</p>
+<p>Three iterations of zero progress. On an HPC cluster that charges by the hour.</p>
+<p>It was grade inflation. The threshold was so loose that even genuinely uncertain predictions passed. The model sat there, smug, convinced it knew everything. It didn’t. It was just that my bar was so low even wildly uncertain predictions cleared it.</p>
+<p>Then I changed it to 0.05. Candidates everywhere. The model actually started learning.</p>
+<p>Start tight: 0.05 for <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code>, 0.15 for <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code>. Only loosen if you’re drowning in candidates (hundreds per iteration). If you’re getting zero candidates and the model clearly hasn’t converged, check <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> first. Trust me on this one.</p>
+</div>
+<section id="a-the-model-devi-jobs-schedule">
+<h3>7a. The model_devi_jobs Schedule<a class="headerlink" href="#a-the-model-devi-jobs-schedule" title="Permalink to this heading">#</a></h3>
+<p>This is the exploration schedule. One entry per dpgen iteration. Each entry tells dpgen which structures to explore, at what temperatures, for how long. This is where you design the model’s education, semester by semester.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;model_devi_jobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 0: Light exploration, bare + 4H2 + gas&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 1: Add 8H2&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 2: Full set including 12H2&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">500000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 3: Long exploration, wider T range&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mi">800</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Iter 4: Convergence check&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;sys_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;temps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">77</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mi">800</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;nsteps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2000000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ensemble&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;trj_freq&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Look at the progression. Each iteration pushes harder. The model earns its way to more difficult conditions.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Iteration</p></th>
+<th class="head"><p>Systems</p></th>
+<th class="head"><p>Temps (K)</p></th>
+<th class="head"><p>Steps</p></th>
+<th class="head"><p>Frames/traj</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>3</p></td>
+<td><p>77, 150, 300</p></td>
+<td><p>50k</p></td>
+<td><p>500</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>4</p></td>
+<td><p>77, 300, 500</p></td>
+<td><p>200k</p></td>
+<td><p>2000</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>5</p></td>
+<td><p>77, 300, 500</p></td>
+<td><p>500k</p></td>
+<td><p>500</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>5</p></td>
+<td><p>50-800</p></td>
+<td><p>1M</p></td>
+<td><p>1000</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>50-800</p></td>
+<td><p>2M</p></td>
+<td><p>2000</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Iteration 0 is gentle. Three systems, mild temperatures, short run. You don’t throw a freshly trained model into 800 K on day one. It would blow up in 200 steps, produce nothing but “failed” frames, and you’d have burned GPU time on exploration that generated zero usable candidates.</p>
+<p>By iteration 3, the model has seen hundreds of DFT-labeled structures across multiple configurations and temperatures. Now you push it: 50 K to 800 K, 1 million steps, all five systems. This is where you find out if your model actually learned the physics or just memorized the specific configurations it was trained on.</p>
+<p>Iteration 4 is the final exam. Two million steps. Everything. If it passes with &gt;98% accurate frames, you’re done.</p>
+<p>dpgen creates one LAMMPS task for <strong>every combination</strong> of <code class="docutils literal notranslate"><span class="pre">sys_idx</span></code> and temperature. Iteration 0: 3 systems times 3 temperatures = 9 simulations. Iteration 3: 5 times 6 = 30 simulations. Each generates <code class="docutils literal notranslate"><span class="pre">nsteps</span> <span class="pre">/</span> <span class="pre">trj_freq</span></code> frames for deviation analysis.</p>
+<p>Check the numbers. Iteration 3 produces 30 trajectories, each with 1000 frames. That’s 30,000 frames that need deviation analysis. From those 30,000, maybe 50-200 end up as candidates for DFT. The funnel is aggressive by design.</p>
+<div class="tip admonition">
+<p class="admonition-title">Key Insight</p>
+<p><strong>Design your exploration schedule with intent. Here are the principles I learned the hard way:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Start small.</strong> Few systems, mild temperatures, short runs. The initial model is rough. Long explorations at this stage just produce thousands of “failed” frames that get thrown away. Wasted GPU time.</p></li>
+<li><p><strong>Add complexity gradually.</strong> New systems in iteration 1 or 2, not iteration 0. Higher temperatures only after the model has learned the basics. You’re building on a foundation. If the foundation is shaky, adding load collapses it.</p></li>
+<li><p><strong>Increase <code class="docutils literal notranslate"><span class="pre">trj_freq</span></code> for long runs.</strong> 50k steps at <code class="docutils literal notranslate"><span class="pre">trj_freq=100</span></code> gives 500 frames. Fine. But 2M steps at <code class="docutils literal notranslate"><span class="pre">trj_freq=100</span></code> gives 20,000 frames per trajectory. That’s absurd. Most are redundant because consecutive MD frames are highly correlated. Use <code class="docutils literal notranslate"><span class="pre">trj_freq=1000</span></code> for anything over 200k steps. I cannot stress this enough.</p></li>
+<li><p><strong>The last iteration should be the hardest test you can design.</strong> Widest temperature range, longest runs, all systems. If the model survives this with &gt;98% accurate, it’s ready for production. That’s your graduation day.</p></li>
+</ol>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">HPC Reality</p>
+<p>Total LAMMPS simulations per iteration = <code class="docutils literal notranslate"><span class="pre">len(sys_idx)</span> <span class="pre">*</span> <span class="pre">len(temps)</span></code>. With 5 systems and 6 temperatures, that’s 30 GPU jobs. Each runs for 2M steps at 0.5 fs with a deep potential. On a single GPU, each takes maybe 2-6 hours depending on system size.</p>
+<p>That’s 60-180 GPU-hours per iteration. Just for exploration. And you haven’t even started the DFT labeling yet.</p>
+<p>Make sure your <code class="docutils literal notranslate"><span class="pre">machine.json</span></code> <code class="docutils literal notranslate"><span class="pre">group_size</span></code> for <code class="docutils literal notranslate"><span class="pre">model_devi</span></code> is set to pack multiple simulations per GPU job where possible. Otherwise you’re submitting 30 separate PBS jobs per iteration, and the scheduler overhead alone will eat your afternoon. Queue wait time times 30 is not a number you want to look at.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="first-principles-settings">
+<h2>8. First-Principles Settings<a class="headerlink" href="#first-principles-settings" title="Permalink to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pwscf&quot;</span><span class="p">,</span>
+<span class="nt">&quot;fp_task_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="nt">&quot;fp_task_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="nt">&quot;fp_accurate_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.98</span><span class="p">,</span>
+<span class="nt">&quot;fp_accurate_soft_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>This controls the DFT labeling stage. The teacher grading the hard questions. The whole point of active learning is that the teacher only grades the questions the student found difficult. Not the ones they already know. Not the ones that are beyond comprehension. Just the ones in the sweet spot.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_style:</span> <span class="pre">&quot;pwscf&quot;</span></code></strong>: Use Quantum ESPRESSO as the DFT engine. The other main option is <code class="docutils literal notranslate"><span class="pre">&quot;vasp&quot;</span></code>. This determines how dpgen generates input files and parses output. Pick the one installed on your HPC. We use QE.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_task_max:</span> <span class="pre">50</span></code></strong>: Maximum number of candidate structures sent to DFT per iteration. Even if 200 structures are candidates, only 50 get labeled. They’re selected randomly from the candidate pool. This is your DFT budget cap. Think of it as grading capacity. The teacher can only grade so many exams per week. 50 structures at ~1 CPU-hour each = 50 CPU-hours per iteration. Plan this around your HPC allocation, not around what’s theoretically optimal.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_task_min:</span> <span class="pre">5</span></code></strong>: Minimum DFT tasks per iteration. Even if only 2 structures are candidates, dpgen samples at least 5 (pulling in some “accurate” structures) to ensure meaningful data addition. Prevents empty or near-empty iterations where you burn a full training cycle for 2 new frames.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_accurate_threshold:</span> <span class="pre">0.98</span></code></strong>: The convergence criterion. If 98% of explored frames are “accurate” (below <code class="docutils literal notranslate"><span class="pre">trust_lo</span></code>), dpgen considers this system learned. The model knows its stuff. This is the finish line.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_accurate_soft_threshold:</span> <span class="pre">0.9</span></code></strong>: Above 90% accurate, dpgen starts reducing the number of candidates it sends. A soft transition. The model is getting close, so dpgen eases off the DFT throttle gradually rather than going from full speed to zero. Elegant engineering.</p></li>
+</ul>
+</div>
+<section id="a-pseudopotentials">
+<h3>8a. Pseudopotentials<a class="headerlink" href="#a-pseudopotentials" title="Permalink to this heading">#</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp_pp_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pseudo&quot;</span><span class="p">,</span>
+<span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p><strong>The order of <code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code> must match <code class="docutils literal notranslate"><span class="pre">type_map</span></code>.</strong> Carbon first, hydrogen second. Yes, I’m repeating myself from Section 1. No, I will not apologize. This is the second place where element ordering bites people, and the consequences are identical: silent garbage.</p>
+<p><code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code> is relative to the dpgen working directory. Put your <code class="docutils literal notranslate"><span class="pre">.UPF</span></code> files in a <code class="docutils literal notranslate"><span class="pre">pseudo/</span></code> subdirectory next to your <code class="docutils literal notranslate"><span class="pre">param.json</span></code>. dpgen copies these into each DFT task directory automatically.</p>
+<p>For VASP users: you don’t list individual pseudopotential files. Instead, dpgen constructs the POTCAR by concatenating per-element POTCARs from <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code> in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order. But the <strong>ordering still must match</strong>. This is not a QE-specific rule. This is a universal rule.</p>
+</section>
+<section id="b-qe-input-parameters">
+<h3>8b. QE Input Parameters<a class="headerlink" href="#b-qe-input-parameters" title="Permalink to this heading">#</a></h3>
+<p>Now we slow down. This section determines the quality of every DFT label your model trains on. Get one setting wrong and every label is subtly off. The model trains on those labels. The model inherits those errors. And nothing tells you it happened.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;user_fp_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;control&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;calculation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scf&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;restart_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;from_scratch&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;outdir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./OUT&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;tprnfor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;tstress&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;disk_io&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;system&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;ecutwfc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;ecutrho&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;input_dft&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PBE&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;vdw_corr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dft-d3&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;dftd3_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;nosym&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;occupations&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smearing&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;smearing&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;degauss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.005</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;electrons&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;conv_thr&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1e-06</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;electron_maxstep&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;mixing_beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.3</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;kspacing&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is the QE input template dpgen stamps onto every DFT calculation in the fp stage. Every single one. <mark class="hard-req">Consistency is everything here. Every DFT calculation across all dpgen iterations must use identical settings.</mark> Changing the functional mid-run is like changing the grading rubric halfway through the semester. The model sees conflicting labels and can’t learn.</p>
+<div class="note admonition">
+<p class="admonition-title">Config Walkthrough</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">control</span></code> section:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">calculation:</span> <span class="pre">&quot;scf&quot;</span></code>: Single-point energy calculation. dpgen only needs energies and forces, not geometry relaxation. Never set this to “relax” or “vc-relax” in a dpgen context. The candidate structures come from MD; you want to label them as-is.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">tprnfor:</span> <span class="pre">true</span></code></strong>: Print forces. <strong>Not optional. Not a suggestion.</strong> Without this flag, QE computes forces internally but doesn’t write them to the output file. <mark class="silent-fail">dpdata reads the output, finds no forces, and your training data gets zero-force labels.</mark> The loss looks fine. The model trains. The forces are all zeros. Garbage in, garbage out. I lost two days to this. QE doesn’t complain. It just silently gives you garbage. Helpful.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tstress:</span> <span class="pre">true</span></code>: Print the stress tensor. Useful if you’re training with virial prefactors. Costs almost nothing to include.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">disk_io:</span> <span class="pre">&quot;none&quot;</span></code>: Don’t write wavefunctions to disk. We don’t need them and they waste I/O on the cluster.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">system</span></code> section:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ecutwfc:</span> <span class="pre">50</span></code>: Plane-wave cutoff in Ry. 50 Ry is standard for PAW pseudopotentials. This should match whatever you used for your initial AIMD data. Don’t change it between runs. Consistency.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ecutrho:</span> <span class="pre">400</span></code>: Charge density cutoff. 8x <code class="docutils literal notranslate"><span class="pre">ecutwfc</span></code> for PAW. For ultrasoft pseudopotentials, use 10-12x.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nosym:</span> <span class="pre">true</span></code>: Disable symmetry detection. Important. The candidate structures come from MD trajectories and have no symmetry. QE trying to find symmetry wastes time and occasionally causes convergence issues on slightly distorted structures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">occupations/smearing/degauss</span></code>: Gaussian smearing at 0.005 Ry. Standard for metallic or semi-metallic systems. Graphene is a semimetal, so we need this.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">electrons</span></code> section:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">conv_thr:</span> <span class="pre">1e-06</span></code>: SCF convergence threshold in Ry. Tight enough for reliable forces. Don’t go looser than 1e-5. Loose convergence means noisy forces, which means noisy training labels, which means the model learns noise. It doesn’t crash. It just doesn’t learn well. You’ll see it as a plateau in the force RMSE that never breaks below 40-50 meV/Angstrom no matter how many iterations you run.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electron_maxstep:</span> <span class="pre">200</span></code>: Maximum SCF iterations. 200 is generous. If a calculation needs more than 200 steps to converge, something is wrong with the structure. Let it fail. dpgen handles failures gracefully.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixing_beta:</span> <span class="pre">0.3</span></code>: Charge mixing parameter. Lower = more stable convergence but slower. If your DFT jobs fail to converge, try 0.1 or 0.2 before anything else.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">kspacing:</span> <span class="pre">0.5</span></code></strong>: K-point spacing in reciprocal Angstroms. dpgen generates the k-point grid automatically from this value and the cell dimensions. 0.5 is reasonable for a slab system. For bulk metals, use 0.3 or tighter.</p>
+</div>
+<div class="caution admonition">
+<p class="admonition-title">Common Mistake</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">input_dft</span></code> for vdW functionals on QE 7.3.1</strong>: If you need a vdW-DF functional, use <code class="docutils literal notranslate"><span class="pre">'vdw-df2-b86r'</span></code>, NOT <code class="docutils literal notranslate"><span class="pre">'rev-vdw-df2'</span></code>. The latter is an obsolete label that older QE versions accepted. QE 7.3.1 on most HPCs won’t recognize it and will either crash or silently fall back to a different functional.</p>
+<p>Silently. Fall back. To a different functional.</p>
+<p>Let that sink in. Your DFT calculations run successfully, produce energies and forces, and dpgen happily adds them to the training set. Except they were computed with the wrong functional. Every label is subtly wrong. The model trains. It looks converged. The forces are off by just enough to ruin your production simulations. You won’t catch it until validation, weeks later.</p>
+<p>In our config, we’re using <code class="docutils literal notranslate"><span class="pre">&quot;PBE&quot;</span></code> with explicit D3(BJ) correction (<code class="docutils literal notranslate"><span class="pre">vdw_corr:</span> <span class="pre">&quot;dft-d3&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">dftd3_version:</span> <span class="pre">4</span></code>) instead of a vdW-DF functional. This is a valid alternative for van der Waals interactions. The key point: be consistent. Same functional. Same pseudopotentials. Same cutoffs. Every iteration. No exceptions.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="for-vasp-users">
+<h2>9. For VASP Users<a class="headerlink" href="#for-vasp-users" title="Permalink to this heading">#</a></h2>
+<p>If you’re using VASP instead of QE, the <code class="docutils literal notranslate"><span class="pre">fp_style</span></code> and related fields look different:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vasp&quot;</span><span class="p">,</span>
+<span class="nt">&quot;user_incar_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;ENCUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;EDIFF&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ISMEAR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;SIGMA&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;LREAL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Auto&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ISYM&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;PREC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;LWAVE&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;LCHARG&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;NSW&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;IBRION&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;KSPACING&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The key mappings between QE and VASP:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>QE</p></th>
+<th class="head"><p>VASP</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Disable symmetry</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nosym:</span> <span class="pre">true</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ISYM:</span> <span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Single-point (no relax)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">calculation:</span> <span class="pre">&quot;scf&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NSW:</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">IBRION:</span> <span class="pre">-1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Don’t dump wavefunctions</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">disk_io:</span> <span class="pre">&quot;none&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LWAVE:</span> <span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">LCHARG:</span> <span class="pre">false</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Plane-wave cutoff</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ecutwfc</span></code> (Ry)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ENCUT</span></code> (eV)</p></td>
+</tr>
+<tr class="row-even"><td><p>SCF convergence</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">conv_thr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EDIFF</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>K-point spacing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kspacing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">KSPACING</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>One difference: VASP always writes forces. No <code class="docutils literal notranslate"><span class="pre">tprnfor</span></code> equivalent to forget. Small mercy.</p>
+<p>Pseudopotential handling: VASP reads from a POTCAR that dpgen constructs by concatenating per-element POTCARs in <code class="docutils literal notranslate"><span class="pre">type_map</span></code> order from <code class="docutils literal notranslate"><span class="pre">fp_pp_path</span></code>. Same ordering rule applies. Always.</p>
+</section>
+<hr class="docutils" />
+<section id="the-complete-param-json">
+<h2>The Complete param.json<a class="headerlink" href="#the-complete-param-json" title="Permalink to this heading">#</a></h2>
+<p>Here’s everything together. The real config from the graphene + H₂ project, comments stripped:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;mass_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">12.011</span><span class="p">,</span><span class="w"> </span><span class="mf">1.008</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;init_data_prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;../init_data&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;init_data_sys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;set_2atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_4atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_8atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_16atoms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;set_72atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_74atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_80atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_88atoms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;set_96atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_gap_128atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_gap_288atoms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;set_gap_2atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_gap_320atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_gap_352atoms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;set_gap_384atoms&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;set_gap_448atoms&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;sys_configs_prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;..&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sys_configs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_bare/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_4h2/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_8h2/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_12h2/POSCAR&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="p">[</span><span class="s2">&quot;sys_configs/sys_h2gas/POSCAR&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;numb_models&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;default_training_param&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;...training config...&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;model_devi_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0005</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;model_devi_f_trust_lo&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;model_devi_f_trust_hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.15</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;model_devi_jobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;...exploration schedule...&quot;</span><span class="w"> </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;fp_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pwscf&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_task_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_task_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_fp_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;...QE settings...&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;fp_pp_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pseudo&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;fp_pp_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C.pbe-n-kjpaw_psl.1.0.0.UPF&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;H.pbe-rrkjus_psl.1.0.0.UPF&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>That’s it. One file. Every scientific decision.</p>
+</section>
+<section id="writing-your-own-a-checklist">
+<h2>Writing Your Own: A Checklist<a class="headerlink" href="#writing-your-own-a-checklist" title="Permalink to this heading">#</a></h2>
+<p>Before you launch <code class="docutils literal notranslate"><span class="pre">dpgen</span> <span class="pre">run</span></code>, go through this list. All of it. Every time. I’m serious.</p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">type_map</span></code></strong> matches your structures, pseudopotentials, and training config? <strong>Check three times.</strong> Then check it a fourth time. I’m not being dramatic. This is the number one source of silent failures.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">init_data_sys</span></code></strong> points to real directories with valid DeePMD data? Run <code class="docutils literal notranslate"><span class="pre">ls</span> <span class="pre">init_data/set_*/set.000/</span></code> to verify. If any directory is missing <code class="docutils literal notranslate"><span class="pre">energy.npy</span></code> or <code class="docutils literal notranslate"><span class="pre">force.npy</span></code>, you’ll get a cryptic error at training time.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">sys_configs</span></code></strong> is a 2D list (list of lists) and each POSCAR actually exists at the specified path?</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">sel</span></code></strong> in the descriptor is large enough for your densest configuration? Pad by 20%. Memory is cheap. Silent truncation is not.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">model_devi_jobs</span></code></strong> starts gentle and increases in difficulty? First iteration should not have your widest temperature range or longest simulation.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">trust_lo</span></code> and <code class="docutils literal notranslate"><span class="pre">trust_hi</span></code></strong> are reasonable? 0.05 and 0.15 is a safe start. Tighten or loosen based on what you see in the first 2-3 iterations.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_task_max</span></code></strong> is within your HPC budget? 50 DFT calculations at ~1 CPU-hour each = 50 CPU-hours per iteration. Over 10 iterations, that’s 500 CPU-hours just for labeling. Know your allocation.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">user_fp_params</span></code></strong> has <code class="docutils literal notranslate"><span class="pre">tprnfor:</span> <span class="pre">true</span></code> (QE)? Is it consistent with the DFT settings you used for your initial data?</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">fp_pp_files</span></code></strong> order matches <code class="docutils literal notranslate"><span class="pre">type_map</span></code>? Carbon first if <code class="docutils literal notranslate"><span class="pre">type_map</span></code> says carbon first. Always.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">kspacing</span></code></strong> is appropriate for your system size? Too coarse for bulk metals, too fine wastes compute on large supercells.</p></li>
+</ol>
+<p>If all 10 pass, you’re ready for Ch 8 (machine.json) and Ch 9 (running it).</p>
+</section>
+<section id="what-s-next">
+<h2>What’s Next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">param.json</span></code> tells dpgen <em>what</em> to do. Now it needs to know <em>where</em> to do it. Which GPU for training, which PBS queue for DFT, how many cores per job, how to launch the Apptainer container. That’s <code class="docutils literal notranslate"><span class="pre">machine.json</span></code>. Grab your terminal.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/ch07"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../ch06/dpgen-concept.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ch 6: The dpgen Concept</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ch08/machine-json.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ch 8: Writing machine.json</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference-standalone-training-configs">Quick Reference: Standalone Training Configs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ar-input-json-single-element">Ar input.json (Single Element)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#water-input-json-multi-element">Water input.json (Multi-Element)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-big-picture">The Big Picture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#type-map-and-mass-map">1. Type Map and Mass Map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-training-data">2. Initial Training Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-configurations">3. System Configurations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#number-of-models">4. Number of Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-parameters">5. Training Parameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-the-descriptor">5a. The Descriptor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-the-fitting-network">5b. The Fitting Network</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-learning-rate">5c. Learning Rate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-loss-function">5d. Loss Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-training-settings">5e. Training Settings</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-reuse-transfer-learning">6. Training Reuse (Transfer Learning)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-settings">7. Exploration Settings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-the-model-devi-jobs-schedule">7a. The model_devi_jobs Schedule</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-principles-settings">8. First-Principles Settings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pseudopotentials">8a. Pseudopotentials</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-qe-input-parameters">8b. QE Input Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#for-vasp-users">9. For VASP Users</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-complete-param-json">The Complete param.json</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-your-own-a-checklist">Writing Your Own: A Checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Krishna Patel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

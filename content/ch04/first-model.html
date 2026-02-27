@@ -260,7 +260,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial" target="_blank"
+      <li><a href="https://github.com/crisnapatel/deepmd-handbook" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -277,7 +277,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/edit/main/content/ch04/first-model.md" target="_blank"
+      <li><a href="https://github.com/crisnapatel/deepmd-handbook/edit/main/content/ch04/first-model.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -294,7 +294,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/crisnapatel/deepmd-dpgen-tutorial/issues/new?title=Issue%20on%20page%20%2Fcontent/ch04/first-model.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/crisnapatel/deepmd-handbook/issues/new?title=Issue%20on%20page%20%2Fcontent/ch04/first-model.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -606,7 +606,7 @@ document.write(`
 <section id="running-dp-train">
 <h2>Running dp train<a class="headerlink" href="#running-dp-train" title="Permalink to this heading">#</a></h2>
 <p>Grab your terminal. First, put your <code class="docutils literal notranslate"><span class="pre">input.json</span></code> (the file shown above) in the training directory and <code class="docutils literal notranslate"><span class="pre">cd</span></code> into it:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/01_train/
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd/ar/01_train/
 <span class="gp">$ </span>ls
 <span class="go">input.json</span>
 </pre></div>
@@ -709,7 +709,7 @@ document.write(`
 <section id="testing-the-model">
 <h2>Testing the Model<a class="headerlink" href="#testing-the-model" title="Permalink to this heading">#</a></h2>
 <p>You have a frozen model. Before you use it for anything real, you test it. Against held-out DFT data. The validation set you split off back in Ch 3. This is the exam.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd_project/ar/02_test/
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/deepmd/ar/02_test/
 <span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_fcc/<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-d<span class="w"> </span>test_fcc
 <span class="gp">$ </span>dp<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-m<span class="w"> </span>../01_train/frozen_model.pb<span class="w"> </span>-s<span class="w"> </span>../00_data/validation/ar_liquid/<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-d<span class="w"> </span>test_liquid
 <span class="gp">$ </span>ls

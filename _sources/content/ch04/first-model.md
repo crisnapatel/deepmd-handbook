@@ -123,7 +123,7 @@ This is the part that made it click for me. The model learns forces first becaus
 Grab your terminal. First, put your `input.json` (the file shown above) in the training directory and `cd` into it:
 
 ```console
-$ cd ~/deepmd_project/ar/01_train/
+$ cd ~/deepmd/ar/01_train/
 $ ls
 input.json
 ```
@@ -253,7 +253,7 @@ In the dpgen context, you never run `dp freeze` manually. dpgen does it automati
 You have a frozen model. Before you use it for anything real, you test it. Against held-out DFT data. The validation set you split off back in Ch 3. This is the exam.
 
 ```console
-$ cd ~/deepmd_project/ar/02_test/
+$ cd ~/deepmd/ar/02_test/
 $ dp test -m ../01_train/frozen_model.pb -s ../00_data/validation/ar_fcc/ -n 10 -d test_fcc
 $ dp test -m ../01_train/frozen_model.pb -s ../00_data/validation/ar_liquid/ -n 10 -d test_liquid
 $ ls

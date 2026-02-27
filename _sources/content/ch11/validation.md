@@ -39,7 +39,7 @@ First thing after training. Always. There is no good reason to skip this step.
 `dp test` takes your frozen model, feeds it a held-out test set, and tells you how far off it is from DFT. Energy RMSE, force RMSE, virial RMSE. Three numbers. Your first reality check.
 
 ```console
-$ cd ~/deepmd_project/ar/02_test/
+$ cd ~/deepmd/ar/02_test/
 $ dp test -m ../01_train/frozen_model.pb -s ../00_data/validation/ar_fcc/ -n 500 -d results
 
 # This produces:
@@ -94,7 +94,7 @@ This matters even more for multi-component systems. I ran `dp test` on a mixed g
 Test each subsystem independently:
 
 ```console
-$ cd ~/deepmd_project/ar/02_test/
+$ cd ~/deepmd/ar/02_test/
 
 # For Ar: test FCC and liquid separately
 $ dp test -m ../01_train/frozen_model.pb -s ../00_data/validation/ar_fcc/ -n 10 -d test_fcc
@@ -122,7 +122,7 @@ The model did not "crash." It confidently predicted its way into physical absurd
 The test is dead simple. Run a long NVT simulation and see if it survives:
 
 ```console
-$ cd ~/deepmd_project/ar/03_lammps/
+$ cd ~/deepmd/ar/03_lammps/
 
 # Run a long NVT simulation and see if it survives
 # 1 ns = 1,000 ps = 2,000,000 steps at 0.5 fs timestep
@@ -233,7 +233,7 @@ Equilibrium volume off by more than 1%? Bulk modulus off by more than 10%? The m
 For crystalline systems, phonon dispersions are a brutal test. I am not exaggerating. Forces need to be accurate not just at equilibrium, but for every small displacement in every direction. Use `phonopy` with the DeePMD potential as the force calculator:
 
 ```console
-$ cd ~/deepmd_project/ar/02_test/
+$ cd ~/deepmd/ar/02_test/
 $ phonopy --deepmd ../01_train/frozen_model.pb -d --dim 3 3 1
 # ... compute forces, extract phonon bands
 ```
